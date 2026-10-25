@@ -140,7 +140,7 @@ object DozeParser {
 
     /** Extract package names from `dumpsys deviceidle whitelist` output. */
     fun parseWhitelist(dump: String): List<String> =
-        pkgToken.findAll(dump).map { it.value }.distinct().sorted()
+        pkgToken.findAll(dump).map { it.value }.distinct().toList().sorted()
 
     /** Third-party (user-installed) packages that are Doze-exempt = best restrict candidates. */
     fun exemptThirdParty(whitelist: List<String>, thirdParty: List<String>): List<String> {

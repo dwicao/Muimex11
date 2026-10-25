@@ -89,7 +89,7 @@ internal fun MainActivity.showDozeSheet(prefs: SharedPreferences) {
 internal fun MainActivity.restrictDozeExemptions(prefs: SharedPreferences, pkgs: List<String>) {
     if (!hasShizukuPermission() || pkgs.isEmpty()) return
     runAdbCommand(DozeParser.buildRemoveCmd(pkgs), getString(R.string.doze_restricted_fmt, pkgs.size)) {
-        saveDozeRemoved(this, (readDozeRemoved(this) + pkgs).distinct().sorted())
+        saveDozeRemoved(prefs, (readDozeRemoved(prefs) + pkgs).distinct().sorted())
         fetchSystemStatuses()
     }
 }
@@ -97,7 +97,7 @@ internal fun MainActivity.restrictDozeExemptions(prefs: SharedPreferences, pkgs:
 internal fun MainActivity.restoreDozeExemptions(prefs: SharedPreferences, pkgs: List<String>) {
     if (!hasShizukuPermission() || pkgs.isEmpty()) return
     runAdbCommand(DozeParser.buildRestoreCmd(pkgs), getString(R.string.doze_restored)) {
-        saveDozeRemoved(this, emptyList())
+        saveDozeRemoved(prefs, emptyList())
         fetchSystemStatuses()
     }
 }
