@@ -8,7 +8,6 @@ import android.hardware.SensorManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
-import es.dmoral.toasty.Toasty
 import java.util.concurrent.atomic.AtomicInteger
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -32,7 +31,7 @@ internal fun MainActivity.fixGyroDelay() {
         val before = measureGyroRateHz()
         if (before == null) {
             progress.dismiss()
-            Toasty.error(this@fixGyroDelay, getString(R.string.gyro_not_found), Toast.LENGTH_LONG, true).show()
+            UiToast.error(this@fixGyroDelay, getString(R.string.gyro_not_found), Toast.LENGTH_LONG).show()
             return@launch
         }
 

@@ -9,7 +9,6 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
-import es.dmoral.toasty.Toasty
 
 internal fun MainActivity.setupClickListeners() {
     val prefs = getSharedPreferences(Prefs.MAIN, Context.MODE_PRIVATE)
@@ -34,7 +33,7 @@ private fun MainActivity.runTweakOnce(
     // Status text may be translated; compare against its English source.
     val status = AppTranslator.toEnglish(findViewById<TextView>(statusId).text.toString())
     if (status.contains(doneMarker())) {
-        Toasty.info(this, getString(alreadyToastRes), Toast.LENGTH_SHORT, true).show()
+        UiToast.info(this, getString(alreadyToastRes), Toast.LENGTH_SHORT).show()
         return
     }
     runAdbCommand(command, getString(successMessageRes)) { onSuccess() }
@@ -49,7 +48,7 @@ private fun MainActivity.bindCommandReset(buttonId: Int, command: String, messag
 private fun MainActivity.bindStatusReset(buttonId: Int, statusId: Int) {
     findViewById<TextView>(buttonId).setOnClickListener {
         findViewById<TextView>(statusId).text = getString(R.string.status_ready)
-        Toasty.success(this, getString(R.string.toast_status_reset), Toast.LENGTH_SHORT, true).show()
+        UiToast.success(this, getString(R.string.toast_status_reset), Toast.LENGTH_SHORT).show()
     }
 }
 
@@ -59,7 +58,7 @@ private fun MainActivity.setupTweakCardListeners(prefs: SharedPreferences) {
 
     findViewById<CardView>(R.id.cardFixedPerformance).setOnClickListener {
         if (prefs.getBoolean(Prefs.KEY_FIXED_PERF_AGGRESSIVE, false)) {
-            Toasty.info(this, getString(R.string.toast_already_aggr), Toast.LENGTH_SHORT, true).show()
+            UiToast.info(this, getString(R.string.toast_already_aggr), Toast.LENGTH_SHORT).show()
             return@setOnClickListener
         }
         showFixedPerformanceSheet(prefs)
@@ -123,7 +122,7 @@ private fun MainActivity.setupTweakCardListeners(prefs: SharedPreferences) {
 
     findViewById<CardView>(R.id.cardGameMode).setOnClickListener {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-            Toasty.error(this, getString(R.string.toast_needs_a12), Toast.LENGTH_LONG, true).show()
+            UiToast.error(this, getString(R.string.toast_needs_a12), Toast.LENGTH_LONG).show()
             return@setOnClickListener
         }
         showGameModeSelectorDialog()
@@ -221,7 +220,7 @@ private fun MainActivity.setupTweakResetListeners(prefs: SharedPreferences) {
                 fetchSystemStatuses()
             }
         } else {
-            Toasty.info(this, getString(R.string.toast_no_gm), Toast.LENGTH_SHORT, true).show()
+            UiToast.info(this, getString(R.string.toast_no_gm), Toast.LENGTH_SHORT).show()
         }
     }
 

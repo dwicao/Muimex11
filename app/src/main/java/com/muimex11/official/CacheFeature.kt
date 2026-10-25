@@ -3,12 +3,10 @@ package com.muimex11.official
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
-import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import rikka.shizuku.Shizuku
 
 internal fun MainActivity.confirmClearCaches() {
     Sheet(this)
@@ -35,8 +33,7 @@ internal fun MainActivity.clearAllCaches() {
         var ok = false
         try {
 
-            val process = Shizuku.newProcess(arrayOf("sh", "-c", "pm trim-caches 999G"), null, null)
-            ok = process.waitFor() == 0
+            ok = ShizukuRunner.execOk("pm trim-caches 999G")
         } catch (e: Exception) {
             ok = false
         }
@@ -48,14 +45,13 @@ internal fun MainActivity.clearAllCaches() {
             if (ok) {
                 findViewById<TextView>(R.id.tvStatusCache).text =
                     if (freed > 0) getString(R.string.status_freed, formatSize(freed)) else getString(R.string.status_already_clean)
-                Toasty.success(
+                UiToast.success(
                     this@clearAllCaches,
-                    if (freed > 0) getString(R.string.toast_freed_cache, formatSize(freed)) else getString(R.string.toast_cache_clean),
-                    Toast.LENGTH_LONG, true
+                    if (freed > 0) getString(R.string.toast_freed_cache, formatSize(freed)) else getString(R.string.toast_cache_clean), Toast.LENGTH_LONG
                 ).show()
                 updateDeviceInfo()
             } else {
-                Toasty.error(this@clearAllCaches, getString(R.string.toast_cache_blocked), Toast.LENGTH_LONG, true).show()
+                UiToast.error(this@clearAllCaches, getString(R.string.toast_cache_blocked), Toast.LENGTH_LONG).show()
             }
         }
     }

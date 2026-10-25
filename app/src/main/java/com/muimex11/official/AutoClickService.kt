@@ -21,7 +21,7 @@ import rikka.shizuku.Shizuku
 
 class AutoClickService : Service() {
 
-    override fun getResources(): android.content.res.Resources = AppTranslator.wrap(super.getResources())
+    // static locales only
 
     companion object {
         const val PREFS = Prefs.MAIN
@@ -59,6 +59,7 @@ class AutoClickService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        ServiceNotif.startOverlayForeground(this, 4204, R.string.notif_autoclick)
         windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         buildOverlay()
     }
@@ -207,16 +208,15 @@ class AutoClickService : Service() {
 
     private fun runShell(cmd: String) {
         try {
-            val p = Shizuku.newProcess(arrayOf("sh", "-c", cmd), null, null)
-            p.waitFor()
-            p.destroy()
+            ShizukuRunner.exec(cmd, timeoutMs = 3000).code
         } catch (_: Throwable) {
         }
     }
 
     override fun onDestroy() {
+        try { stopForeground(STOP_FOREGROUND_REMOVE) } catch (_: Exception) {}
         stopLoop()
-        job.cancel()
+        try { job.cancel() } catch (_: Exception) {}
         if (viewAdded) {
             try { windowManager.removeView(root) } catch (_: Exception) {}
             viewAdded = false

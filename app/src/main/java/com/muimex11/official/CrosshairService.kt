@@ -12,7 +12,7 @@ import android.view.WindowManager
 
 class CrosshairService : Service() {
 
-    override fun getResources(): android.content.res.Resources = AppTranslator.wrap(super.getResources())
+    // static locales only
 
     private lateinit var windowManager: WindowManager
     private lateinit var crosshairView: CrosshairView
@@ -21,6 +21,7 @@ class CrosshairService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        ServiceNotif.startOverlayForeground(this, 4203, R.string.notif_crosshair)
         windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         crosshairView = CrosshairView(this)
 
@@ -65,6 +66,7 @@ class CrosshairService : Service() {
     }
 
     override fun onDestroy() {
+        try { stopForeground(STOP_FOREGROUND_REMOVE) } catch (_: Exception) {}
         super.onDestroy()
         if (::crosshairView.isInitialized) {
             windowManager.removeView(crosshairView)

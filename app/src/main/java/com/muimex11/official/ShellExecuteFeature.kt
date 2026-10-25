@@ -27,7 +27,6 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
-import es.dmoral.toasty.Toasty
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import kotlinx.coroutines.Dispatchers
@@ -108,7 +107,7 @@ internal fun MainActivity.showShellExecuteSheet() {
 }
 
 private fun MainActivity.toastErr(res: Int) {
-    Toasty.error(this, getString(res), Toast.LENGTH_SHORT, true).show()
+    UiToast.error(this, getString(res), Toast.LENGTH_SHORT).show()
 }
 
 private fun MainActivity.renderScriptPicker(box: LinearLayout, script: PickedScript?, pick: () -> Unit) {
@@ -470,7 +469,7 @@ internal fun MainActivity.runShellScript(script: PickedScript) {
             copyBtn.setOnClickListener {
                 val cm = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                 cm.setPrimaryClip(ClipData.newPlainText("shell-output", terminal.text.toString()))
-                Toasty.success(this@runShellScript, getString(R.string.shell_copied), Toast.LENGTH_SHORT, true).show()
+                UiToast.success(this@runShellScript, getString(R.string.shell_copied), Toast.LENGTH_SHORT).show()
             }
             sheet.dialog.setCancelable(true)
             sheet.dialog.setCanceledOnTouchOutside(true)

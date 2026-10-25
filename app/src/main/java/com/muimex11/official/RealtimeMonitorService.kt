@@ -33,7 +33,7 @@ class RealtimeMonitorService : Service() {
         var isRunning: Boolean = false
     }
 
-    override fun getResources(): android.content.res.Resources = AppTranslator.wrap(super.getResources())
+    // static locales only
 
     private lateinit var windowManager: WindowManager
     private lateinit var overlayView: View
@@ -65,6 +65,7 @@ class RealtimeMonitorService : Service() {
     override fun onCreate() {
         super.onCreate()
         isRunning = true
+        ServiceNotif.startOverlayForeground(this, ServiceNotif.MONITOR_ID, R.string.notif_monitor)
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         activityManager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
 
@@ -240,21 +241,23 @@ class RealtimeMonitorService : Service() {
 
     private fun getSysFileValue(path: String, divisor: Long = 1, fallback: String = "--"): String {
         return try {
-            val reader = RandomAccessFile(path, "r")
-            val value = reader.readLine().toLong() / divisor
-            reader.close()
-            value.toString()
+            RandomAccessFile(path, "r").use { reader ->
+                (reader.readLine().toLong() / divisor).toString()
+            }
         } catch (e: Exception) {
             fallback
         }
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         isRunning = false
         serviceJob.cancel()
-        if (::overlayView.isInitialized) {
-            windowManager.removeView(overlayView)
-        }
+        try {
+            if (::overlayView.isInitialized) windowManager.removeView(overlayView)
+        } catch (_: Exception) {}
+        try { stopForeground(STOP_FOREGROUND_REMOVE) } catch (_: Exception) {}
+        super.onDestroy()
     }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int = START_STICKY
 }

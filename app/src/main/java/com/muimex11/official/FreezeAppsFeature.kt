@@ -14,7 +14,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
-import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -111,7 +110,7 @@ internal fun MainActivity.showFreezeAppsSheet() {
         withContext(Dispatchers.Main) {
             scanning.dismiss()
             if (apps.isEmpty()) {
-                Toasty.info(this@showFreezeAppsSheet, getString(R.string.toast_no_apps), Toast.LENGTH_LONG, true).show()
+                UiToast.info(this@showFreezeAppsSheet, getString(R.string.toast_no_apps), Toast.LENGTH_LONG).show()
             } else {
                 presentFreezeList(apps)
             }
@@ -346,13 +345,12 @@ internal fun MainActivity.applyFreezeChange(pkgs: List<String>, freeze: Boolean)
                 val msg = if (freeze) {
                     resources.getQuantityString(R.plurals.froze_apps, ok, ok) + if (freed > 0) " · " + getString(R.string.freed_suffix, freed) else ""
                 } else resources.getQuantityString(R.plurals.restored_apps, ok, ok)
-                Toasty.success(this@applyFreezeChange, msg, Toast.LENGTH_LONG, true).show()
+                UiToast.success(this@applyFreezeChange, msg, Toast.LENGTH_LONG).show()
             }
             if (failed.isNotEmpty()) {
-                Toasty.warning(
+                UiToast.warning(
                     this@applyFreezeChange,
-                    resources.getQuantityString(R.plurals.failed_apps, failed.size, failed.size),
-                    Toast.LENGTH_LONG, true
+                    resources.getQuantityString(R.plurals.failed_apps, failed.size, failed.size), Toast.LENGTH_LONG
                 ).show()
             }
         }
@@ -362,7 +360,7 @@ internal fun MainActivity.applyFreezeChange(pkgs: List<String>, freeze: Boolean)
 internal fun MainActivity.restoreAllFrozen() {
     val saved = savedFrozen().toList()
     if (saved.isEmpty()) {
-        Toasty.info(this, getString(R.string.toast_no_frozen), Toast.LENGTH_SHORT, true).show()
+        UiToast.info(this, getString(R.string.toast_no_frozen), Toast.LENGTH_SHORT).show()
         return
     }
     if (!hasShizukuPermission()) return

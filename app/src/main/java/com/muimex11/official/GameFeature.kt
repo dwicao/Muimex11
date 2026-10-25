@@ -8,7 +8,6 @@ import android.os.Build
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
-import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -32,7 +31,7 @@ internal fun MainActivity.findGames(): List<ResolveInfo> {
 internal fun MainActivity.showGamePicker(title: String, message: String, onPick: (ResolveInfo) -> Unit) {
     val games = findGames()
     if (games.isEmpty()) {
-        Toasty.info(this, getString(R.string.toast_no_games), Toast.LENGTH_SHORT, true).show()
+        UiToast.info(this, getString(R.string.toast_no_games), Toast.LENGTH_SHORT).show()
         return
     }
     val pm = packageManager
@@ -72,16 +71,16 @@ internal fun MainActivity.showGameModeSelectorDialog() {
 
                 withContext(Dispatchers.Main) {
                     if (exitCode == 0) {
-                        Toasty.success(this@showGameModeSelectorDialog, getString(R.string.toast_gm_enabled, appName), Toast.LENGTH_SHORT, true).show()
+                        UiToast.success(this@showGameModeSelectorDialog, getString(R.string.toast_gm_enabled, appName), Toast.LENGTH_SHORT).show()
                         getSharedPreferences(Prefs.MAIN, Context.MODE_PRIVATE).edit().putString(Prefs.KEY_LAST_GAME_MODE, pkgName).apply()
                         fetchSystemStatuses()
                     } else {
-                        Toasty.warning(this@showGameModeSelectorDialog, getString(R.string.toast_gm_blocked), Toast.LENGTH_LONG, true).show()
+                        UiToast.warning(this@showGameModeSelectorDialog, getString(R.string.toast_gm_blocked), Toast.LENGTH_LONG).show()
                     }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Toasty.error(this@showGameModeSelectorDialog, getString(R.string.toast_error, e.message ?: ""), Toast.LENGTH_SHORT, true).show()
+                    UiToast.error(this@showGameModeSelectorDialog, getString(R.string.toast_error, e.message ?: ""), Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -99,7 +98,7 @@ internal fun MainActivity.showGameLauncherDialog() {
             if (launchIntent != null) {
                 startActivity(launchIntent)
             } else {
-                Toasty.error(this, getString(R.string.toast_launch_fail), Toast.LENGTH_SHORT, true).show()
+                UiToast.error(this, getString(R.string.toast_launch_fail), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -117,24 +116,23 @@ internal fun MainActivity.showGameLauncherDialog() {
 
                 lifecycleScope.launch(Dispatchers.IO) {
                     try {
-                        val process = Shizuku.newProcess(arrayOf("sh", "-c", "cmd package compile -m speed -f $pkgName"), null, null)
-                        process.waitFor()
+                        ShizukuRunner.exec("cmd package compile -m speed -f $pkgName")
                         withContext(Dispatchers.Main) {
                             progress.dismiss()
-                            Toasty.success(this@showGameLauncherDialog, getString(R.string.toast_optimized, appName), Toast.LENGTH_SHORT, true).show()
+                            UiToast.success(this@showGameLauncherDialog, getString(R.string.toast_optimized, appName), Toast.LENGTH_SHORT).show()
                             launchGame()
                         }
                     } catch (e: Exception) {
                         withContext(Dispatchers.Main) {
                             progress.dismiss()
-                            Toasty.error(this@showGameLauncherDialog, getString(R.string.toast_opt_failed, e.message ?: ""), Toast.LENGTH_LONG, true).show()
+                            UiToast.error(this@showGameLauncherDialog, getString(R.string.toast_opt_failed, e.message ?: ""), Toast.LENGTH_LONG).show()
                         }
                     }
                 }
             }
             .button(getString(R.string.btn_launch_now), SheetStyle.TONAL) {
                 launchGame()
-                Toasty.success(this, getString(R.string.toast_launching, appName), Toast.LENGTH_SHORT, true).show()
+                UiToast.success(this, getString(R.string.toast_launching, appName), Toast.LENGTH_SHORT).show()
             }
             .button(getString(R.string.btn_cancel), SheetStyle.TEXT)
             .show()

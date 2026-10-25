@@ -32,7 +32,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import rikka.shizuku.Shizuku
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -99,13 +98,14 @@ class GameSpaceService : Service() {
 
     override fun onBind(intent: Intent?): IBinder? = null
 
-    override fun getResources(): android.content.res.Resources = AppTranslator.wrap(super.getResources())
+    // Resources: static locales only (no runtime ML translation)
 
     // ---------------------------------------------------------------- setup
 
     override fun onCreate() {
         super.onCreate()
         isRunning = true
+        ServiceNotif.startOverlayForeground(this, ServiceNotif.GAME_SPACE_ID, R.string.notif_gamespace)
         wm = getSystemService(Context.WINDOW_SERVICE) as WindowManager
         try {
             buildBubble()
@@ -394,9 +394,9 @@ class GameSpaceService : Service() {
 
     // ------------------------------------------------------------- tile UI
 
-    private val COLOR_ON = Color.parseColor("#00E68C")
-    private val COLOR_OFF = Color.parseColor("#9AA3B2")
-    private val COLOR_ACCENT = Color.parseColor("#C9B6FF")
+    private val COLOR_ON get() = androidx.core.content.ContextCompat.getColor(this, R.color.gs_on)
+    private val COLOR_OFF get() = androidx.core.content.ContextCompat.getColor(this, R.color.gs_off)
+    private val COLOR_ACCENT get() = androidx.core.content.ContextCompat.getColor(this, R.color.gs_accent)
     private val STATUS_TAG = "gs_status_tag"
     private val DOT_TAG = "gs_dot_tag"
 
@@ -440,11 +440,11 @@ class GameSpaceService : Service() {
     private fun tileBg(active: Boolean): GradientDrawable = GradientDrawable().apply {
         cornerRadius = dp(15).toFloat()
         if (active) {
-            setColor(Color.parseColor("#332BD07E"))
-            setStroke(dp(1), Color.parseColor("#8C27BE71"))
+            setColor(androidx.core.content.ContextCompat.getColor(this@GameSpaceService, R.color.gs_tile_on_bg))
+            setStroke(dp(1), androidx.core.content.ContextCompat.getColor(this@GameSpaceService, R.color.gs_tile_on_stroke))
         } else {
-            setColor(Color.parseColor("#21FFFFFF"))
-            setStroke(dp(1), Color.parseColor("#2EFFFFFF"))
+            setColor(androidx.core.content.ContextCompat.getColor(this@GameSpaceService, R.color.gs_tile_off_bg))
+            setStroke(dp(1), androidx.core.content.ContextCompat.getColor(this@GameSpaceService, R.color.gs_tile_off_stroke))
         }
     }
 
@@ -503,6 +503,8 @@ class GameSpaceService : Service() {
         tile.addView(statusRow)
 
         tile.setOnClickListener { applyItem(spec, tile) }
+        tile.minimumHeight = dp(48)
+        tile.contentDescription = getString(spec.titleRes)
         tile.tag = spec
         tiles.add(tile)
         return tile
@@ -663,21 +665,11 @@ class GameSpaceService : Service() {
 
     // ------------------------------------------------- foreground app + FPS
 
-    private val fgRegex = Regex("(?:topResumedActivity|ResumedActivity|mFocusedApp)[^\\n]*u0\\s+(\\w[\\w.]*)/")
+    // fg parsing now in FgPkgParser (unit-tested)
 
     private fun detectForegroundPkg(): String? {
         val dump = query("dumpsys activity activities") + "\n" + query("dumpsys window windows")
-        val candidates = fgRegex.findAll(dump).mapNotNull { it.groupValues.getOrNull(1) }
-            .filter {
-                it != packageName &&
-                    it != "com.android.systemui" &&
-                    it != "com.android.launcher3" &&
-                    !it.contains("launcher", ignoreCase = true) &&
-                    !it.endsWith(".home") &&
-                    it != "com.google.android.googlequicksearchbox"
-            }
-            .distinct()
-        return candidates.firstOrNull()
+        return FgPkgParser.parse(dump, packageName)
     }
 
     private fun refreshForegroundApp() {
@@ -735,12 +727,14 @@ class GameSpaceService : Service() {
             var lastCount = -1L
             var lastAt = 0L
             while (fpsPolling) {
+                var delayMs = 1000L
                 try {
                     val pkg = detectForegroundPkg()
                     if (pkg != lastPkg) {
                         lastPkg = pkg
                         lastCount = -1L
                         lastAt = 0L
+                        if (pkg != null) applyAutoBoost(pkg)
                     }
                     if (pkg != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         val out = query("dumpsys gfxinfo $pkg")
@@ -748,22 +742,19 @@ class GameSpaceService : Service() {
                             ?.groupValues?.getOrNull(1)?.toLongOrNull()
                         val now = android.os.SystemClock.elapsedRealtime()
                         if (total != null) {
-                            val dt = now - lastAt
-                            val frames = total - lastCount
-                            val sane = lastCount >= 0 && dt >= 700 && frames in 1L..1500L
-                            if (sane) {
-                                publishFps(((frames * 1000f) / dt).coerceIn(0f, 360f).toInt())
-                            }
+                            FgPkgParser.fps(total, lastCount, now - lastAt)?.let { publishFps(it) }
                             lastCount = total
                             lastAt = now
                         } else {
                             publishFps(null)
                         }
+                        delayMs = 1000L
                     } else {
                         publishFps(null)
+                        delayMs = 2000L
                     }
                 } catch (_: Exception) {}
-                kotlinx.coroutines.delay(1000)
+                kotlinx.coroutines.delay(delayMs)
             }
         }
     }
@@ -771,15 +762,16 @@ class GameSpaceService : Service() {
     private fun publishFps(value: Int?) {
         handler.post {
             if (!fpsPolling) return@post
-            if (::bubbleFps.isInitialized) bubbleFps.text = value?.toString() ?: ""
+            if (::bubbleFps.isInitialized) bubbleFps.text = value?.toString() ?: getString(R.string.gs_fps_none)
             if (::fpsChip.isInitialized) {
+                val res = resources
                 if (value != null) {
                     fpsChip.text = "$value FPS"
                     fpsChip.setTextColor(
                         when {
-                            value >= 50 -> COLOR_ON
-                            value >= 30 -> Color.parseColor("#FFB300")
-                            else -> Color.parseColor("#FF5A6E")
+                            value >= 50 -> androidx.core.content.ContextCompat.getColor(this, R.color.fps_good)
+                            value >= 30 -> androidx.core.content.ContextCompat.getColor(this, R.color.fps_warn)
+                            else -> androidx.core.content.ContextCompat.getColor(this, R.color.fps_bad)
                         }
                     )
                 } else {
@@ -790,25 +782,28 @@ class GameSpaceService : Service() {
         }
     }
 
+    private fun applyAutoBoost(pkg: String) {
+        if (!GameProfileStore.isAutoBoost(this)) return
+        val p = GameProfileStore.get(this, pkg) ?: return
+        ioScope.launch {
+            try {
+                if (p.gameModePerf && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) exec("cmd game mode performance $pkg")
+                if (p.fixedPerf) exec("cmd power set-fixed-performance-mode-enabled true")
+                if (p.thermalBypass) exec("cmd thermalservice override-status 0")
+                if (p.refresh120) exec("settings put system peak_refresh_rate 120 && settings put system min_refresh_rate 120")
+            } catch (_: Exception) {}
+        }
+    }
+
     private fun stopFpsPolling() {
         fpsPolling = false
     }
 
     // ---------------------------------------------------------------- shell
 
-    private fun exec(cmd: String): Boolean {
-        val p = Shizuku.newProcess(arrayOf("sh", "-c", cmd), null, null)
-        return p.waitFor() == 0
-    }
+    private fun exec(cmd: String): Boolean = ShizukuRunner.execOk(cmd)
 
-    private fun query(cmd: String): String = try {
-        val p = Shizuku.newProcess(arrayOf("sh", "-c", cmd), null, null)
-        val out = p.inputStream.bufferedReader().readText()
-        p.waitFor()
-        out
-    } catch (e: Exception) {
-        ""
-    }
+    private fun query(cmd: String): String = ShizukuRunner.query(cmd)
 
     private fun cycleResolution(): Boolean {
         val real = screenBounds()
@@ -817,16 +812,16 @@ class GameSpaceService : Service() {
         val ratio = cur.widthPixels.toFloat() / real.width()
         val dpi = cur.densityDpi
 
-        return when {
-            ratio > 0.9f -> {
+        return when (ResolutionController.next(ratio)) {
+            ResolutionController.Step.TO_75 -> {
                 val w = (real.width() * 0.75f).toInt(); val h = (real.height() * 0.75f).toInt()
                 exec("wm size ${w}x${h} && wm density ${(dpi * 0.75f).toInt()}")
             }
-            ratio > 0.6f -> {
+            ResolutionController.Step.TO_50 -> {
                 val w = (real.width() * 0.5f).toInt(); val h = (real.height() * 0.5f).toInt()
                 exec("wm size ${w}x${h} && wm density ${(dpi * 0.5f).toInt()}")
             }
-            else -> exec("wm size reset && wm density reset")
+            ResolutionController.Step.RESET -> exec("wm size reset && wm density reset")
         }
     }
 
@@ -870,8 +865,8 @@ class GameSpaceService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int = START_STICKY
 
     override fun onDestroy() {
-        super.onDestroy()
         isRunning = false
+        try { stopForeground(STOP_FOREGROUND_REMOVE) } catch (_: Exception) {}
         try {
             getSharedPreferences(Prefs.MAIN, Context.MODE_PRIVATE)
                 .edit().putBoolean(Prefs.KEY_GAMESPACE_ENABLED, false).apply()
@@ -886,5 +881,6 @@ class GameSpaceService : Service() {
         bubbleRoot = null
         panelRoot = null
         tiles.clear()
+        super.onDestroy()
     }
 }

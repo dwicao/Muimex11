@@ -19,7 +19,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import es.dmoral.toasty.Toasty
 import java.io.File
 import rikka.shizuku.Shizuku
 
@@ -44,12 +43,12 @@ class MainActivity : AppCompatActivity() {
     internal val permissionListener = Shizuku.OnRequestPermissionResultListener { requestCode, grantResult ->
         if (requestCode == SHIZUKU_REQUEST_CODE) {
             if (grantResult == PackageManager.PERMISSION_GRANTED) {
-                Toasty.success(this, getString(R.string.toast_shizuku_granted), Toast.LENGTH_SHORT, true).show()
+                UiToast.success(this, getString(R.string.toast_shizuku_granted), Toast.LENGTH_SHORT).show()
                 updateShizukuBannerUI(true)
                 fetchSystemStatuses()
             } else {
                 updateShizukuBannerUI(false)
-                Toasty.error(this, getString(R.string.toast_shizuku_denied), Toast.LENGTH_LONG, true).show()
+                UiToast.error(this, getString(R.string.toast_shizuku_denied), Toast.LENGTH_LONG).show()
             }
         }
     }

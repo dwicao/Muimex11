@@ -549,5 +549,22 @@
     <string name="samsung_gos_warning_title">Disable GOS?</string>
     <string name="samsung_gos_warning_msg">The Game Optimizing Service (GOS) decides how much power games are allowed to use. Disabling it can raise FPS but Samsung\'s in-game safeguards stop working (more heat / battery drain). You can restore GOS any time from this same panel.</string>
     <string name="samsung_gos_confirm_disable">Disable it</string>
+    <string name="notif_overlay_channel">Overlays</string>
+    <string name="notif_overlay_desc">Keeps Game Space, monitor and helpers alive</string>
+    <string name="notif_overlay_text">Tap to manage overlays</string>
+    <string name="notif_gamespace">Game Space dock active</string>
+    <string name="notif_monitor">Hardware monitor active</string>
+    <string name="notif_crosshair">Crosshair active</string>
+    <string name="notif_autoclick">Auto clicker active</string>
+    <string name="notif_resolution">Resolution helper active</string>
+    <string name="gs_fps_none">--</string>
+    <string name="gs_fps_display_fmt">%1$d Hz display</string>
+    <string name="dl_sha_mismatch">Update file failed integrity check</string>
+    <string name="dl_insecure_blocked">Blocked insecure update URL</string>
+    <string name="profile_saved">Profile saved for %1$s</string>
+    <string name="backup_exported">Backup copied to clipboard</string>
+    <string name="backup_imported">Backup restored (%1$d profiles)</string>
+    <string name="backup_failed">Backup restore failed</string>
 
+    <string name="cd_theme_toggle">Toggle theme</string>
 </resources>

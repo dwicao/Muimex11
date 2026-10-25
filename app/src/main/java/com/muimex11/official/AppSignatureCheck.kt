@@ -3,7 +3,6 @@ package com.muimex11.official
 import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
-import es.dmoral.toasty.Toasty
 import java.net.HttpURLConnection
 import java.net.URL
 import java.security.MessageDigest
@@ -41,7 +40,7 @@ internal fun MainActivity.verifyAppSignature() {
                 !currentSignature.equals(expectedSignature, ignoreCase = true)
             ) {
                 withContext(Dispatchers.Main) {
-                    Toasty.warning(this@verifyAppSignature, getString(R.string.toast_unofficial), Toast.LENGTH_LONG, true).show()
+                    UiToast.warning(this@verifyAppSignature, getString(R.string.toast_unofficial), Toast.LENGTH_LONG).show()
                 }
             }
         } catch (e: Exception) {

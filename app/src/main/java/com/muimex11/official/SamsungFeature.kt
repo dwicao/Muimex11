@@ -8,7 +8,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.card.MaterialCardView
-import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -144,9 +143,9 @@ private fun MainActivity.samsungMaxBoostRow(): MaterialCardView {
             ).joinToString(" ; ")
         ) { ok ->
             if (ok) {
-                Toasty.success(this, getString(R.string.samsung_max_done), Toast.LENGTH_LONG, true).show()
+                UiToast.success(this, getString(R.string.samsung_max_done), Toast.LENGTH_LONG).show()
             } else {
-                Toasty.error(this, getString(R.string.toast_cmd_failed, 1), Toast.LENGTH_LONG, true).show()
+                UiToast.error(this, getString(R.string.toast_cmd_failed, 1), Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -255,15 +254,15 @@ internal fun MainActivity.toggleSamsungAction(action: SamsungAction, onDone: () 
         SamsungAction.GOS -> {
             if (boosted) {
                 runSamsung("cmd package install-existing ${SamsungPkgs.GOS}") { ok ->
-                    if (ok) Toasty.success(this, getString(R.string.samsung_gos_on), Toast.LENGTH_LONG, true).show()
+                    if (ok) UiToast.success(this, getString(R.string.samsung_gos_on), Toast.LENGTH_LONG).show()
                     onDone()
                 }
             } else {
                 runSamsung("pm uninstall -k --user ${userId0()} ${SamsungPkgs.GOS}") { ok ->
                     if (ok) {
-                        Toasty.success(this, getString(R.string.samsung_gos_off), Toast.LENGTH_LONG, true).show()
+                        UiToast.success(this, getString(R.string.samsung_gos_off), Toast.LENGTH_LONG).show()
                     } else {
-                        Toasty.error(this, getString(R.string.toast_cmd_failed, 1), Toast.LENGTH_LONG, true).show()
+                        UiToast.error(this, getString(R.string.toast_cmd_failed, 1), Toast.LENGTH_LONG).show()
                     }
                     onDone()
                 }
@@ -274,10 +273,9 @@ internal fun MainActivity.toggleSamsungAction(action: SamsungAction, onDone: () 
             else "settings put global ram_expand_size_list 0"
             runSamsung(cmd) { ok ->
                 if (ok) {
-                    Toasty.success(
+                    UiToast.success(
                         this,
-                        getString(if (boosted) R.string.samsung_ramplus_on else R.string.samsung_ramplus_off),
-                        Toast.LENGTH_LONG, true
+                        getString(if (boosted) R.string.samsung_ramplus_on else R.string.samsung_ramplus_off), Toast.LENGTH_LONG
                     ).show()
                 }
                 onDone()
@@ -285,19 +283,19 @@ internal fun MainActivity.toggleSamsungAction(action: SamsungAction, onDone: () 
         }
         SamsungAction.LOGGING -> {
             freezeSet(SamsungPkgs.LOGGING, freeze = !boosted) { ok ->
-                if (ok) Toasty.success(this, getString(if (boosted) R.string.samsung_log_on else R.string.samsung_log_off), Toast.LENGTH_SHORT, true).show()
+                if (ok) UiToast.success(this, getString(if (boosted) R.string.samsung_log_on else R.string.samsung_log_off), Toast.LENGTH_SHORT).show()
                 onDone()
             }
         }
         SamsungAction.DEVICE_SECURITY -> {
             freezeSet(listOf(SamsungPkgs.DEVICE_SECURITY), freeze = !boosted) { ok ->
-                if (ok) Toasty.success(this, getString(if (boosted) R.string.samsung_sec_on else R.string.samsung_sec_off), Toast.LENGTH_SHORT, true).show()
+                if (ok) UiToast.success(this, getString(if (boosted) R.string.samsung_sec_on else R.string.samsung_sec_off), Toast.LENGTH_SHORT).show()
                 onDone()
             }
         }
         SamsungAction.BLOAT -> {
             freezeSet(SamsungPkgs.BLOAT, freeze = !boosted) { ok ->
-                if (ok) Toasty.success(this, getString(if (boosted) R.string.samsung_bloat_on else R.string.samsung_bloat_frozen), Toast.LENGTH_SHORT, true).show()
+                if (ok) UiToast.success(this, getString(if (boosted) R.string.samsung_bloat_on else R.string.samsung_bloat_frozen), Toast.LENGTH_SHORT).show()
                 onDone()
             }
         }
@@ -308,7 +306,7 @@ internal fun MainActivity.toggleSamsungAction(action: SamsungAction, onDone: () 
 private fun MainActivity.freezeSet(pkgs: List<String>, freeze: Boolean, done: (Boolean) -> Unit) {
     val installed = pkgs.filter { isInstalled(it) }
     if (installed.isEmpty()) {
-        Toasty.info(this, getString(R.string.samsung_row_unknown), Toast.LENGTH_SHORT, true).show()
+        UiToast.info(this, getString(R.string.samsung_row_unknown), Toast.LENGTH_SHORT).show()
         done(false)
         return
     }
@@ -335,7 +333,7 @@ internal fun MainActivity.restoreAllSamsung(onDone: (() -> Unit)? = null) {
         }.joinToString(" ; ")
         runSamsung(restore) { _ ->
             lifecycleScope.launch(Dispatchers.Main) {
-                Toasty.success(this@restoreAllSamsung, getString(R.string.samsung_all_restored), Toast.LENGTH_SHORT, true).show()
+                UiToast.success(this@restoreAllSamsung, getString(R.string.samsung_all_restored), Toast.LENGTH_SHORT).show()
                 onDone?.invoke()
             }
         }

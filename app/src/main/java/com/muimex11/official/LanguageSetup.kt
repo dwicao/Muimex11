@@ -3,7 +3,6 @@ package com.muimex11.official
 import android.content.Context
 import android.os.SystemClock
 import android.widget.Toast
-import es.dmoral.toasty.Toasty
 
 private const val RETRY_BACKOFF_MS = 6L * 60 * 60 * 1000
 
@@ -41,7 +40,7 @@ internal fun MainActivity.setupLanguageIfNeeded() {
             } else if (SystemClock.elapsedRealtime() - startedAt > 400 && !isFinishing && !isDestroyed) {
                 if (System.currentTimeMillis() >= prefs.getLong(Prefs.KEY_LANG_RETRY_AFTER, 0L)) {
                     prefs.edit().putLong(Prefs.KEY_LANG_RETRY_AFTER, System.currentTimeMillis() + RETRY_BACKOFF_MS).apply()
-                    Toasty.warning(this, getString(R.string.toast_lang_failed), Toast.LENGTH_LONG, true).show()
+                    UiToast.warning(this, getString(R.string.toast_lang_failed), Toast.LENGTH_LONG).show()
                 }
             }
         }

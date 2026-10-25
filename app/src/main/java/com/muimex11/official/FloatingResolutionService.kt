@@ -23,12 +23,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import rikka.shizuku.Shizuku
 import kotlin.math.abs
 
 class FloatingResolutionService : Service() {
 
-    override fun getResources(): android.content.res.Resources = AppTranslator.wrap(super.getResources())
+    // static locales only
 
     private lateinit var windowManager: WindowManager
     private lateinit var floatingView: View
@@ -38,6 +37,7 @@ class FloatingResolutionService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        ServiceNotif.startOverlayForeground(this, 4205, R.string.notif_resolution)
         windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
 
         val prefs = getSharedPreferences(Prefs.THEME, Context.MODE_PRIVATE)
@@ -55,7 +55,7 @@ class FloatingResolutionService : Service() {
         val themeContext = android.view.ContextThemeWrapper(localizedContext, R.style.Theme_Muimex11)
 
         floatingView = LayoutInflater.from(themeContext).inflate(R.layout.layout_floating_resolution, null)
-        AppTranslator.translateTree(floatingView)
+        // static locales only
 
         val layoutParams = WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
@@ -280,8 +280,7 @@ class FloatingResolutionService : Service() {
     private fun executeCommand(command: String, successMsg: String) {
         serviceScope.launch {
             try {
-                val process = Shizuku.newProcess(arrayOf("sh", "-c", command), null, null)
-                if (process.waitFor() == 0) {
+                if (ShizukuRunner.execOk(command)) {
                     withContext(Dispatchers.Main) {
                         Toast.makeText(this@FloatingResolutionService, successMsg, Toast.LENGTH_SHORT).show()
                     }
@@ -295,6 +294,7 @@ class FloatingResolutionService : Service() {
     }
 
     override fun onDestroy() {
+        try { stopForeground(STOP_FOREGROUND_REMOVE) } catch (_: Exception) {}
         super.onDestroy()
         if (::floatingView.isInitialized) {
             windowManager.removeView(floatingView)

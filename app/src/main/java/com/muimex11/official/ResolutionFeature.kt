@@ -15,7 +15,6 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.materialswitch.MaterialSwitch
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.google.android.material.textfield.TextInputEditText
-import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -52,10 +51,10 @@ internal fun MainActivity.launchFloatingResolution() {
     if (!android.provider.Settings.canDrawOverlays(this)) {
         val intent = Intent(android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
         startActivity(intent)
-        Toasty.info(this, getString(R.string.toast_allow_overlay), Toast.LENGTH_LONG, true).show()
+        UiToast.info(this, getString(R.string.toast_allow_overlay), Toast.LENGTH_LONG).show()
     } else {
         startService(Intent(this, FloatingResolutionService::class.java))
-        Toasty.success(this, getString(R.string.toast_float_enabled), Toast.LENGTH_SHORT, true).show()
+        UiToast.success(this, getString(R.string.toast_float_enabled), Toast.LENGTH_SHORT).show()
     }
 }
 
@@ -143,17 +142,17 @@ internal fun MainActivity.showResolutionDialog() {
             val newWidth = widthInput.text.toString().trim().toIntOrNull()
             val newHeight = heightInput.text.toString().trim().toIntOrNull()
             if (newWidth == null || newHeight == null) {
-                Toasty.warning(this, getString(R.string.toast_enter_wh), Toast.LENGTH_SHORT, true).show()
+                UiToast.warning(this, getString(R.string.toast_enter_wh), Toast.LENGTH_SHORT).show()
                 return@button
             }
             if (newWidth < 300 || newHeight < 300) {
-                Toasty.warning(this, getString(R.string.toast_res_small), Toast.LENGTH_SHORT, true).show()
+                UiToast.warning(this, getString(R.string.toast_res_small), Toast.LENGTH_SHORT).show()
                 return@button
             }
             val manualDpiText = dpiInput.text.toString().trim()
             val manualDpi = if (autoDpiSwitch.isChecked || manualDpiText.isEmpty()) null else manualDpiText.toIntOrNull()
             if (!autoDpiSwitch.isChecked && manualDpiText.isNotEmpty() && (manualDpi == null || manualDpi !in AppConfig.MIN_DPI..AppConfig.MAX_DPI)) {
-                Toasty.warning(this, getString(R.string.toast_dpi_invalid, AppConfig.MIN_DPI, AppConfig.MAX_DPI), Toast.LENGTH_SHORT, true).show()
+                UiToast.warning(this, getString(R.string.toast_dpi_invalid, AppConfig.MIN_DPI, AppConfig.MAX_DPI), Toast.LENGTH_SHORT).show()
                 return@button
             }
             if (!hasShizukuPermission()) return@button
@@ -182,12 +181,11 @@ private fun resolutionCommand(
 
 private fun MainActivity.applyResolutionCommand(cmd: String) {
     lifecycleScope.launch(Dispatchers.IO) {
-        val process = Shizuku.newProcess(arrayOf("sh", "-c", cmd), null, null)
-        if (process.waitFor() == 0) {
+        if (ShizukuRunner.execOk(cmd)) {
             withContext(Dispatchers.Main) { showResolutionPreviewCountdown() }
         } else {
             withContext(Dispatchers.Main) {
-                Toasty.error(this@applyResolutionCommand, getString(R.string.toast_res_fail), Toast.LENGTH_SHORT, true).show()
+                UiToast.error(this@applyResolutionCommand, getString(R.string.toast_res_fail), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -220,7 +218,7 @@ internal fun MainActivity.showResolutionPreviewCountdown() {
         .button(getString(R.string.btn_keep), SheetStyle.PRIMARY) {
             decided = true
             timerJob?.cancel()
-            Toasty.success(this, getString(R.string.toast_res_saved), Toast.LENGTH_SHORT, true).show()
+            UiToast.success(this, getString(R.string.toast_res_saved), Toast.LENGTH_SHORT).show()
             fetchSystemStatuses()
         }
         .show()

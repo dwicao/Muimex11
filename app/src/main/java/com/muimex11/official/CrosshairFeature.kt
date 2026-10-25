@@ -14,7 +14,6 @@ import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
-import es.dmoral.toasty.Toasty
 
 private val CROSSHAIR_STYLES = listOf(
     "Cross", "Dot", "Circle", "Cross with Circle", "Square", "Target",
@@ -78,7 +77,7 @@ internal fun MainActivity.showCrosshairConfigDialog() {
     if (!Settings.canDrawOverlays(this)) {
         val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
         startActivity(intent)
-        Toasty.info(this, getString(R.string.toast_allow_overlay_cross), Toast.LENGTH_LONG, true).show()
+        UiToast.info(this, getString(R.string.toast_allow_overlay_cross), Toast.LENGTH_LONG).show()
         return
     }
 
@@ -199,7 +198,7 @@ internal fun MainActivity.startCrosshairService(style: String, color: String, si
         .apply()
 
     findViewById<TextView>(R.id.tvStatusCrosshair).text = getString(R.string.status_crosshair, xl(style.orEmpty()), xl(color.orEmpty()), xl(size.orEmpty()))
-    Toasty.success(this, getString(R.string.toast_cross_updated), Toast.LENGTH_SHORT, true).show()
+    UiToast.success(this, getString(R.string.toast_cross_updated), Toast.LENGTH_SHORT).show()
 }
 
 internal fun MainActivity.stopCrosshairService() {
@@ -213,5 +212,5 @@ internal fun MainActivity.stopCrosshairService() {
         .apply()
 
     findViewById<TextView>(R.id.tvStatusCrosshair).text = getString(R.string.status_disabled)
-    Toasty.success(this, getString(R.string.toast_cross_off), Toast.LENGTH_SHORT, true).show()
+    UiToast.success(this, getString(R.string.toast_cross_off), Toast.LENGTH_SHORT).show()
 }

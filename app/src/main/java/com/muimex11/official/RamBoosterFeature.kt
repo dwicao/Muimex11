@@ -8,7 +8,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
-import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -81,7 +80,7 @@ internal fun MainActivity.showRamBoosterSheet() {
         withContext(Dispatchers.Main) {
             scanning.dismiss()
             if (apps.isEmpty()) {
-                Toasty.info(this@showRamBoosterSheet, getString(R.string.toast_no_heavy), Toast.LENGTH_LONG, true).show()
+                UiToast.info(this@showRamBoosterSheet, getString(R.string.toast_no_heavy), Toast.LENGTH_LONG).show()
             } else {
                 presentRamList(apps)
             }

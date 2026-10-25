@@ -6,7 +6,6 @@ import android.net.Uri
 import android.provider.Settings
 import android.widget.TextView
 import android.widget.Toast
-import es.dmoral.toasty.Toasty
 
 /**
  * MainActivity side of the Game Space floating dock: overlay-permission gate,
@@ -21,7 +20,7 @@ internal fun MainActivity.toggleGameSpace() {
     if (!Settings.canDrawOverlays(this)) {
         val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
         startActivity(intent)
-        Toasty.info(this, getString(R.string.toast_allow_overlay), Toast.LENGTH_LONG, true).show()
+        UiToast.info(this, getString(R.string.toast_allow_overlay), Toast.LENGTH_LONG).show()
         return
     }
 
@@ -33,7 +32,7 @@ internal fun MainActivity.toggleGameSpace() {
         try {
             startService(intent)
         } catch (e: Exception) {
-            Toasty.error(this, getString(R.string.svc_failed, e.message ?: ""), Toast.LENGTH_LONG, true).show()
+            UiToast.error(this, getString(R.string.svc_failed, e.message ?: ""), Toast.LENGTH_LONG).show()
             return
         }
     } else {
@@ -44,10 +43,8 @@ internal fun MainActivity.toggleGameSpace() {
     prefs.edit().putBoolean(Prefs.KEY_GAMESPACE_ENABLED, enable).apply()
     findViewById<TextView>(R.id.tvStatusGameSpace).text =
         getString(if (enable) R.string.status_enabled else R.string.status_disabled)
-    Toasty.success(
+    UiToast.success(
         this,
-        getString(if (enable) R.string.toast_gamespace_on else R.string.toast_gamespace_off),
-        Toast.LENGTH_SHORT,
-        true
+        getString(if (enable) R.string.toast_gamespace_on else R.string.toast_gamespace_off), Toast.LENGTH_SHORT
     ).show()
 }

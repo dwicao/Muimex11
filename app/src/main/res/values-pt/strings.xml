@@ -539,4 +539,23 @@
     <string name="samsung_gos_warning_msg">O Game Optimizing Service (GOS) decide quanta potência os jogos podem usar. Desativá-lo pode subir o FPS, mas as proteções de jogo da Samsung param de funcionar (mais calor / bateria). Você pode restaurar o GOS a qualquer momento neste mesmo painel.</string>
     <string name="samsung_gos_confirm_disable">Desativar</string>
 
+
+    <string name="notif_overlay_channel">Sobreposições</string>
+    <string name="notif_overlay_desc">Mantém Game Space, monitor e ajudantes ativos</string>
+    <string name="notif_overlay_text">Toque para gerenciar sobreposições</string>
+    <string name="notif_gamespace">Dock Game Space ativo</string>
+    <string name="notif_monitor">Monitor de hardware ativo</string>
+    <string name="notif_crosshair">Mira ativa</string>
+    <string name="notif_autoclick">Clique automático ativo</string>
+    <string name="notif_resolution">Ajudante de resolução ativo</string>
+    <string name="gs_fps_none">--</string>
+    <string name="gs_fps_display_fmt">%1$d Hz display</string>
+    <string name="dl_sha_mismatch">Arquivo de atualização falhou na verificação de integridade</string>
+    <string name="dl_insecure_blocked">URL de atualização insegura bloqueada</string>
+    <string name="profile_saved">Perfil salvo para %1$s</string>
+    <string name="backup_exported">Backup copiado</string>
+    <string name="backup_imported">Backup restaurado (%1$d perfis)</string>
+    <string name="backup_failed">Falha ao restaurar backup</string>
+    <string name="cd_theme_toggle">Alternar tema</string>
+
 </resources>

@@ -8,7 +8,6 @@ import android.provider.Settings
 import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.lifecycle.lifecycleScope
-import es.dmoral.toasty.Toasty
 import java.io.File
 import java.io.FileOutputStream
 import java.net.HttpURLConnection
@@ -25,11 +24,15 @@ import org.json.JSONObject
 
 internal fun MainActivity.checkForUpdates() {
     lifecycleScope.launch(Dispatchers.IO) {
+        var conn: HttpURLConnection? = null
         try {
+            if (!UpdateParser.isHttps(AppConfig.VERSION_URL)) return@launch
             val url = URL(AppConfig.VERSION_URL)
-            val conn = url.openConnection() as HttpURLConnection
-            conn.connectTimeout = 5000
-            conn.readTimeout = 5000
+            conn = (url.openConnection() as HttpURLConnection).apply {
+                connectTimeout = 5000
+                readTimeout = 5000
+                instanceFollowRedirects = true
+            }
 
             if (conn.responseCode == 200) {
                 val jsonString = conn.inputStream.bufferedReader().readText()
@@ -40,6 +43,7 @@ internal fun MainActivity.checkForUpdates() {
                 val apkUrl = jsonObject.getString("apkUrl")
                 val releaseNotes = jsonObject.optString("releaseNotes", "")
                 val mandatory = jsonObject.optBoolean("mandatory", false)
+                val expectedSha = jsonObject.optString("sha256", "").lowercase()
 
                 val currentVersionCode = try {
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
@@ -52,19 +56,21 @@ internal fun MainActivity.checkForUpdates() {
                     1
                 }
 
-                if (latestVersionCode > currentVersionCode) {
+                if (UpdateParser.shouldUpdate(latestVersionCode, currentVersionCode)) {
                     withContext(Dispatchers.Main) {
-                        showUpdateDialog(latestVersionName, releaseNotes, apkUrl, mandatory)
+                        showUpdateDialog(latestVersionName, releaseNotes, apkUrl, mandatory, expectedSha)
                     }
                 }
             }
         } catch (e: Exception) {
             android.util.Log.e("Muimex11", "Failed to check for updates", e)
+        } finally {
+            conn?.disconnect()
         }
     }
 }
 
-internal fun MainActivity.showUpdateDialog(versionName: String, releaseNotes: String, apkUrl: String, mandatory: Boolean = false) {
+internal fun MainActivity.showUpdateDialog(versionName: String, releaseNotes: String, apkUrl: String, mandatory: Boolean = false, expectedSha256: String = "") {
     if (isFinishing || isDestroyed) return
     val notes = releaseNotes.trim().ifEmpty { getString(R.string.notes_default) }
 
@@ -75,12 +81,12 @@ internal fun MainActivity.showUpdateDialog(versionName: String, releaseNotes: St
         .content(infoCard(this, getString(R.string.update_whats_new, notes)))
         .cancelable(!mandatory)
     if (!mandatory) sheet.button(getString(R.string.btn_later), SheetStyle.TONAL)
-    sheet.button(getString(R.string.btn_update_now), SheetStyle.PRIMARY) { downloadAppUpdate(apkUrl) }
+    sheet.button(getString(R.string.btn_update_now), SheetStyle.PRIMARY) { downloadAppUpdate(apkUrl, expectedSha256) }
     sheet.show()
 }
 
-internal fun MainActivity.downloadAppUpdate(downloadUrl: String) {
-    downloadAndInstall(getString(R.string.dl_updating), downloadUrl, "Muimex11-update.apk", finishAfterInstall = false)
+internal fun MainActivity.downloadAppUpdate(downloadUrl: String, expectedSha256: String = "") {
+    downloadAndInstall(getString(R.string.dl_updating), downloadUrl, "Muimex11-update.apk", finishAfterInstall = false, expectedSha256 = expectedSha256)
 }
 
 internal fun MainActivity.formatMb(bytes: Long): String = String.format("%.1f MB", bytes / (1024.0 * 1024.0))
@@ -127,10 +133,15 @@ private suspend fun CoroutineScope.streamToPartFile(
     return downloaded to total
 }
 
-internal fun MainActivity.downloadAndInstall(title: String, url: String, fileName: String, finishAfterInstall: Boolean) {
+internal fun MainActivity.downloadAndInstall(title: String, url: String, fileName: String, finishAfterInstall: Boolean, expectedSha256: String = "") {
+    if (!UpdateParser.isHttps(url)) {
+        UiToast.error(this, getString(R.string.dl_insecure_blocked), Toast.LENGTH_LONG).show()
+        if (finishAfterInstall) showShizukuRequiredDialog()
+        return
+    }
     val dir = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
     if (dir == null) {
-        Toasty.error(this, getString(R.string.toast_storage_na), Toast.LENGTH_SHORT, true).show()
+        UiToast.error(this, getString(R.string.toast_storage_na), Toast.LENGTH_SHORT).show()
         if (finishAfterInstall) showShizukuRequiredDialog()
         return
     }
@@ -163,6 +174,12 @@ internal fun MainActivity.downloadAndInstall(title: String, url: String, fileNam
             val (downloaded, total) = streamToPartFile(this@downloadAndInstall, c, part, progress)
 
             if (total > 0 && downloaded != total) throw java.io.IOException(getString(R.string.err_incomplete))
+            if (expectedSha256.isNotBlank()) {
+                val actual = sha256Of(part)
+                if (!actual.equals(expectedSha256.lowercase(), ignoreCase = true)) {
+                    throw java.io.IOException(getString(R.string.dl_sha_mismatch))
+                }
+            }
             if (target.exists()) target.delete()
             if (!part.renameTo(target)) throw java.io.IOException(getString(R.string.err_save_file))
 
@@ -181,12 +198,29 @@ internal fun MainActivity.downloadAndInstall(title: String, url: String, fileNam
             part.delete()
             withContext(Dispatchers.Main) {
                 progress.dismiss()
-                Toasty.error(this@downloadAndInstall, getString(R.string.toast_dl_failed, e.message ?: ""), Toast.LENGTH_LONG, true).show()
+                UiToast.error(this@downloadAndInstall, getString(R.string.toast_dl_failed, e.message ?: ""), Toast.LENGTH_LONG).show()
                 if (finishAfterInstall) showShizukuRequiredDialog()
             }
         } finally {
             conn?.disconnect()
         }
+    }
+}
+
+internal fun sha256Of(file: File): String {
+    return try {
+        val md = java.security.MessageDigest.getInstance("SHA-256")
+        file.inputStream().use { ins ->
+            val buf = ByteArray(32 * 1024)
+            while (true) {
+                val n = ins.read(buf)
+                if (n <= 0) break
+                md.update(buf, 0, n)
+            }
+        }
+        md.digest().joinToString("") { "%02x".format(it) }
+    } catch (_: Exception) {
+        ""
     }
 }
 
@@ -216,6 +250,6 @@ internal fun MainActivity.installApk(file: File, finishAfter: Boolean = true) {
         startActivity(intent)
         if (finishAfter) finishAffinity()
     } catch (e: Exception) {
-        Toasty.error(this, getString(R.string.toast_installer_failed, e.message ?: ""), Toast.LENGTH_LONG, true).show()
+        UiToast.error(this, getString(R.string.toast_installer_failed, e.message ?: ""), Toast.LENGTH_LONG).show()
     }
 }

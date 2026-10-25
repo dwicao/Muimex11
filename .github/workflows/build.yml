@@ -52,6 +52,12 @@ jobs:
           echo "$KEYSTORE_B64" | base64 --decode > "$GITHUB_WORKSPACE/muimex11-release.keystore"
           test -s "$GITHUB_WORKSPACE/muimex11-release.keystore" || { echo "::error::Keystore secret is empty"; exit 1; }
 
+      - name: Run unit tests
+        run: ./gradlew --no-daemon --stacktrace testDebugUnitTest
+
+      - name: Android lint
+        run: ./gradlew --no-daemon --stacktrace lintDebug || true
+
       - name: Build signed release APK
         env:
           MUIMEX_KEYSTORE: ${{ github.workspace }}/muimex11-release.keystore
@@ -108,14 +114,21 @@ jobs:
         run: |
           export NOTES="$(git tag -l "$TAG" --format='%(contents:body)')"
           python3 - <<'PY'
-          import json, os
+          import hashlib, json, os
           version = os.environ["VNAME"].strip()
+          apk = f"Muimex11-{version}.apk"
+          # SHA-256 of the APK for client-side integrity check (optional but verified if present)
+          h = hashlib.sha256()
+          with open("app/build/outputs/apk/release/app-release.apk", "rb") as fh:
+              for chunk in iter(lambda: fh.read(1024*1024), b""):
+                  h.update(chunk)
           meta = {
               "versionCode": int(os.environ["VCODE"]),
               "versionName": version,
-              "apkUrl": f"https://github.com/{os.environ['REPO']}/releases/download/{os.environ['TAG']}/Muimex11-{version}.apk",
+              "apkUrl": f"https://github.com/{os.environ['REPO']}/releases/download/{os.environ['TAG']}/{apk}",
               "releaseNotes": (os.environ.get("NOTES", "") or "").strip() or f"Muimex11 {version}",
               "mandatory": False,
+              "sha256": h.hexdigest(),
           }
           with open("version.json", "w", encoding="utf-8") as fh:
               json.dump(meta, fh, indent=2)

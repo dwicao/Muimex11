@@ -4,7 +4,6 @@ import android.text.InputType
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
-import es.dmoral.toasty.Toasty
 
 internal fun MainActivity.showRefreshRateDialog() {
     val (minLayout, minInput) = styledField(this, getString(R.string.hint_min_hz), InputType.TYPE_CLASS_NUMBER, topMarginDp = 0)
@@ -37,9 +36,9 @@ internal fun MainActivity.showRefreshRateDialog() {
             val min = minInput.text.toString().trim().toIntOrNull()
             val max = maxInput.text.toString().trim().toIntOrNull()
             when {
-                min == null || max == null -> Toasty.warning(this, getString(R.string.toast_valid_numbers), Toast.LENGTH_SHORT, true).show()
-                min !in 30..240 || max !in 30..240 -> Toasty.warning(this, getString(R.string.toast_hz_range), Toast.LENGTH_SHORT, true).show()
-                min > max -> Toasty.warning(this, getString(R.string.toast_min_gt_max), Toast.LENGTH_SHORT, true).show()
+                min == null || max == null -> UiToast.warning(this, getString(R.string.toast_valid_numbers), Toast.LENGTH_SHORT).show()
+                min !in 30..240 || max !in 30..240 -> UiToast.warning(this, getString(R.string.toast_hz_range), Toast.LENGTH_SHORT).show()
+                min > max -> UiToast.warning(this, getString(R.string.toast_min_gt_max), Toast.LENGTH_SHORT).show()
                 else -> {
                     sheet.dismiss()
                     val cmd = "settings put system min_refresh_rate $min && settings put system peak_refresh_rate $max"

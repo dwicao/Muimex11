@@ -37,8 +37,8 @@
 
         <ImageView
             android:id="@+id/gsBtnMinimize"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/cd_minimize"
             android:padding="5dp"
@@ -47,8 +47,8 @@
 
         <ImageView
             android:id="@+id/gsBtnKill"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/cd_close_overlay"
             android:padding="5dp"

@@ -22,7 +22,6 @@ import androidx.core.graphics.ColorUtils
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import es.dmoral.toasty.Toasty
 import java.io.Closeable
 import java.io.File
 import java.io.FileNotFoundException
@@ -222,7 +221,7 @@ internal fun MainActivity.showApkInstallSheet() {
 }
 
 private fun MainActivity.apkToastErr(res: Int) {
-    Toasty.error(this, getString(res), Toast.LENGTH_SHORT, true).show()
+    UiToast.error(this, getString(res), Toast.LENGTH_SHORT).show()
 }
 
 private fun MainActivity.renderBundlePicker(box: LinearLayout, bundle: PickedBundle?, pick: () -> Unit) {
@@ -347,7 +346,7 @@ private fun MainActivity.beginApkInstall(b: PickedBundle) {
                 PackageInstaller.STATUS_FAILURE_ABORTED -> {
                     unregister()
                     progress.dismiss()
-                    Toasty.info(act, act.getString(R.string.apk_cancelled), Toast.LENGTH_SHORT, true).show()
+                    UiToast.info(act, act.getString(R.string.apk_cancelled), Toast.LENGTH_SHORT).show()
                 }
                 else -> {
                     unregister()
@@ -425,12 +424,12 @@ private fun MainActivity.beginApkInstall(b: PickedBundle) {
 private fun MainActivity.onApkInstalled(b: PickedBundle, progress: ProgressSheet) {
     if (b.obbs.isEmpty()) {
         progress.dismiss()
-        Toasty.success(this, getString(R.string.apk_ok), Toast.LENGTH_LONG, true).show()
+        UiToast.success(this, getString(R.string.apk_ok), Toast.LENGTH_LONG).show()
         return
     }
     if (!shizukuReady()) {
         progress.dismiss()
-        Toasty.warning(this, getString(R.string.apk_obb_skipped), Toast.LENGTH_LONG, true).show()
+        UiToast.warning(this, getString(R.string.apk_obb_skipped), Toast.LENGTH_LONG).show()
         return
     }
 
@@ -479,8 +478,8 @@ private fun MainActivity.onApkInstalled(b: PickedBundle, progress: ProgressSheet
         }
         withContext(Dispatchers.Main) {
             progress.dismiss()
-            if (ok) Toasty.success(this@onApkInstalled, getString(R.string.apk_obb_ok), Toast.LENGTH_LONG, true).show()
-            else Toasty.error(this@onApkInstalled, getString(R.string.apk_obb_fail), Toast.LENGTH_LONG, true).show()
+            if (ok) UiToast.success(this@onApkInstalled, getString(R.string.apk_obb_ok), Toast.LENGTH_LONG).show()
+            else UiToast.error(this@onApkInstalled, getString(R.string.apk_obb_fail), Toast.LENGTH_LONG).show()
         }
     }
 }

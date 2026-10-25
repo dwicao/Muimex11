@@ -8,16 +8,15 @@ import android.text.InputType
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import es.dmoral.toasty.Toasty
 
 internal fun MainActivity.showAutoClickDialog() {
     if (!Settings.canDrawOverlays(this)) {
         startActivity(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName")))
-        Toasty.info(this, getString(R.string.toast_allow_overlay), Toast.LENGTH_LONG, true).show()
+        UiToast.info(this, getString(R.string.toast_allow_overlay), Toast.LENGTH_LONG).show()
         return
     }
     if (!hasShizukuPermission()) {
-        Toasty.error(this, getString(R.string.toast_start_shizuku), Toast.LENGTH_LONG, true).show()
+        UiToast.error(this, getString(R.string.toast_start_shizuku), Toast.LENGTH_LONG).show()
         return
     }
 
@@ -68,7 +67,7 @@ internal fun MainActivity.showAutoClickDialog() {
             startService(Intent(this, AutoClickService::class.java))
             isAutoClickEnabled = true
             findViewById<TextView>(R.id.tvStatusAutoClick).text = getString(R.string.status_autoclick, AutoClickService.modeLabel(this, mode), interval.toString())
-            Toasty.success(this, getString(R.string.toast_float_ready), Toast.LENGTH_SHORT, true).show()
+            UiToast.success(this, getString(R.string.toast_float_ready), Toast.LENGTH_SHORT).show()
         }
         .show()
 }
