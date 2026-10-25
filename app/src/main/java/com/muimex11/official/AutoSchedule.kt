@@ -95,7 +95,7 @@ object BatterySchedule {
             } catch (_: Exception) {
                 emptyMap()
             }
-            ShizukuRunner.execOk(BatterySaver.buildReset(prev))
+            ShizukuRunner.execOk(BatterySaver.buildResetCmd(prev))
             p.edit()
                 .putString(Prefs.KEY_BATTERY_MODE, BatterySaver.MODE_OFF)
                 .remove(Prefs.KEY_BATTERY_PREV)
