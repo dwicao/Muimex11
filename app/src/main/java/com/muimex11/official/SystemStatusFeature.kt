@@ -26,7 +26,9 @@ private class SystemStatuses(
     val gameProfiles: String,
     val debloat: String,
     val audio: String,
-    val sensors: String
+    val sensors: String,
+    val bgRestrict: String,
+    val benchmark: String
 )
 
 internal fun MainActivity.fetchSystemStatuses() {
@@ -119,6 +121,17 @@ private fun MainActivity.readSystemStatuses(prefs: SharedPreferences): SystemSta
 
     val sensorsStatus = sensorsStatusText(prefs)
 
+    val bgN = bgRestrictCount(prefs)
+    val bgStatus = if (bgN == 0) getString(R.string.status_ready)
+    else getString(R.string.status_value, getString(R.string.bgrestrict_fmt, bgN))
+
+    val benchLast = readBenchRuns(prefs).lastOrNull()
+    val benchStatus = if (benchLast == null) getString(R.string.status_ready)
+    else getString(
+        R.string.status_bench_fmt,
+        benchLast.label, benchLast.launchMs, benchLast.fps?.toString() ?: "--"
+    )
+
     return SystemStatuses(
         fixedPerf = fixedPerfStatus,
         thermal = thermalStatus,
@@ -137,7 +150,9 @@ private fun MainActivity.readSystemStatuses(prefs: SharedPreferences): SystemSta
         gameProfiles = gameProfilesStatus,
         debloat = debloatStatus,
         audio = audioStatus,
-        sensors = sensorsStatus
+        sensors = sensorsStatus,
+        bgRestrict = bgStatus,
+        benchmark = benchStatus
     )
 }
 
@@ -160,6 +175,8 @@ private fun MainActivity.renderSystemStatuses(s: SystemStatuses) {
     findViewById<TextView>(R.id.tvStatusDebloat).text = s.debloat
     findViewById<TextView>(R.id.tvStatusAudio).text = s.audio
     findViewById<TextView>(R.id.tvStatusSensors).text = s.sensors
+    findViewById<TextView>(R.id.tvStatusBgRestrict).text = s.bgRestrict
+    findViewById<TextView>(R.id.tvStatusBenchmark).text = s.benchmark
 }
 
 private fun MainActivity.renderOverlayStatuses(prefs: SharedPreferences) {

@@ -687,4 +687,45 @@
     <string name="status_sensors_cam">Status: Camera blocked</string>
     <string name="status_sensors_mic">Status: Mic blocked</string>
     <string name="sensors_reset_done">Sensors restored</string>
+
+    <string name="gs_adaptive_fmt">Adaptive %1$s · %2$s</string>
+    <string name="gs_thermal_bypass">bypass</string>
+    <string name="gs_thermal_system">system</string>
+
+    <string name="title_bgrestrict">Background Restrict</string>
+    <string name="desc_bgrestrict">Put unused apps into rare/restricted standby buckets and hibernate them. Measured battery saving, fully reversible.</string>
+    <string name="bgrestrict_title">Background Restrict</string>
+    <string name="bgrestrict_message">Pick an app to set its standby bucket and hibernation.</string>
+    <string name="bgrestrict_hint">Restricted buckets + hibernation stop background work: fewer wakeups, less drain. The app still opens normally.</string>
+    <string name="bgrestrict_no_hiber">Hibernation unavailable on this ROM (needs Android 12+).</string>
+    <string name="bgrestrict_current">current</string>
+    <string name="bgrestrict_set_fmt">%1$s → %2$s</string>
+    <string name="bgrestrict_hiber">App hibernation</string>
+    <string name="bgrestrict_hiber_on">%1$s hibernated</string>
+    <string name="bgrestrict_hiber_off">%1$s unhibernated</string>
+    <string name="bgrestrict_fmt">%1$d apps restricted</string>
+    <string name="standby_active">Active</string>
+    <string name="standby_working">Working set</string>
+    <string name="standby_frequent">Frequent</string>
+    <string name="standby_rare">Rare</string>
+    <string name="standby_restricted">Restricted</string>
+
+    <string name="title_bench">Benchmark</string>
+    <string name="desc_bench">Measure cold-start time and in-game FPS before and after tweaks — proof, not placebo.</string>
+    <string name="bench_title">Benchmark</string>
+    <string name="bench_message">Pick a game. Launch is measured 3x cold, then FPS is sampled for 15s while you play.</string>
+    <string name="bench_hint">Close other apps first for stable numbers. Results are saved for before/after comparison.</string>
+    <string name="bench_last_fmt">%1$s · %2$dms · %3$s FPS</string>
+    <string name="bench_prev_fmt">Previous: %1$dms · %2$s FPS</string>
+    <string name="bench_run_desc">Forces a cold start, measures launch 3 times, then samples FPS for 15 seconds. Keep playing during the FPS phase.</string>
+    <string name="bench_run">Run</string>
+    <string name="bench_phase_launch">Measuring cold start…</string>
+    <string name="bench_phase_launch_n">Launch %1$d of %2$d…</string>
+    <string name="bench_phase_fps">Play now — sampling FPS…</string>
+    <string name="bench_fps_count">%1$ds left</string>
+    <string name="bench_result_fmt">Launch %1$dms · FPS %2$s</string>
+    <string name="bench_delta_fmt">vs before: launch %1$sms · FPS %2$s</string>
+    <string name="bench_done">Benchmark done</string>
+    <string name="status_bench_fmt">Status: %1$s %2$dms · %3$s FPS</string>
+    <string name="toast_bench_kept">History kept — benchmark data is never wiped</string>
 </resources>

@@ -74,7 +74,9 @@ class GameSpaceService : Service() {
     private lateinit var bubbleFps: TextView
     private lateinit var scroll: ScrollView
 
-    private var thermalBypass = false
+    private var thermalMode = 0 // 0 = off, 1 = manual bypass, 2 = adaptive
+    private var adaptiveTempC: Float? = null
+    private var adaptiveRunning = false
     private var fixedPerf = false
     private var fgPkg: String? = null
     private var fgLabel: String = ""
@@ -546,7 +548,7 @@ class GameSpaceService : Service() {
 
     private fun rowState(spec: ItemSpec): Boolean = when (spec.kind) {
         Kind.TOGGLE_SESSION -> when (spec.titleRes) {
-            R.string.gs_thermal -> thermalBypass
+            R.string.gs_thermal -> thermalMode != 0
             R.string.gs_perf -> fixedPerf
             else -> false
         }
@@ -564,12 +566,15 @@ class GameSpaceService : Service() {
                 when (spec.kind) {
                     Kind.ONE_SHOT -> ok = exec(spec.onCmd!!)
                     Kind.TOGGLE_SESSION -> {
-                        val active = rowState(spec)
-                        ok = exec(if (active) spec.offCmd!! else spec.onCmd!!)
-                        if (ok) when (spec.titleRes) {
-                            R.string.gs_thermal -> thermalBypass = !active
-                            R.string.gs_perf -> fixedPerf = !active
-                            else -> {}
+                        if (spec.titleRes == R.string.gs_thermal) {
+                            ok = cycleThermal(tile)
+                        } else {
+                            val active = rowState(spec)
+                            ok = exec(if (active) spec.offCmd!! else spec.onCmd!!)
+                            if (ok) when (spec.titleRes) {
+                                R.string.gs_perf -> fixedPerf = !active
+                                else -> {}
+                            }
                         }
                     }
                     Kind.TOGGLE_STATE -> {
@@ -629,6 +634,9 @@ class GameSpaceService : Service() {
                         setRow(tile, rowState(spec))
                     }
                 }
+                if (spec.titleRes == R.string.gs_thermal && thermalMode == 2) {
+                    refreshThermalText(tile)
+                }
                 if (spec.kind == Kind.TOGGLE_STATE || spec.kind == Kind.MONITOR) {
                     refreshRowAsync(spec, tile)
                 }
@@ -658,6 +666,7 @@ class GameSpaceService : Service() {
                 else -> {}
             }
         }
+        thermalTile()?.let { if (thermalMode == 2) refreshThermalText(it) }
     }
 
     private fun queryState(spec: ItemSpec): Boolean =
@@ -813,6 +822,81 @@ class GameSpaceService : Service() {
         exec("wm size ${w}x$h && wm density $d")
     }
 
+    // ------------------------------------------------------- adaptive thermal
+
+    private var lastAdaptiveBypass = false
+
+    /** OFF -> MANUAL -> ADAPTIVE -> OFF. Returns false only if a shell call failed. */
+    private fun cycleThermal(tile: View): Boolean {
+        return when (thermalMode) {
+            1 -> { // manual -> adaptive
+                thermalMode = 2
+                lastAdaptiveBypass = true
+                adaptiveTempC = null
+                startAdaptiveLoop()
+                handler.post { refreshThermalText(tile) }
+                true
+            }
+            2 -> { // adaptive -> off (hand control back to the system)
+                thermalMode = 0
+                adaptiveRunning = false
+                lastAdaptiveBypass = false
+                adaptiveTempC = null
+                exec("cmd thermalservice reset")
+            }
+            else -> { // off -> manual
+                val ok = exec("cmd thermalservice override-status 0")
+                if (ok) {
+                    thermalMode = 1
+                    lastAdaptiveBypass = true
+                }
+                ok
+            }
+        }
+    }
+
+    private fun thermalTile(): View? =
+        tiles.firstOrNull { (it.tag as? ItemSpec)?.titleRes == R.string.gs_thermal }
+
+    private fun refreshThermalText(tile: View) {
+        if (thermalMode != 2) return
+        val tv = statusViewOf(tile) ?: return
+        val t = adaptiveTempC
+        tv.text = if (t == null) getString(R.string.gs_fps_measuring)
+        else getString(
+            R.string.gs_adaptive_fmt, "${t.toInt()}°C",
+            getString(if (lastAdaptiveBypass) R.string.gs_thermal_bypass else R.string.gs_thermal_system)
+        )
+        tv.setTextColor(COLOR_ON)
+    }
+
+    private fun startAdaptiveLoop() {
+        if (adaptiveRunning) return
+        adaptiveRunning = true
+        ioScope.launch {
+            var bypassed = lastAdaptiveBypass
+            while (thermalMode == 2) {
+                try {
+                    val temp = AdaptiveThermal.parseZoneTemps(
+                        query("cat /sys/class/thermal/thermal_zone*/temp 2>/dev/null")
+                    )
+                    if (temp != null) {
+                        adaptiveTempC = temp
+                        val want = AdaptiveThermal.decide(bypassed, temp)
+                        if (want != bypassed) {
+                            bypassed = want
+                            lastAdaptiveBypass = want
+                            exec(if (want) "cmd thermalservice override-status 0" else "cmd thermalservice reset")
+                        }
+                        handler.post { thermalTile()?.let { refreshThermalText(it) } }
+                    }
+                } catch (_: Exception) {}
+                kotlinx.coroutines.delay(5000)
+            }
+            adaptiveRunning = false
+        }
+    }
+
     private fun applyAutoBoost(pkg: String) {
         // Scheduled battery saver pauses while gaming so perf profiles win.
         try {
@@ -823,8 +907,15 @@ class GameSpaceService : Service() {
         ioScope.launch {
             try {
                 if (p.gameModePerf && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) exec("cmd game mode performance $pkg")
-                if (p.fixedPerf) exec("cmd power set-fixed-performance-mode-enabled true")
-                if (p.thermalBypass) exec("cmd thermalservice override-status 0")
+                if (p.fixedPerf) {
+                    if (exec("cmd power set-fixed-performance-mode-enabled true")) fixedPerf = true
+                }
+                if (p.thermalBypass && thermalMode == 0) {
+                    if (exec("cmd thermalservice override-status 0")) {
+                        thermalMode = 1
+                        lastAdaptiveBypass = true
+                    }
+                }
                 if (p.refresh120) exec("settings put system peak_refresh_rate 120 && settings put system min_refresh_rate 120")
                 else if (p.refreshMin > 0 && p.refreshMax > 0) exec("settings put system min_refresh_rate ${p.refreshMin} && settings put system peak_refresh_rate ${p.refreshMax}")
                 if (p.resScale == 0.75f || p.resScale == 0.5f) applyResScale(p.resScale)
@@ -910,6 +1001,17 @@ class GameSpaceService : Service() {
                 .edit().putBoolean(Prefs.KEY_GAMESPACE_ENABLED, false).apply()
         } catch (_: Exception) {}
         stopFpsPolling()
+        val wasAdaptive = thermalMode == 2
+        thermalMode = 0
+        adaptiveRunning = false
+        if (wasAdaptive) {
+            // Hand thermal control back to the system; best-effort off the main thread.
+            Thread {
+                try {
+                    ShizukuRunner.execOk("cmd thermalservice reset")
+                } catch (_: Exception) {}
+            }.start()
+        }
         try {
             bubbleRoot?.let { wm.removeView(it) }
         } catch (_: Exception) {}

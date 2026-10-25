@@ -678,4 +678,45 @@
     <string name="status_sensors_mic">Status: Mic bloqueado</string>
     <string name="sensors_reset_done">Sensores restaurados</string>
 
+    <string name="gs_adaptive_fmt">Adaptivo %1$s · %2$s</string>
+    <string name="gs_thermal_bypass">bypass</string>
+    <string name="gs_thermal_system">sistema</string>
+
+    <string name="title_bgrestrict">Restrição de fundo</string>
+    <string name="desc_bgrestrict">Coloque apps ociosos em buckets raros/restritos e hiberne-os. Economia medida, reversível.</string>
+    <string name="bgrestrict_title">Restrição de fundo</string>
+    <string name="bgrestrict_message">Escolha um app para definir bucket e hibernação.</string>
+    <string name="bgrestrict_hint">Buckets restritos + hibernação param trabalho em fundo: menos wakeups, menos dreno. O app abre normal.</string>
+    <string name="bgrestrict_no_hiber">Hibernação indisponível nesta ROM (exige Android 12+).</string>
+    <string name="bgrestrict_current">atual</string>
+    <string name="bgrestrict_set_fmt">%1$s → %2$s</string>
+    <string name="bgrestrict_hiber">Hibernação de app</string>
+    <string name="bgrestrict_hiber_on">%1$s hibernado</string>
+    <string name="bgrestrict_hiber_off">%1$s deshibernado</string>
+    <string name="bgrestrict_fmt">%1$d apps restritos</string>
+    <string name="standby_active">Ativo</string>
+    <string name="standby_working">Conjunto de trabalho</string>
+    <string name="standby_frequent">Frequente</string>
+    <string name="standby_rare">Raro</string>
+    <string name="standby_restricted">Restrito</string>
+
+    <string name="title_bench">Benchmark</string>
+    <string name="desc_bench">Meça tempo de abertura e FPS antes/depois dos ajustes — prova, não placebo.</string>
+    <string name="bench_title">Benchmark</string>
+    <string name="bench_message">Escolha um jogo. Abertura medida 3x a frio, depois FPS por 15s jogando.</string>
+    <string name="bench_hint">Feche outros apps para números estáveis. Resultados salvos para comparar.</string>
+    <string name="bench_last_fmt">%1$s · %2$dms · %3$s FPS</string>
+    <string name="bench_prev_fmt">Anterior: %1$dms · %2$s FPS</string>
+    <string name="bench_run_desc">Força abertura a frio, mede 3 vezes, depois amostra FPS por 15 segundos. Continue jogando na fase FPS.</string>
+    <string name="bench_run">Rodar</string>
+    <string name="bench_phase_launch">Medindo abertura…</string>
+    <string name="bench_phase_launch_n">Abertura %1$d de %2$d…</string>
+    <string name="bench_phase_fps">Jogue agora — amostrando FPS…</string>
+    <string name="bench_fps_count">%1$ds restantes</string>
+    <string name="bench_result_fmt">Abertura %1$dms · FPS %2$s</string>
+    <string name="bench_delta_fmt">vs antes: abertura %1$sms · FPS %2$s</string>
+    <string name="bench_done">Benchmark pronto</string>
+    <string name="status_bench_fmt">Status: %1$s %2$dms · %3$s FPS</string>
+    <string name="toast_bench_kept">Histórico mantido — dados de benchmark nunca apagados</string>
+
 </resources>

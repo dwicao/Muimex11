@@ -225,3 +225,81 @@ class SensorCmdTest {
         assertTrue(both.contains("enable 0 2") && both.contains("enable 0 1"))
     }
 }
+
+class AdaptiveThermalTest {
+    @Test
+    fun hysteresis() {
+        // Hot always releases, cold always engages.
+        assertFalse(AdaptiveThermal.decide(true, 46f))
+        assertFalse(AdaptiveThermal.decide(false, 45f))
+        assertTrue(AdaptiveThermal.decide(false, 37f))
+        assertTrue(AdaptiveThermal.decide(true, 38f))
+        // Inside the band the previous state sticks (no flapping).
+        assertTrue(AdaptiveThermal.decide(true, 42f))
+        assertFalse(AdaptiveThermal.decide(false, 42f))
+    }
+
+    @Test
+    fun parsesHottestZone() {
+        val dump = "35000\n47000\nnot_a_number\n-5\n200000\n"
+        assertEquals(47f, AdaptiveThermal.parseZoneTemps(dump)!!, 0.001f)
+    }
+
+    @Test
+    fun parseEmptyIsNull() {
+        assertNull(AdaptiveThermal.parseZoneTemps("oops\n-1\n"))
+        assertNull(AdaptiveThermal.parseZoneTemps(""))
+    }
+}
+
+class StandbyBucketsTest {
+    @Test
+    fun parsesIntAndName() {
+        assertEquals("rare", StandbyBuckets.parseGet("40\n"))
+        assertEquals("active", StandbyBuckets.parseGet("10"))
+        assertEquals("restricted", StandbyBuckets.parseGet("RESTRICTED"))
+        assertEquals("rare", StandbyBuckets.parseGet("rare"))
+        assertNull(StandbyBuckets.parseGet(""))
+        assertNull(StandbyBuckets.parseGet("banana"))
+    }
+
+    @Test
+    fun buildCmds() {
+        assertTrue(StandbyBuckets.buildSet("com.a", "restricted").contains("am set-standby-bucket com.a restricted"))
+        assertTrue(StandbyBuckets.buildGet("com.a").contains("am get-standby-bucket com.a"))
+    }
+}
+
+class HibernationTest {
+    @Test
+    fun parsesState() {
+        assertEquals(true, Hibernation.parseGet("true\n"))
+        assertEquals(false, Hibernation.parseGet("false "))
+        assertNull(Hibernation.parseGet("cmd: Failure calling service"))
+        assertNull(Hibernation.parseGet(""))
+    }
+
+    @Test
+    fun sdkGateAndBuild() {
+        assertFalse(Hibernation.sdkOk(30))
+        assertTrue(Hibernation.sdkOk(31))
+        assertEquals("cmd app_hibernation set-state com.a true", Hibernation.buildSet("com.a", true))
+    }
+}
+
+class BenchmarkCalcTest {
+    @Test
+    fun parsesAmStartW() {
+        val dump = "Starting: Intent {}\nStatus: ok\nActivity: com.a/.Main\nThisTime: 120\nTotalTime: 345\nWaitTime: 360\nComplete\n"
+        assertEquals(345L, BenchmarkCalc.parseAmStartW(dump))
+        assertNull(BenchmarkCalc.parseAmStartW("no timing here"))
+    }
+
+    @Test
+    fun avgAndFps() {
+        assertEquals(200L, BenchmarkCalc.avg(listOf(100L, 200L, 300L)))
+        assertEquals(0L, BenchmarkCalc.avg(emptyList()))
+        assertEquals(60, BenchmarkCalc.fps(900, 0, 15_000))
+        assertNull(BenchmarkCalc.fps(50_000, 0, 15_000))
+    }
+}

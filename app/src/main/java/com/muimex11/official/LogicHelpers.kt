@@ -284,3 +284,97 @@ object SensorCmd {
     fun buildUnblockBoth(userId: Int): String =
         "${buildSet(userId, CAMERA, false)}; ${buildSet(userId, MIC, false)}"
 }
+
+/**
+ * Adaptive thermal governor — pure decision logic, unit-testable.
+ * Instead of a dumb always-on bypass: engage the bypass only while cool,
+ * release throttling control back to the system when hot. Hysteresis band
+ * (engage <= 38C, release >= 45C) prevents flapping.
+ */
+object AdaptiveThermal {
+    const val ENGAGE_BELOW = 38f
+    const val RELEASE_ABOVE = 45f
+
+    fun decide(bypassed: Boolean, tempC: Float): Boolean = when {
+        tempC >= RELEASE_ABOVE -> false
+        tempC <= ENGAGE_BELOW -> true
+        else -> bypassed
+    }
+
+    /**
+     * Parse `cat /sys/class/thermal/thermal_zone*/temp` output.
+     * Values are millidegrees; returns the hottest sane zone in Celsius.
+     */
+    fun parseZoneTemps(dump: String): Float? {
+        val temps = dump.lines()
+            .mapNotNull { it.trim().toLongOrNull() }
+            .filter { it in 20_000..120_000 }
+        if (temps.isEmpty()) return null
+        return temps.max() / 1000f
+    }
+}
+
+/** Pure App Standby bucket helpers — unit-testable. */
+object StandbyBuckets {
+    val NAMES = listOf("active", "working_set", "frequent", "rare", "restricted")
+
+    private val INT_TO_NAME = mapOf(
+        5 to "exempted",
+        10 to "active",
+        20 to "working_set",
+        30 to "frequent",
+        40 to "rare",
+        50 to "restricted"
+    )
+
+    /** Parse `am get-standby-bucket <pkg>` output (int or name) to canonical name. */
+    fun parseGet(dump: String): String? {
+        val t = dump.trim().lowercase()
+        if (t.isEmpty()) return null
+        t.toIntOrNull()?.let { return INT_TO_NAME[it] }
+        val first = t.split(Regex("\\s+")).firstOrNull() ?: return null
+        return if (first in NAMES || first == "exempted") first else null
+    }
+
+    fun buildGet(pkg: String): String = "am get-standby-bucket $pkg"
+
+    fun buildSet(pkg: String, bucket: String): String =
+        "am set-standby-bucket $pkg $bucket"
+}
+
+/** Pure app-hibernation helpers — unit-testable. Android 12+. */
+object Hibernation {
+    fun sdkOk(sdkInt: Int): Boolean = sdkInt >= 31
+
+    /** Parse `cmd app_hibernation get-state <pkg>` ("true"/"false"); null = unsupported. */
+    fun parseGet(dump: String): Boolean? {
+        val t = dump.trim().lowercase()
+        val first = t.split(Regex("\\s+")).firstOrNull() ?: return null
+        return when (first) {
+            "true" -> true
+            "false" -> false
+            else -> null
+        }
+    }
+
+    fun buildGet(pkg: String): String = "cmd app_hibernation get-state $pkg"
+
+    fun buildSet(pkg: String, hibernate: Boolean): String =
+        "cmd app_hibernation set-state $pkg $hibernate"
+}
+
+/** Pure benchmark parsers — unit-testable. */
+object BenchmarkCalc {
+    private val totalRe = Regex("TotalTime:\\s*(\\d+)")
+
+    /** Parse `am start -W` output to cold-start ms. */
+    fun parseAmStartW(dump: String): Long? =
+        totalRe.find(dump)?.groupValues?.getOrNull(1)?.toLongOrNull()
+
+    fun avg(samples: List<Long>): Long =
+        if (samples.isEmpty()) 0 else samples.sum() / samples.size
+
+    /** FPS from gfxinfo frame counters (delegates to the tested sanity gate). */
+    fun fps(total: Long, lastCount: Long, dtMs: Long): Int? =
+        FgPkgParser.fps(total, lastCount, dtMs)
+}

@@ -200,6 +200,10 @@ private fun MainActivity.setupToolsCardListeners(prefs: SharedPreferences) {
 
     findViewById<CardView>(R.id.cardSensorsToggle).setOnClickListener { showSensorsSheet(prefs) }
 
+    findViewById<CardView>(R.id.cardBgRestrict).setOnClickListener { showBgRestrictSheet(prefs) }
+
+    findViewById<CardView>(R.id.cardBenchmark).setOnClickListener { showBenchmarkSheet(prefs) }
+
     findViewById<TextView>(R.id.btnResetAppOps).setOnClickListener {
         if (!hasShizukuPermission()) return@setOnClickListener
         val cmd = appOpsResetCmdForAll(prefs)
@@ -234,6 +238,23 @@ private fun MainActivity.setupToolsCardListeners(prefs: SharedPreferences) {
             findViewById<TextView>(R.id.tvStatusSensors).text = getString(R.string.status_default)
             fetchSystemStatuses()
         }
+    }
+
+    findViewById<TextView>(R.id.btnResetBgRestrict).setOnClickListener {
+        if (!hasShizukuPermission()) return@setOnClickListener
+        val cmd = bgRestrictResetCmdForAll(prefs)
+        if (cmd == null) {
+            UiToast.info(this, getString(R.string.toast_no_apps), Toast.LENGTH_SHORT).show()
+            return@setOnClickListener
+        }
+        runAdbCommand(cmd, getString(R.string.appops_reset_done)) {
+            clearBgRestrictPrefs(prefs)
+            findViewById<TextView>(R.id.tvStatusBgRestrict).text = getString(R.string.status_ready)
+            fetchSystemStatuses()
+        }
+    }
+    findViewById<TextView>(R.id.btnResetBenchmark).setOnClickListener {
+        UiToast.info(this, getString(R.string.toast_bench_kept), Toast.LENGTH_SHORT).show()
     }
 }
 
@@ -348,11 +369,13 @@ internal fun MainActivity.resetAllFunctions(prefs: android.content.SharedPrefere
         val audioReset = audioResetCmdForAll(prefs)
         val sensorsReset = sensorsResetCmd(prefs)
         val sensorsPart = if (sensorsReset != null) "$sensorsReset && " else ""
+        val bgReset = bgRestrictResetCmdForAll(prefs)
+        val bgPart = if (bgReset != null) "$bgReset && " else ""
 
         val resetCmd = """
             cmd power set-fixed-performance-mode-enabled false
             cmd thermalservice reset
-            $gameModeReset$aggressiveReset$batteryReset && $dozePart$appOpsPart$audioReset && $sensorsPart
+            $gameModeReset$aggressiveReset$batteryReset && $dozePart$appOpsPart$audioReset && $sensorsPart$bgPart
             settings delete system min_refresh_rate
             settings delete system peak_refresh_rate
             wm size reset
@@ -381,6 +404,7 @@ internal fun MainActivity.resetAllFunctions(prefs: android.content.SharedPrefere
             clearDozePrefs(prefs)
             clearAudioPrefs(prefs)
             clearSensorsPrefs(prefs)
+            clearBgRestrictPrefs(prefs)
 
 
             if (isMonitorEnabled) {
@@ -402,6 +426,8 @@ internal fun MainActivity.resetAllFunctions(prefs: android.content.SharedPrefere
             findViewById<TextView>(R.id.tvStatusDebloat).text = getString(R.string.status_ready)
             findViewById<TextView>(R.id.tvStatusAudio).text = getString(R.string.status_default)
             findViewById<TextView>(R.id.tvStatusSensors).text = getString(R.string.status_default)
+            findViewById<TextView>(R.id.tvStatusBgRestrict).text = getString(R.string.status_ready)
+            findViewById<TextView>(R.id.tvStatusBenchmark).text = getString(R.string.status_ready)
 
             findViewById<TextView>(R.id.tvStatusFstrim).text = getString(R.string.status_ready)
             findViewById<TextView>(R.id.tvStatusRamBooster).text = getString(R.string.status_ready)

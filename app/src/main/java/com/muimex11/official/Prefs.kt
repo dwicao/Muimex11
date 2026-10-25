@@ -37,4 +37,7 @@ object Prefs {
     const val KEY_AUDIO_PRESET = "AudioPreset"
     const val KEY_AUDIO_PREV = "AudioPrev"
     const val KEY_SENSORS_STATE = "SensorsState"
+
+    const val KEY_BGRESTRICT_RULES = "BgRestrictRules"
+    const val KEY_BENCH_RUNS = "BenchRuns"
 }
