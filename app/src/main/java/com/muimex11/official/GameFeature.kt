@@ -61,13 +61,11 @@ internal fun MainActivity.showGameModeSelectorDialog() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                var process = Shizuku.newProcess(arrayOf("sh", "-c", "cmd game mode performance $pkgName"), null, null)
-                var exitCode = process.waitFor()
-
-                if (exitCode != 0) {
-                    process = Shizuku.newProcess(arrayOf("sh", "-c", "cmd game mode 2 $pkgName"), null, null)
-                    exitCode = process.waitFor()
+                var res = ShizukuRunner.exec("cmd game mode performance $pkgName")
+                if (!res.ok) {
+                    res = ShizukuRunner.exec("cmd game mode 2 $pkgName")
                 }
+                var exitCode = res.code
 
                 withContext(Dispatchers.Main) {
                     if (exitCode == 0) {

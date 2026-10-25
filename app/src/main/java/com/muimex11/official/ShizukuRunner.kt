@@ -1,7 +1,9 @@
 package com.muimex11.official
 
 import rikka.shizuku.Shizuku
+import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 data class ShellResult(val code: Int, val out: String, val err: String = "") {
     val merged: String get() = if (err.isBlank()) out else "$out\n$err".trim()
@@ -20,6 +22,7 @@ object ShizukuRunner {
 
     fun exec(cmd: String, timeoutMs: Long = DEFAULT_TIMEOUT_MS): ShellResult {
         var proc: Process? = null
+        var executor: java.util.concurrent.ExecutorService? = null
         return try {
             proc = Shizuku.newProcess(arrayOf("sh", "-c", cmd), null, null)
             val p = proc
@@ -31,8 +34,16 @@ object ShizukuRunner {
             val t1 = Thread { try { outReader.forEachLine { outSb.append(it).append('\n') } } catch (_: Exception) {} }
             val t2 = Thread { try { errReader.forEachLine { errSb.append(it).append('\n') } } catch (_: Exception) {} }
             t1.start(); t2.start()
-            val finished = p.waitFor(timeoutMs, TimeUnit.MILLISECONDS)
-            if (!finished) {
+            // NOTE: use plain blocking waitFor() inside a Future instead of
+            // waitFor(timeout, unit) + exitValue(). Shizuku's Process
+            // implementation throws IllegalStateException("process hasn't
+            // exited") for the timed/exitValue path on some versions.
+            executor = Executors.newSingleThreadExecutor()
+            val future = executor.submit<Int> { p.waitFor() }
+            val code: Int = try {
+                future.get(timeoutMs, TimeUnit.MILLISECONDS)
+            } catch (e: TimeoutException) {
+                future.cancel(true)
                 try { p.destroyForcibly() } catch (_: Exception) {}
                 t1.join(500); t2.join(500)
                 try { outReader.close() } catch (_: Exception) {}
@@ -42,10 +53,12 @@ object ShizukuRunner {
             t1.join(2000); t2.join(2000)
             try { outReader.close() } catch (_: Exception) {}
             try { errReader.close() } catch (_: Exception) {}
-            ShellResult(p.exitValue(), outSb.toString().trim(), errSb.toString().trim())
+            ShellResult(code, outSb.toString().trim(), errSb.toString().trim())
         } catch (e: Exception) {
             try { proc?.destroyForcibly() } catch (_: Exception) {}
             ShellResult(-1, "", e.message ?: "error")
+        } finally {
+            try { executor?.shutdownNow() } catch (_: Exception) {}
         }
     }
 
