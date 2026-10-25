@@ -24,4 +24,8 @@ object Prefs {
     const val KEY_LANG_RETRY_AFTER = "LangRetryAfter"
 
     const val KEY_GAMESPACE_ENABLED = "GameSpaceEnabled"
+
+    const val KEY_BATTERY_MODE = "BatteryMode"
+    const val KEY_BATTERY_PREV = "BatteryPrev"
+    const val KEY_DOZE_REMOVED = "DozeRemoved"
 }

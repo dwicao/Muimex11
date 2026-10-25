@@ -567,4 +567,37 @@
     <string name="backup_failed">Backup restore failed</string>
 
     <string name="cd_theme_toggle">Toggle theme</string>
+
+    <string name="title_battery">Battery Saver</string>
+    <string name="desc_battery">System-level battery saving without root or undervolting. Balanced, Saver and Extreme modes tune battery saver, adaptive battery, Doze and background scans. Fully reversible.</string>
+    <string name="bat_title">Battery Saver</string>
+    <string name="bat_message">Pick a mode. Your current values are saved first, Reset restores them. No kernel undervolting is used — that needs root.</string>
+    <string name="bat_balanced">Balanced</string>
+    <string name="bat_balanced_desc">Saver off, adaptive battery on, normal scans. Daily default.</string>
+    <string name="bat_saver">Saver</string>
+    <string name="bat_saver_desc">Saver on, background Wi-Fi/BLE scans and mobile-data-always-on off.</string>
+    <string name="bat_extreme">Extreme</string>
+    <string name="bat_extreme_desc">Saver + force Doze now, also turns off fixed-performance and thermal bypass.</string>
+    <string name="bat_doze">Doze tuning</string>
+    <string name="bat_doze_desc">See Doze whitelist, force idle, restrict exempt apps.</string>
+    <string name="bat_done_balanced">Balanced battery mode on</string>
+    <string name="bat_done_saver">Battery Saver on</string>
+    <string name="bat_done_extreme">Extreme battery mode on</string>
+    <string name="bat_reset_done">Battery settings restored</string>
+    <string name="status_battery_saver">Status: Battery Saver</string>
+    <string name="status_battery_extreme">Status: Battery Extreme</string>
+    <string name="status_battery_balanced">Status: Battery Balanced</string>
+    <string name="toast_battery_already">Battery mode already active — reset first to change</string>
+    <string name="doze_title">Doze tuning</string>
+    <string name="doze_message">Doze sleeps background apps when the screen is off. Apps on the whitelist stay awake.</string>
+    <string name="doze_state_fmt">Whitelisted: %1$d · third-party exempt: %2$d</string>
+    <string name="doze_removed_fmt">Restricted earlier: %1$d</string>
+    <string name="doze_candidates_fmt">Exempt apps: %1$s</string>
+    <string name="doze_more_fmt">+%1$d more</string>
+    <string name="doze_force_now">Force Doze now</string>
+    <string name="doze_restrict">Restrict exempt apps</string>
+    <string name="doze_restore">Restore exemptions</string>
+    <string name="doze_forced">Doze forced (until screen wakes)</string>
+    <string name="doze_restricted_fmt">Restricted %1$d apps from Doze exemption</string>
+    <string name="doze_restored">Doze exemptions restored</string>
 </resources>

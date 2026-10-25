@@ -180,6 +180,15 @@ private fun MainActivity.setupToolsCardListeners(prefs: SharedPreferences) {
             }
             .show()
     }
+
+    findViewById<CardView>(R.id.cardBatterySaver).setOnClickListener {
+        showBatterySaverSheet(prefs)
+    }
+
+    findViewById<TextView>(R.id.btnResetBatterySaver).setOnClickListener {
+        if (!hasShizukuPermission()) return@setOnClickListener
+        resetBatterySaver(prefs)
+    }
 }
 
 private fun MainActivity.setupOverlayResetListeners() {
@@ -285,11 +294,14 @@ internal fun MainActivity.resetAllFunctions(prefs: android.content.SharedPrefere
         val gameModeReset = if (lastGame.isNullOrEmpty()) "" else "cmd game mode standard $lastGame && "
         val aggressiveReset = if (prefs.getBoolean(Prefs.KEY_FIXED_PERF_AGGRESSIVE, false))
             "{ ${fixedPerfAggressiveRestore(prefs)}; true; } && " else ""
+        val batteryReset = batteryResetCmdForAll(prefs)
+        val dozeReset = dozeResetCmdForAll(prefs)
+        val dozePart = if (dozeReset != null) "$dozeReset && " else ""
 
         val resetCmd = """
             cmd power set-fixed-performance-mode-enabled false
             cmd thermalservice reset
-            $gameModeReset$aggressiveReset
+            $gameModeReset$aggressiveReset$batteryReset && $dozePart
             settings delete system min_refresh_rate
             settings delete system peak_refresh_rate
             wm size reset
@@ -313,6 +325,8 @@ internal fun MainActivity.resetAllFunctions(prefs: android.content.SharedPrefere
                 .putBoolean(Prefs.KEY_THERMAL_DISABLED, false)
                 .putString(Prefs.KEY_LAST_GAME_MODE, "")
                 .apply()
+            clearBatteryPrefs(prefs)
+            clearDozePrefs(prefs)
 
 
             if (isMonitorEnabled) {
@@ -328,6 +342,7 @@ internal fun MainActivity.resetAllFunctions(prefs: android.content.SharedPrefere
 
             findViewById<TextView>(R.id.tvStatusFixedPerf).text = getString(R.string.status_default)
             findViewById<TextView>(R.id.tvStatusOptimize).text = getString(R.string.status_ready)
+            findViewById<TextView>(R.id.tvStatusBatterySaver).text = getString(R.string.status_default)
 
             findViewById<TextView>(R.id.tvStatusFstrim).text = getString(R.string.status_ready)
             findViewById<TextView>(R.id.tvStatusRamBooster).text = getString(R.string.status_ready)

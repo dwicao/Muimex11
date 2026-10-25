@@ -62,6 +62,12 @@ internal fun MainActivity.applyFixedPerformance(prefs: android.content.SharedPre
                 getString(if (aggressive) R.string.fp_done_aggressive else R.string.fp_done_standard)
             ) {
                 prefs.edit().putBoolean(Prefs.KEY_FIXED_PERF, true).putBoolean(Prefs.KEY_FIXED_PERF_AGGRESSIVE, aggressive).apply()
+                if (aggressive) {
+                    // Aggressive perf disables Doze + battery saver, so a saved
+                    // battery mode would no longer be accurate.
+                    clearBatteryPrefs(prefs)
+                    findViewById<TextView>(R.id.tvStatusBatterySaver).text = getString(R.string.status_default)
+                }
                 findViewById<TextView>(R.id.tvStatusFixedPerf).text =
                     getString(if (aggressive) R.string.status_enabled_aggr else R.string.status_enabled)
             }

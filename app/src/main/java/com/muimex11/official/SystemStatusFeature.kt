@@ -20,7 +20,8 @@ private class SystemStatuses(
     val animations: String,
     val blurs: String,
     val dnd: String,
-    val devOptions: String
+    val devOptions: String,
+    val battery: String
 )
 
 internal fun MainActivity.fetchSystemStatuses() {
@@ -94,6 +95,9 @@ private fun MainActivity.readSystemStatuses(prefs: SharedPreferences): SystemSta
     val devOpt = runAdbCommandWithResult("settings get global development_settings_enabled")
     val devOptStatus = if (devOpt == "1") getString(R.string.status_devopt_on) else getString(R.string.status_devopt_off)
 
+    val batteryMode = prefs.getString(Prefs.KEY_BATTERY_MODE, BatterySaver.MODE_OFF).orEmpty()
+    val batteryStatus = getString(BatterySaver.labelRes(batteryMode))
+
     return SystemStatuses(
         fixedPerf = fixedPerfStatus,
         thermal = thermalStatus,
@@ -106,7 +110,8 @@ private fun MainActivity.readSystemStatuses(prefs: SharedPreferences): SystemSta
         animations = animStatus,
         blurs = blursStatus,
         dnd = headsUpStatus,
-        devOptions = devOptStatus
+        devOptions = devOptStatus,
+        battery = batteryStatus
     )
 }
 
@@ -123,6 +128,7 @@ private fun MainActivity.renderSystemStatuses(s: SystemStatuses) {
     findViewById<TextView>(R.id.tvStatusBlurs).text = s.blurs
     findViewById<TextView>(R.id.tvStatusDnd).text = s.dnd
     findViewById<TextView>(R.id.tvStatusDevOptions).text = s.devOptions
+    findViewById<TextView>(R.id.tvStatusBatterySaver).text = s.battery
 }
 
 private fun MainActivity.renderOverlayStatuses(prefs: SharedPreferences) {

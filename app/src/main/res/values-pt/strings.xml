@@ -558,4 +558,37 @@
     <string name="backup_failed">Falha ao restaurar backup</string>
     <string name="cd_theme_toggle">Alternar tema</string>
 
+    <string name="title_battery">Economia de bateria</string>
+    <string name="desc_battery">Economia de bateria sem root ou undervolt. Modos Equilibrado, Econômico e Extremo ajustam economia, bateria adaptativa, Doze e varreduras. Totalmente reversível.</string>
+    <string name="bat_title">Economia de bateria</string>
+    <string name="bat_message">Escolha um modo. Valores atuais são salvos antes; Reset restaura tudo. Sem undervolt de kernel — isso exige root.</string>
+    <string name="bat_balanced">Equilibrado</string>
+    <string name="bat_balanced_desc">Economia off, bateria adaptativa on, varreduras normais.</string>
+    <string name="bat_saver">Econômico</string>
+    <string name="bat_saver_desc">Economia on, varreduras Wi-Fi/BLE e dados-móveis-sempre-on off.</string>
+    <string name="bat_extreme">Extremo</string>
+    <string name="bat_extreme_desc">Econômico + força Doze agora, desliga performance fixa e bypass térmico.</string>
+    <string name="bat_doze">Ajuste Doze</string>
+    <string name="bat_doze_desc">Ver whitelist do Doze, forçar idle, restringir apps isentos.</string>
+    <string name="bat_done_balanced">Modo equilibrado ativado</string>
+    <string name="bat_done_saver">Economia de bateria ativada</string>
+    <string name="bat_done_extreme">Modo extremo ativado</string>
+    <string name="bat_reset_done">Configurações de bateria restauradas</string>
+    <string name="status_battery_saver">Status: Economia de bateria</string>
+    <string name="status_battery_extreme">Status: Bateria extrema</string>
+    <string name="status_battery_balanced">Status: Bateria equilibrada</string>
+    <string name="toast_battery_already">Modo de bateria já ativo — restaure antes de trocar</string>
+    <string name="doze_title">Ajuste Doze</string>
+    <string name="doze_message">Doze suspende apps em segundo plano com tela desligada. Apps na whitelist continuam ativos.</string>
+    <string name="doze_state_fmt">Whitelist: %1$d · terceiros isentos: %2$d</string>
+    <string name="doze_removed_fmt">Restringidos antes: %1$d</string>
+    <string name="doze_candidates_fmt">Apps isentos: %1$s</string>
+    <string name="doze_more_fmt">+%1$d mais</string>
+    <string name="doze_force_now">Forçar Doze agora</string>
+    <string name="doze_restrict">Restringir apps isentos</string>
+    <string name="doze_restore">Restaurar isenções</string>
+    <string name="doze_forced">Doze forçado (até a tela acender)</string>
+    <string name="doze_restricted_fmt">%1$d apps removidos da isenção Doze</string>
+    <string name="doze_restored">Isenções Doze restauradas</string>
+
 </resources>
