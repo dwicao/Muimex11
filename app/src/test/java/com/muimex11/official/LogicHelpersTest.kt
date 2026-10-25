@@ -191,7 +191,7 @@ class AudioPresetsTest {
             val (ns, k) = ck.split(":")
             assertTrue(cmd.contains("settings put $ns $k"))
         }
-        assertTrue(cmd.contains("bluetooth_disable_absolute_volume' '1'"))
+        assertTrue(cmd.contains("bluetooth_disable_absolute_volume '1'"))
     }
 
     @Test
