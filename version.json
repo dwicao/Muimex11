@@ -1,8 +1,8 @@
 {
-  "versionCode": 36,
-  "versionName": "4.6",
-  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.6/Muimex11-4.6.apk",
-  "releaseNotes": "Muimex11 4.6",
+  "versionCode": 37,
+  "versionName": "4.7",
+  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.7/Muimex11-4.7.apk",
+  "releaseNotes": "Muimex11 4.7",
   "mandatory": false,
-  "sha256": "99a7f337f0cf1966f07bbdfbf51294784e3a03992018df0ee8c115a49c88a228"
+  "sha256": "54f3c109f85015f0092396b508f218f17776960a63300ac77976f91526909408"
 }
