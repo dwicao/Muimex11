@@ -1,7 +1,8 @@
 {
-  "versionCode": 31,
-  "versionName": "4.1",
-  "apkUrl": "https://github.com/Inkflow-Gab/Muimex11/releases/download/v4.1/Muimex11-4.1.apk",
-  "releaseNotes": "Muimex11 4.1",
-  "mandatory": false
+  "versionCode": 32,
+  "versionName": "4.2",
+  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.2/Muimex11-4.2.apk",
+  "releaseNotes": "Muimex11 4.2",
+  "mandatory": false,
+  "sha256": "1b67750b4ae147e73bcddebebff40566f539b4629537201b1103146d6362fdd3"
 }
