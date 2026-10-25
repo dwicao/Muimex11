@@ -302,8 +302,8 @@ object AdaptiveThermal {
     }
 
     /**
-     * Parse `cat /sys/class/thermal/thermal_zone*/temp` output.
-     * Values are millidegrees; returns the hottest sane zone in Celsius.
+     * Parse `cat` output of thermal_zone temp files, one millidegree value
+     * per line. Returns the hottest sane zone in Celsius, null if none.
      */
     fun parseZoneTemps(dump: String): Float? {
         val temps = dump.lines()
