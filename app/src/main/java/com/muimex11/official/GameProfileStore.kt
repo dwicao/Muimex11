@@ -13,7 +13,12 @@ data class GameProfile(
     val fixedPerf: Boolean = false,
     val thermalBypass: Boolean = false,
     val gameModePerf: Boolean = true,
-    val refresh120: Boolean = false
+    val refresh120: Boolean = false,
+    /** 0 = unset (follow system). */
+    val refreshMin: Int = 0,
+    val refreshMax: Int = 0,
+    /** 0f = unset (follow system). One of 0.75f / 0.5f when set. */
+    val resScale: Float = 0f
 )
 
 object GameProfileStore {
@@ -38,7 +43,10 @@ object GameProfileStore {
                     fixedPerf = v.optBoolean("fixedPerf", false),
                     thermalBypass = v.optBoolean("thermalBypass", false),
                     gameModePerf = v.optBoolean("gameModePerf", true),
-                    refresh120 = v.optBoolean("refresh120", false)
+                    refresh120 = v.optBoolean("refresh120", false),
+                    refreshMin = v.optInt("refreshMin", 0),
+                    refreshMax = v.optInt("refreshMax", 0),
+                    resScale = v.optDouble("resScale", 0.0).toFloat()
                 )
             }
             out
@@ -67,6 +75,9 @@ object GameProfileStore {
                 put("thermalBypass", v.thermalBypass)
                 put("gameModePerf", v.gameModePerf)
                 put("refresh120", v.refresh120)
+                put("refreshMin", v.refreshMin)
+                put("refreshMax", v.refreshMax)
+                put("resScale", v.resScale.toDouble())
             })
         }
         prefs(ctx).edit().putString(KEY_PROFILES, o.toString()).apply()

@@ -139,3 +139,89 @@ class DozeParserTest {
         assertTrue(DozeParser.buildRestoreCmd(pkgs).contains("whitelist +com.b"))
     }
 }
+
+class AppOpsParserTest {
+    @Test
+    fun parsesGet() {
+        val dump = """
+            CAMERA: allow; time=+1d0h0m0s0ms ago; duration=-1
+            RECORD_AUDIO: ignore; time=+2d0h0m0s0ms ago
+            ACCESS_FINE_LOCATION: default
+        """.trimIndent()
+        val m = AppOpsParser.parseGet(dump)
+        assertEquals("allow", m["CAMERA"])
+        assertEquals("ignore", m["RECORD_AUDIO"])
+        assertEquals("default", m["ACCESS_FINE_LOCATION"])
+        assertNull(m["ACCESS_COARSE_LOCATION"])
+    }
+
+    @Test
+    fun buildSetAndSafe() {
+        assertTrue(AppOpsParser.buildSet("com.a", "CAMERA", "ignore").contains("cmd appops set com.a CAMERA ignore"))
+        assertTrue(AppOpsParser.safePkg("com.example.game"))
+        assertFalse(AppOpsParser.safePkg("com.example; rm -rf"))
+        assertFalse(AppOpsParser.safePkg(""))
+    }
+}
+
+class DebloatPresetsTest {
+    @Test
+    fun presetsOnlySafePkgs() {
+        val all = DebloatPresets.ALL.flatMap { it.pkgs }
+        val critical = listOf("android", "com.android.systemui", "com.google.android.gms", "com.android.phone")
+        critical.forEach { c -> assertFalse(all.contains(c)) }
+        assertTrue(DebloatPresets.META.pkgs.contains("com.facebook.katana"))
+        assertTrue(DebloatPresets.MIUI.pkgs.contains("com.miui.msa.global"))
+        assertTrue(DebloatPresets.SAMSUNG.pkgs.contains("com.samsung.android.bixby.agent"))
+    }
+
+    @Test
+    fun buildCmds() {
+        val cmd = DebloatPresets.buildDisable(listOf("com.a", "com.b"), 0)
+        assertTrue(cmd.contains("pm disable-user --user 0 com.a"))
+        assertTrue(DebloatPresets.buildEnable(listOf("com.a"), 0).contains("pm enable --user 0 com.a"))
+    }
+}
+
+class AudioPresetsTest {
+    @Test
+    fun applyCoversSnapshot() {
+        val cmd = AudioPresets.buildApply(AudioPresets.PRESET_LOWLAT)
+        AudioPresets.SNAPSHOT.forEach { ck ->
+            val (ns, k) = ck.split(":")
+            assertTrue(cmd.contains("settings put $ns $k"))
+        }
+        assertTrue(cmd.contains("bluetooth_disable_absolute_volume' '1'"))
+    }
+
+    @Test
+    fun resetRestoresOrDeletes() {
+        val cmd = AudioPresets.buildReset(
+            mapOf(
+                "system:sound_effects_enabled" to "1",
+                "system:haptic_feedback_enabled" to "null",
+                "global:bluetooth_disable_absolute_volume" to ""
+            )
+        )
+        assertTrue(cmd.contains("settings put system sound_effects_enabled '1'"))
+        assertTrue(cmd.contains("settings delete system haptic_feedback_enabled"))
+        assertTrue(cmd.contains("settings delete global bluetooth_disable_absolute_volume"))
+    }
+}
+
+class SensorCmdTest {
+    @Test
+    fun sdkGate() {
+        assertFalse(SensorCmd.sdkOk(30))
+        assertTrue(SensorCmd.sdkOk(31))
+        assertTrue(SensorCmd.sdkOk(34))
+    }
+
+    @Test
+    fun buildBlockUnblock() {
+        assertEquals("cmd sensor_privacy enable 0 2", SensorCmd.buildSet(0, SensorCmd.CAMERA, true))
+        assertEquals("cmd sensor_privacy disable 0 1", SensorCmd.buildSet(0, SensorCmd.MIC, false))
+        val both = SensorCmd.buildBlockBoth(0)
+        assertTrue(both.contains("enable 0 2") && both.contains("enable 0 1"))
+    }
+}

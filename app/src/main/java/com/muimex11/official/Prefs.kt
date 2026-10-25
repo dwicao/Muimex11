@@ -28,4 +28,13 @@ object Prefs {
     const val KEY_BATTERY_MODE = "BatteryMode"
     const val KEY_BATTERY_PREV = "BatteryPrev"
     const val KEY_DOZE_REMOVED = "DozeRemoved"
+
+    const val KEY_APPOPS_RULES = "AppOpsRules"
+    const val KEY_DEBLOAT_REMOVED = "DebloatRemoved"
+    const val KEY_SCHEDULE_SCREEN_OFF = "ScheduleScreenOff"
+    const val KEY_SCHEDULE_MODE = "ScheduleMode"
+    const val KEY_SCHEDULE_ACTIVE = "ScheduleActive"
+    const val KEY_AUDIO_PRESET = "AudioPreset"
+    const val KEY_AUDIO_PREV = "AudioPrev"
+    const val KEY_SENSORS_STATE = "SensorsState"
 }

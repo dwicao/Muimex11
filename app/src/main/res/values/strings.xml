@@ -600,4 +600,91 @@
     <string name="doze_forced">Doze forced (until screen wakes)</string>
     <string name="doze_restricted_fmt">Restricted %1$d apps from Doze exemption</string>
     <string name="doze_restored">Doze exemptions restored</string>
+
+    <string name="btn_delete">Delete</string>
+    <string name="btn_freeze_list">Freeze list</string>
+
+    <string name="title_appops">App Privacy (App Ops)</string>
+    <string name="desc_appops">Block camera, microphone and location per app via App Ops. Reversible, no root.</string>
+    <string name="appops_title">App Privacy</string>
+    <string name="appops_message">Pick an app, then tap a permission to cycle allow → block → default.</string>
+    <string name="appops_hint">Block = ignore (app gets empty data). Default = follow system grant.</string>
+    <string name="appops_camera">Camera</string>
+    <string name="appops_mic">Microphone</string>
+    <string name="appops_fine_loc">Precise location</string>
+    <string name="appops_coarse_loc">Approximate location</string>
+    <string name="appops_state_fmt">%1$s</string>
+    <string name="appops_set_fmt">%1$s → %2$s</string>
+    <string name="appops_reset_done">App permissions reset to default</string>
+
+    <string name="title_gameprofiles">Game Profiles</string>
+    <string name="desc_gameprofiles">Per-game tweaks auto-applied when the game opens: game mode, fixed performance, refresh rate, resolution scale.</string>
+    <string name="gprof_title">Game Profiles</string>
+    <string name="gprof_message">%1$d profiles saved. Tap an app to edit its profile.</string>
+    <string name="gprof_auto">Auto-boost on game launch</string>
+    <string name="gprof_auto_on_desc">On — profiles apply automatically</string>
+    <string name="gprof_auto_off_desc">Off — profiles stay dormant</string>
+    <string name="gprof_auto_on">Auto-boost on</string>
+    <string name="gprof_auto_off">Auto-boost off</string>
+    <string name="gprof_gamemode">Game Mode performance</string>
+    <string name="gprof_gamemode_desc">Android Game Mode for this app (Android 12+)</string>
+    <string name="gprof_fixed">Fixed performance</string>
+    <string name="gprof_fixed_desc">Lock CPU against downclocking in this game</string>
+    <string name="gprof_thermal">Thermal bypass</string>
+    <string name="gprof_thermal_desc">Suspend thermal throttling in this game</string>
+    <string name="gprof_120">120Hz lock</string>
+    <string name="gprof_120_desc">Min + peak refresh rate locked at 120</string>
+    <string name="gprof_refresh_fmt">Refresh %1$s</string>
+    <string name="gprof_refresh_default">Default</string>
+    <string name="gprof_res_fmt">Resolution %1$s</string>
+    <string name="gprof_follow_system">Follow system</string>
+    <string name="status_gprof_fmt">Status: %1$d profiles · auto %2$s</string>
+
+    <string name="title_debloat">Debloat Presets</string>
+    <string name="desc_debloat">One-tap disable of Meta, MIUI and Samsung telemetry/bloat. Only installed, non-critical apps. Reversible via freeze list.</string>
+    <string name="debloat_title">Debloat Presets</string>
+    <string name="debloat_message">Pick a preset. Only apps installed on this device are touched.</string>
+    <string name="debloat_meta">Meta / Facebook suite</string>
+    <string name="debloat_meta_desc">Facebook, Messenger, Meta services &amp; app manager</string>
+    <string name="debloat_miui">MIUI analytics &amp; ads</string>
+    <string name="debloat_miui_desc">Analytics, MSA, GetApps, YellowPage, Joyose, daemon</string>
+    <string name="debloat_samsung">Samsung Bixby &amp; AR</string>
+    <string name="debloat_samsung_desc">Bixby agent/service, Vision, AR Emoji/Drawing</string>
+    <string name="debloat_hint">Critical system apps (dialer, SMS, launcher, GMS) are never touched. Restore anytime from the freeze list.</string>
+    <string name="debloat_none">No apps from this preset are installed</string>
+
+    <string name="bat_sched">Auto on screen off</string>
+    <string name="bat_sched_on_desc">On — saver applies when screen turns off</string>
+    <string name="bat_sched_off_desc">Off — enable scheduled battery saving</string>
+    <string name="bat_sched_on">Screen-off schedule on</string>
+    <string name="bat_sched_off">Screen-off schedule off</string>
+    <string name="bat_sched_mode">Schedule mode</string>
+
+    <string name="title_audio">Audio Latency</string>
+    <string name="desc_audio">Faster touch sound path for gaming: touch sounds and haptics off, absolute Bluetooth volume on. Reversible.</string>
+    <string name="audio_title">Audio Latency</string>
+    <string name="audio_message">One preset tuned for gaming. Current values are saved first.</string>
+    <string name="audio_lowlat">Low latency</string>
+    <string name="audio_lowlat_desc">Touch sounds off, haptics off, BT absolute volume on</string>
+    <string name="audio_hint">Bluetooth absolute volume lets the phone (not the headset) control volume steps — fewer resyncs, steadier latency.</string>
+    <string name="audio_done">Low-latency audio on</string>
+    <string name="audio_reset_done">Audio settings restored</string>
+    <string name="status_audio_lowlat">Status: Low latency</string>
+    <string name="toast_audio_already">Audio preset already active — reset first</string>
+
+    <string name="title_sensors">Sensors Toggle</string>
+    <string name="desc_sensors">Block camera and microphone device-wide (Android 12+ sensor privacy). Reversible.</string>
+    <string name="sensors_title">Sensors Toggle</string>
+    <string name="sensors_message">Requires Android 12+. Blocking is device-wide until restored.</string>
+    <string name="sensors_camera">Camera</string>
+    <string name="sensors_mic">Microphone</string>
+    <string name="sensors_on_fmt">Allowed</string>
+    <string name="sensors_off_fmt">Blocked</string>
+    <string name="sensors_hint">Uses the system sensor-privacy switch — same as the quick-settings tile. Banking and camera apps will see no input while blocked.</string>
+    <string name="sensors_blocked_fmt">%1$s blocked</string>
+    <string name="sensors_allowed_fmt">%1$s allowed</string>
+    <string name="status_sensors_both">Status: Camera + mic blocked</string>
+    <string name="status_sensors_cam">Status: Camera blocked</string>
+    <string name="status_sensors_mic">Status: Mic blocked</string>
+    <string name="sensors_reset_done">Sensors restored</string>
 </resources>

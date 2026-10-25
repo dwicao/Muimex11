@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     internal var isMonitorEnabled = false
     internal var isAutoClickEnabled = false
     internal var isGameSpaceEnabled = false
+    internal var screenScheduleReceiver: android.content.BroadcastReceiver? = null
 
     internal var onScriptPicked: ((Uri?) -> Unit)? = null
     internal val scriptPicker = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
@@ -78,6 +79,7 @@ class MainActivity : AppCompatActivity() {
         setupStatusStyling()
         refreshFreezeStatus()
         setupLanguageIfNeeded()
+        syncScreenSchedule()
 
         isGameSpaceEnabled = getSharedPreferences(Prefs.MAIN, MODE_PRIVATE)
             .getBoolean(Prefs.KEY_GAMESPACE_ENABLED, false)
@@ -90,6 +92,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         updateDeviceInfo()
         refreshFreezeStatus()
+        syncScreenSchedule()
 
         // Sync Game Space state — the service may have been closed from its
         // own floating panel since the last tap here.
@@ -107,6 +110,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        stopScreenSchedule()
         Shizuku.removeRequestPermissionResultListener(permissionListener)
     }
 

@@ -21,7 +21,12 @@ private class SystemStatuses(
     val blurs: String,
     val dnd: String,
     val devOptions: String,
-    val battery: String
+    val battery: String,
+    val appOps: String,
+    val gameProfiles: String,
+    val debloat: String,
+    val audio: String,
+    val sensors: String
 )
 
 internal fun MainActivity.fetchSystemStatuses() {
@@ -98,6 +103,22 @@ private fun MainActivity.readSystemStatuses(prefs: SharedPreferences): SystemSta
     val batteryMode = prefs.getString(Prefs.KEY_BATTERY_MODE, BatterySaver.MODE_OFF).orEmpty()
     val batteryStatus = getString(BatterySaver.labelRes(batteryMode))
 
+    val opsCount = appOpsRulesCount(prefs)
+    val appOpsStatus = if (opsCount == 0) getString(R.string.status_default)
+    else getString(R.string.status_value, opsCount.toString())
+
+    val gameProfilesStatus = gameProfilesStatusText(this)
+
+    val debloatN = debloatRemovedCount(prefs)
+    val debloatStatus = if (debloatN == 0) getString(R.string.status_ready)
+    else resources.getQuantityString(R.plurals.status_frozen_apps, debloatN, debloatN)
+
+    val audioPreset = prefs.getString(Prefs.KEY_AUDIO_PRESET, AudioPresets.PRESET_OFF).orEmpty()
+    val audioStatus = if (audioPreset == AudioPresets.PRESET_LOWLAT) getString(R.string.status_audio_lowlat)
+    else getString(R.string.status_default)
+
+    val sensorsStatus = sensorsStatusText(prefs)
+
     return SystemStatuses(
         fixedPerf = fixedPerfStatus,
         thermal = thermalStatus,
@@ -111,7 +132,12 @@ private fun MainActivity.readSystemStatuses(prefs: SharedPreferences): SystemSta
         blurs = blursStatus,
         dnd = headsUpStatus,
         devOptions = devOptStatus,
-        battery = batteryStatus
+        battery = batteryStatus,
+        appOps = appOpsStatus,
+        gameProfiles = gameProfilesStatus,
+        debloat = debloatStatus,
+        audio = audioStatus,
+        sensors = sensorsStatus
     )
 }
 
@@ -129,6 +155,11 @@ private fun MainActivity.renderSystemStatuses(s: SystemStatuses) {
     findViewById<TextView>(R.id.tvStatusDnd).text = s.dnd
     findViewById<TextView>(R.id.tvStatusDevOptions).text = s.devOptions
     findViewById<TextView>(R.id.tvStatusBatterySaver).text = s.battery
+    findViewById<TextView>(R.id.tvStatusAppOps).text = s.appOps
+    findViewById<TextView>(R.id.tvStatusGameProfiles).text = s.gameProfiles
+    findViewById<TextView>(R.id.tvStatusDebloat).text = s.debloat
+    findViewById<TextView>(R.id.tvStatusAudio).text = s.audio
+    findViewById<TextView>(R.id.tvStatusSensors).text = s.sensors
 }
 
 private fun MainActivity.renderOverlayStatuses(prefs: SharedPreferences) {

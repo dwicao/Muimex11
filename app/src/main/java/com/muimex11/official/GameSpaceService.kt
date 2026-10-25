@@ -734,7 +734,10 @@ class GameSpaceService : Service() {
                         lastPkg = pkg
                         lastCount = -1L
                         lastAt = 0L
-                        if (pkg != null) applyAutoBoost(pkg)
+                        if (pkg != null) {
+                            resetProfileDisplay()
+                            applyAutoBoost(pkg)
+                        }
                     }
                     if (pkg != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         val out = query("dumpsys gfxinfo $pkg")
@@ -782,7 +785,39 @@ class GameSpaceService : Service() {
         }
     }
 
+    private var lastDisplayPkg: String? = null
+
+    private fun profileHasDisplay(p: GameProfile): Boolean =
+        p.refresh120 || (p.refreshMin > 0 && p.refreshMax > 0) ||
+            p.resScale == 0.75f || p.resScale == 0.5f
+
+    /** Restore display keys touched by the previous game's profile. */
+    private fun resetProfileDisplay() {
+        if (lastDisplayPkg == null) return
+        lastDisplayPkg = null
+        ioScope.launch {
+            try {
+                exec("settings delete system min_refresh_rate; settings delete system peak_refresh_rate; wm size reset; wm density reset")
+            } catch (_: Exception) {}
+        }
+    }
+
+    private fun applyResScale(scale: Float) {
+        if (scale != 0.75f && scale != 0.5f) return
+        val real = screenBounds()
+        if (real.width() == 0) return
+        val dpi = resources.displayMetrics.densityDpi
+        val w = (real.width() * scale).toInt()
+        val h = (real.height() * scale).toInt()
+        val d = (dpi * scale).toInt()
+        exec("wm size ${w}x$h && wm density $d")
+    }
+
     private fun applyAutoBoost(pkg: String) {
+        // Scheduled battery saver pauses while gaming so perf profiles win.
+        try {
+            BatterySchedule.pauseForGame(this)
+        } catch (_: Exception) {}
         if (!GameProfileStore.isAutoBoost(this)) return
         val p = GameProfileStore.get(this, pkg) ?: return
         ioScope.launch {
@@ -791,6 +826,9 @@ class GameSpaceService : Service() {
                 if (p.fixedPerf) exec("cmd power set-fixed-performance-mode-enabled true")
                 if (p.thermalBypass) exec("cmd thermalservice override-status 0")
                 if (p.refresh120) exec("settings put system peak_refresh_rate 120 && settings put system min_refresh_rate 120")
+                else if (p.refreshMin > 0 && p.refreshMax > 0) exec("settings put system min_refresh_rate ${p.refreshMin} && settings put system peak_refresh_rate ${p.refreshMax}")
+                if (p.resScale == 0.75f || p.resScale == 0.5f) applyResScale(p.resScale)
+                if (profileHasDisplay(p)) lastDisplayPkg = pkg
             } catch (_: Exception) {}
         }
     }

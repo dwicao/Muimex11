@@ -155,3 +155,132 @@ object DozeParser {
     fun buildRestoreCmd(pkgs: List<String>): String =
         pkgs.joinToString(" && ") { "dumpsys deviceidle whitelist +$it" }
 }
+
+/** Pure `cmd appops` helpers — unit-testable. No root needed. */
+object AppOpsParser {
+    const val MODE_ALLOW = "allow"
+    const val MODE_IGNORE = "ignore"
+    const val MODE_DEFAULT = "default"
+
+    /** Ops exposed in the UI. */
+    val OPS = listOf("CAMERA", "RECORD_AUDIO", "ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION")
+
+    private val lineRe = Regex("^\\s*([A-Z_]+)\\s*:\\s*(\\w+)", RegexOption.MULTILINE)
+
+    /** Parse `cmd appops get <pkg>` output into op -> mode. */
+    fun parseGet(dump: String): Map<String, String> =
+        lineRe.findAll(dump).associate { m ->
+            m.groupValues[1] to m.groupValues[2].lowercase()
+        }
+
+    fun buildSet(pkg: String, op: String, mode: String): String =
+        "cmd appops set $pkg $op $mode"
+
+    fun buildReset(pkg: String, op: String): String =
+        "cmd appops set $pkg $op $MODE_DEFAULT"
+
+    fun safePkg(pkg: String): Boolean = pkg.matches(Regex("^[A-Za-z0-9._]+$")) &&
+        OPS.isNotEmpty() && pkg.length <= 256
+}
+
+/** Conservative debloat presets — unit-testable. Only ads/telemetry/assistant pkgs. */
+object DebloatPresets {
+    data class Preset(val id: String, val pkgs: List<String>)
+
+    val META = Preset(
+        "meta", listOf(
+            "com.facebook.katana", "com.facebook.orca", "com.facebook.services",
+            "com.facebook.system", "com.facebook.appmanager",
+            "com.meta.appmanager", "com.meta.services", "com.meta.system"
+        )
+    )
+    val MIUI = Preset(
+        "miui", listOf(
+            "com.miui.analytics", "com.miui.msa.global", "com.xiaomi.mipicks",
+            "com.miui.yellowpage", "com.xiaomi.joyose", "com.miui.daemon"
+        )
+    )
+    val SAMSUNG = Preset(
+        "samsung", listOf(
+            "com.samsung.android.bixby.agent", "com.samsung.android.bixby.service",
+            "com.samsung.android.visionintelligence", "com.samsung.android.aremoji",
+            "com.samsung.android.ardrawing"
+        )
+    )
+
+    val ALL = listOf(META, MIUI, SAMSUNG)
+
+    fun buildDisable(pkgs: List<String>, userId: Int): String =
+        pkgs.joinToString(" && ") { "pm disable-user --user $userId $it" }
+
+    fun buildEnable(pkgs: List<String>, userId: Int): String =
+        pkgs.joinToString(" && ") { "pm enable --user $userId $it" }
+}
+
+/** Pure audio/latency preset helpers — unit-testable. Reversible settings only. */
+object AudioPresets {
+    const val PRESET_OFF = "off"
+    const val PRESET_LOWLAT = "lowlat"
+
+    /** namespace to keys snapshotted before applying. */
+    val SNAPSHOT = listOf(
+        "system:sound_effects_enabled",
+        "system:haptic_feedback_enabled",
+        "global:bluetooth_disable_absolute_volume"
+    )
+
+    fun key(ns: String, k: String) = "$ns:$k"
+
+    /** Preset values. */
+    fun presetFor(preset: String): Map<String, String> = when (preset) {
+        PRESET_LOWLAT -> mapOf(
+            key("system", "sound_effects_enabled") to "0",
+            key("system", "haptic_feedback_enabled") to "0",
+            key("global", "bluetooth_disable_absolute_volume") to "1"
+        )
+        else -> mapOf(
+            key("system", "sound_effects_enabled") to "1",
+            key("system", "haptic_feedback_enabled") to "1",
+            key("global", "bluetooth_disable_absolute_volume") to "0"
+        )
+    }
+
+    fun getCmd(ns: String, k: String): String = "settings get $ns $k"
+
+    fun buildApply(preset: String): String {
+        val p = presetFor(preset)
+        return SNAPSHOT.joinToString("; ") { ck ->
+            val (ns, k) = ck.split(":")
+            "settings put $ns $k '${p[ck].orEmpty()}'"
+        }
+    }
+
+    /** prev: composite "ns:key" -> raw `settings get` output. */
+    fun buildReset(prev: Map<String, String>): String {
+        return SNAPSHOT.joinToString("; ") { ck ->
+            val (ns, k) = ck.split(":")
+            val v = prev[ck].orEmpty().trim()
+            if (v == "null" || v.isEmpty()) "settings delete $ns $k"
+            else "settings put $ns $k '$v'"
+        }
+    }
+}
+
+/** Pure Android 12+ sensor-privacy helpers — unit-testable. */
+object SensorCmd {
+    const val MIC = 1
+    const val CAMERA = 2
+
+    fun sdkOk(sdkInt: Int): Boolean = sdkInt >= 31
+
+    /** `block=true` = `enable` privacy (sensor OFF). Confusing AOSP naming kept explicit. */
+    fun buildSet(userId: Int, sensor: Int, block: Boolean): String =
+        if (block) "cmd sensor_privacy enable $userId $sensor"
+        else "cmd sensor_privacy disable $userId $sensor"
+
+    fun buildBlockBoth(userId: Int): String =
+        "${buildSet(userId, CAMERA, true)}; ${buildSet(userId, MIC, true)}"
+
+    fun buildUnblockBoth(userId: Int): String =
+        "${buildSet(userId, CAMERA, false)}; ${buildSet(userId, MIC, false)}"
+}

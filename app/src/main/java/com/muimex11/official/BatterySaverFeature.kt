@@ -57,6 +57,37 @@ internal fun MainActivity.showBatterySaverSheet(prefs: SharedPreferences) {
         sheet.dismiss()
         showDozeSheet(prefs)
     })
+    val schedOn = BatterySchedule.isEnabled(this)
+    list.addView(optionRow(
+        this,
+        getString(R.string.bat_sched),
+        getString(if (schedOn) R.string.bat_sched_on_desc else R.string.bat_sched_off_desc),
+        selected = schedOn
+    ) {
+        sheet.dismiss()
+        BatterySchedule.setEnabled(this, !schedOn)
+        syncScreenSchedule()
+        UiToast.success(
+            this,
+            getString(if (!schedOn) R.string.bat_sched_on else R.string.bat_sched_off),
+            Toast.LENGTH_SHORT
+        ).show()
+    })
+    if (schedOn) {
+        val sm = BatterySchedule.mode(this)
+        list.addView(optionRow(
+            this,
+            getString(R.string.bat_sched_mode),
+            getString(if (sm == BatterySaver.MODE_EXTREME) R.string.bat_extreme else R.string.bat_saver)
+        ) {
+            sheet.dismiss()
+            BatterySchedule.setMode(
+                this,
+                if (sm == BatterySaver.MODE_EXTREME) BatterySaver.MODE_SAVER else BatterySaver.MODE_EXTREME
+            )
+            showBatterySaverSheet(prefs)
+        })
+    }
     sheet.content(list).button(getString(R.string.btn_cancel), SheetStyle.TEXT).show()
 }
 
@@ -131,5 +162,6 @@ internal fun clearBatteryPrefs(prefs: SharedPreferences) {
     prefs.edit()
         .putString(Prefs.KEY_BATTERY_MODE, BatterySaver.MODE_OFF)
         .remove(Prefs.KEY_BATTERY_PREV)
+        .putBoolean(Prefs.KEY_SCHEDULE_ACTIVE, false)
         .apply()
 }

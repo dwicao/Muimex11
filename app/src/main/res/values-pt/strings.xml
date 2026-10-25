@@ -591,4 +591,91 @@
     <string name="doze_restricted_fmt">%1$d apps removidos da isenção Doze</string>
     <string name="doze_restored">Isenções Doze restauradas</string>
 
+    <string name="btn_delete">Excluir</string>
+    <string name="btn_freeze_list">Lista freeze</string>
+
+    <string name="title_appops">Privacidade de apps (App Ops)</string>
+    <string name="desc_appops">Bloqueie câmera, microfone e localização por app via App Ops. Reversível, sem root.</string>
+    <string name="appops_title">Privacidade de apps</string>
+    <string name="appops_message">Escolha um app e toque numa permissão para alternar permitir → bloquear → padrão.</string>
+    <string name="appops_hint">Bloquear = ignorar (app recebe dados vazios). Padrão = segue concessão do sistema.</string>
+    <string name="appops_camera">Câmera</string>
+    <string name="appops_mic">Microfone</string>
+    <string name="appops_fine_loc">Localização precisa</string>
+    <string name="appops_coarse_loc">Localização aproximada</string>
+    <string name="appops_state_fmt">%1$s</string>
+    <string name="appops_set_fmt">%1$s → %2$s</string>
+    <string name="appops_reset_done">Permissões do app restauradas ao padrão</string>
+
+    <string name="title_gameprofiles">Perfis de jogo</string>
+    <string name="desc_gameprofiles">Ajustes por jogo aplicados ao abrir: modo jogo, performance fixa, taxa de atualização, escala de resolução.</string>
+    <string name="gprof_title">Perfis de jogo</string>
+    <string name="gprof_message">%1$d perfis salvos. Toque num app para editar.</string>
+    <string name="gprof_auto">Auto-boost ao abrir jogo</string>
+    <string name="gprof_auto_on_desc">Ligado — perfis aplicam sozinhos</string>
+    <string name="gprof_auto_off_desc">Desligado — perfis inativos</string>
+    <string name="gprof_auto_on">Auto-boost ligado</string>
+    <string name="gprof_auto_off">Auto-boost desligado</string>
+    <string name="gprof_gamemode">Modo jogo performance</string>
+    <string name="gprof_gamemode_desc">Modo jogo do Android neste app (Android 12+)</string>
+    <string name="gprof_fixed">Performance fixa</string>
+    <string name="gprof_fixed_desc">Trava CPU contra queda de clock neste jogo</string>
+    <string name="gprof_thermal">Bypass térmico</string>
+    <string name="gprof_thermal_desc">Suspende limite térmico neste jogo</string>
+    <string name="gprof_120">Trava 120Hz</string>
+    <string name="gprof_120_desc">Taxa mínima + máxima travada em 120</string>
+    <string name="gprof_refresh_fmt">Atualização %1$s</string>
+    <string name="gprof_refresh_default">Padrão</string>
+    <string name="gprof_res_fmt">Resolução %1$s</string>
+    <string name="gprof_follow_system">Segue sistema</string>
+    <string name="status_gprof_fmt">Status: %1$d perfis · auto %2$s</string>
+
+    <string name="title_debloat">Presets debloat</string>
+    <string name="desc_debloat">Desative telemetria/bloat Meta, MIUI e Samsung num toque. Só apps instalados e não críticos. Reversível.</string>
+    <string name="debloat_title">Presets debloat</string>
+    <string name="debloat_message">Escolha um preset. Só apps instalados neste aparelho são tocados.</string>
+    <string name="debloat_meta">Pacote Meta / Facebook</string>
+    <string name="debloat_meta_desc">Facebook, Messenger, serviços Meta e gerenciador</string>
+    <string name="debloat_miui">Analytics e ads MIUI</string>
+    <string name="debloat_miui_desc">Analytics, MSA, GetApps, YellowPage, Joyose, daemon</string>
+    <string name="debloat_samsung">Bixby e AR Samsung</string>
+    <string name="debloat_samsung_desc">Agente/serviço Bixby, Vision, AR Emoji/Desenho</string>
+    <string name="debloat_hint">Apps críticos (discador, SMS, launcher, GMS) nunca são tocados. Restaure na lista freeze.</string>
+    <string name="debloat_none">Nenhum app deste preset está instalado</string>
+
+    <string name="bat_sched">Auto com tela off</string>
+    <string name="bat_sched_on_desc">Ligado — economia aplica com tela desligada</string>
+    <string name="bat_sched_off_desc">Desligado — ative economia agendada</string>
+    <string name="bat_sched_on">Agendamento tela-off ligado</string>
+    <string name="bat_sched_off">Agendamento tela-off desligado</string>
+    <string name="bat_sched_mode">Modo agendado</string>
+
+    <string name="title_audio">Latência de áudio</string>
+    <string name="desc_audio">Caminho de som mais rápido: sons de toque e hápticos off, volume absoluto Bluetooth on. Reversível.</string>
+    <string name="audio_title">Latência de áudio</string>
+    <string name="audio_message">Um preset para jogos. Valores atuais são salvos antes.</string>
+    <string name="audio_lowlat">Baixa latência</string>
+    <string name="audio_lowlat_desc">Sons off, hápticos off, volume absoluto BT on</string>
+    <string name="audio_hint">Volume absoluto deixa o celular (não o fone) controlar passos de volume — menos ressincronia, latência estável.</string>
+    <string name="audio_done">Áudio de baixa latência ativado</string>
+    <string name="audio_reset_done">Configurações de áudio restauradas</string>
+    <string name="status_audio_lowlat">Status: Baixa latência</string>
+    <string name="toast_audio_already">Preset de áudio já ativo — restaure antes</string>
+
+    <string name="title_sensors">Chave de sensores</string>
+    <string name="desc_sensors">Bloqueie câmera e microfone no aparelho todo (privacidade de sensores, Android 12+). Reversível.</string>
+    <string name="sensors_title">Chave de sensores</string>
+    <string name="sensors_message">Exige Android 12+. Bloqueio vale no aparelho todo até restaurar.</string>
+    <string name="sensors_camera">Câmera</string>
+    <string name="sensors_mic">Microfone</string>
+    <string name="sensors_on_fmt">Permitido</string>
+    <string name="sensors_off_fmt">Bloqueado</string>
+    <string name="sensors_hint">Usa a chave de privacidade do sistema — igual ao tile de acesso rápido. Apps de banco e câmera não verão entrada enquanto bloqueado.</string>
+    <string name="sensors_blocked_fmt">%1$s bloqueado</string>
+    <string name="sensors_allowed_fmt">%1$s permitido</string>
+    <string name="status_sensors_both">Status: Câmera + mic bloqueados</string>
+    <string name="status_sensors_cam">Status: Câmera bloqueada</string>
+    <string name="status_sensors_mic">Status: Mic bloqueado</string>
+    <string name="sensors_reset_done">Sensores restaurados</string>
+
 </resources>

@@ -189,6 +189,52 @@ private fun MainActivity.setupToolsCardListeners(prefs: SharedPreferences) {
         if (!hasShizukuPermission()) return@setOnClickListener
         resetBatterySaver(prefs)
     }
+
+    findViewById<CardView>(R.id.cardAppOps).setOnClickListener { showAppOpsSheet(prefs) }
+
+    findViewById<CardView>(R.id.cardGameProfiles).setOnClickListener { showGameProfilesSheet() }
+
+    findViewById<CardView>(R.id.cardDebloat).setOnClickListener { showDebloatSheet(prefs) }
+
+    findViewById<CardView>(R.id.cardAudioLatency).setOnClickListener { showAudioSheet(prefs) }
+
+    findViewById<CardView>(R.id.cardSensorsToggle).setOnClickListener { showSensorsSheet(prefs) }
+
+    findViewById<TextView>(R.id.btnResetAppOps).setOnClickListener {
+        if (!hasShizukuPermission()) return@setOnClickListener
+        val cmd = appOpsResetCmdForAll(prefs)
+        if (cmd == null) {
+            UiToast.info(this, getString(R.string.toast_no_apps), Toast.LENGTH_SHORT).show()
+            return@setOnClickListener
+        }
+        runAdbCommand(cmd, getString(R.string.appops_reset_done)) {
+            prefs.edit().remove(Prefs.KEY_APPOPS_RULES).apply()
+            fetchSystemStatuses()
+        }
+    }
+    findViewById<TextView>(R.id.btnResetGameProfiles).setOnClickListener {
+        GameProfileStore.setAutoBoost(this, false)
+        findViewById<TextView>(R.id.tvStatusGameProfiles).text = gameProfilesStatusText(this)
+        UiToast.success(this, getString(R.string.toast_status_reset), Toast.LENGTH_SHORT).show()
+    }
+    findViewById<TextView>(R.id.btnResetDebloat).setOnClickListener { restoreAllFrozen() }
+    findViewById<TextView>(R.id.btnResetAudio).setOnClickListener {
+        if (!hasShizukuPermission()) return@setOnClickListener
+        resetAudioPreset(prefs)
+    }
+    findViewById<TextView>(R.id.btnResetSensors).setOnClickListener {
+        if (!hasShizukuPermission()) return@setOnClickListener
+        val cmd = sensorsResetCmd(prefs)
+        if (cmd == null) {
+            UiToast.info(this, getString(R.string.toast_no_apps), Toast.LENGTH_SHORT).show()
+            return@setOnClickListener
+        }
+        runAdbCommand(cmd, getString(R.string.sensors_reset_done)) {
+            clearSensorsPrefs(prefs)
+            findViewById<TextView>(R.id.tvStatusSensors).text = getString(R.string.status_default)
+            fetchSystemStatuses()
+        }
+    }
 }
 
 private fun MainActivity.setupOverlayResetListeners() {
@@ -297,11 +343,16 @@ internal fun MainActivity.resetAllFunctions(prefs: android.content.SharedPrefere
         val batteryReset = batteryResetCmdForAll(prefs)
         val dozeReset = dozeResetCmdForAll(prefs)
         val dozePart = if (dozeReset != null) "$dozeReset && " else ""
+        val appOpsReset = appOpsResetCmdForAll(prefs)
+        val appOpsPart = if (appOpsReset != null) "$appOpsReset && " else ""
+        val audioReset = audioResetCmdForAll(prefs)
+        val sensorsReset = sensorsResetCmd(prefs)
+        val sensorsPart = if (sensorsReset != null) "$sensorsReset && " else ""
 
         val resetCmd = """
             cmd power set-fixed-performance-mode-enabled false
             cmd thermalservice reset
-            $gameModeReset$aggressiveReset$batteryReset && $dozePart
+            $gameModeReset$aggressiveReset$batteryReset && $dozePart$appOpsPart$audioReset && $sensorsPart
             settings delete system min_refresh_rate
             settings delete system peak_refresh_rate
             wm size reset
@@ -324,9 +375,12 @@ internal fun MainActivity.resetAllFunctions(prefs: android.content.SharedPrefere
                 .putBoolean(Prefs.KEY_FIXED_PERF_AGGRESSIVE, false)
                 .putBoolean(Prefs.KEY_THERMAL_DISABLED, false)
                 .putString(Prefs.KEY_LAST_GAME_MODE, "")
+                .remove(Prefs.KEY_APPOPS_RULES)
                 .apply()
             clearBatteryPrefs(prefs)
             clearDozePrefs(prefs)
+            clearAudioPrefs(prefs)
+            clearSensorsPrefs(prefs)
 
 
             if (isMonitorEnabled) {
@@ -343,6 +397,11 @@ internal fun MainActivity.resetAllFunctions(prefs: android.content.SharedPrefere
             findViewById<TextView>(R.id.tvStatusFixedPerf).text = getString(R.string.status_default)
             findViewById<TextView>(R.id.tvStatusOptimize).text = getString(R.string.status_ready)
             findViewById<TextView>(R.id.tvStatusBatterySaver).text = getString(R.string.status_default)
+            findViewById<TextView>(R.id.tvStatusAppOps).text = getString(R.string.status_default)
+            findViewById<TextView>(R.id.tvStatusGameProfiles).text = gameProfilesStatusText(this)
+            findViewById<TextView>(R.id.tvStatusDebloat).text = getString(R.string.status_ready)
+            findViewById<TextView>(R.id.tvStatusAudio).text = getString(R.string.status_default)
+            findViewById<TextView>(R.id.tvStatusSensors).text = getString(R.string.status_default)
 
             findViewById<TextView>(R.id.tvStatusFstrim).text = getString(R.string.status_ready)
             findViewById<TextView>(R.id.tvStatusRamBooster).text = getString(R.string.status_ready)
