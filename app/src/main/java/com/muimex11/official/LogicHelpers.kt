@@ -217,9 +217,31 @@ object DebloatPresets {
         pkgs.joinToString(" && ") { "pm enable --user $userId $it" }
 }
 
+/** Bounded adaptive-thermal threshold presets — unit-testable.
+ * Free numeric input is deliberately NOT offered: a release point of 60C
+ * would cook the device, an engage point near room temp degrades to a dumb
+ * always-on bypass. Presets keep every combination inside a safe band. */
+object ThermalPresets {
+    data class Preset(val id: String, val low: Int, val high: Int)
+
+    val CONSERVATIVE = Preset("conservative", 36, 43)
+    val BALANCED = Preset("balanced", 38, 45)
+    val AGGRESSIVE = Preset("aggressive", 40, 48)
+
+    val ALL = listOf(CONSERVATIVE, BALANCED, AGGRESSIVE)
+
+    fun isSane(low: Int, high: Int): Boolean =
+        low in 30..50 && high in 35..55 && low + 3 <= high
+
+    fun clamp(low: Int, high: Int): Pair<Int, Int> {
+        val l = low.coerceIn(30, 50)
+        val h = high.coerceIn(35, 55)
+        return if (l + 3 <= h) l to h else BALANCED.low to BALANCED.high
+    }
+}
+
 /** Pure audio/latency preset helpers — unit-testable. Reversible settings only. */
-object AudioPresets {
-    const val PRESET_OFF = "off"
+object AudioPresets {    const val PRESET_OFF = "off"
     const val PRESET_LOWLAT = "lowlat"
 
     /** namespace to keys snapshotted before applying. */

@@ -167,18 +167,7 @@ private fun MainActivity.setupToolsCardListeners(prefs: SharedPreferences) {
     }
 
     findViewById<CardView>(R.id.cardThermalThrottling).setOnClickListener {
-        Sheet(this)
-            .icon(R.drawable.ic_warning, Color.parseColor("#E53935"))
-            .title(getString(R.string.dlg_thermal_title))
-            .message(getString(R.string.dlg_thermal_msg))
-            .button(getString(R.string.btn_cancel), SheetStyle.TONAL)
-            .button(getString(R.string.btn_enable), SheetStyle.DANGER) {
-                runAdbCommand("cmd thermalservice override-status 0", getString(R.string.msg_thermal_off)) {
-                    prefs.edit().putBoolean(Prefs.KEY_THERMAL_DISABLED, true).apply()
-                    fetchSystemStatuses()
-                }
-            }
-            .show()
+        showThermalSheet(prefs)
     }
 
     findViewById<CardView>(R.id.cardBatterySaver).setOnClickListener {
@@ -283,10 +272,7 @@ private fun MainActivity.setupTweakResetListeners(prefs: SharedPreferences) {
         }
     }
     findViewById<TextView>(R.id.btnResetThermal).setOnClickListener {
-        runAdbCommand("cmd thermalservice reset", getString(R.string.msg_thermal_restored)) {
-            prefs.edit().putBoolean(Prefs.KEY_THERMAL_DISABLED, false).apply()
-            fetchSystemStatuses()
-        }
+        resetThermal(prefs)
     }
     findViewById<TextView>(R.id.btnResetGameMode).setOnClickListener {
         val lastGame = prefs.getString(Prefs.KEY_LAST_GAME_MODE, "")
@@ -397,9 +383,11 @@ internal fun MainActivity.resetAllFunctions(prefs: android.content.SharedPrefere
                 .putBoolean(Prefs.KEY_FIXED_PERF, false)
                 .putBoolean(Prefs.KEY_FIXED_PERF_AGGRESSIVE, false)
                 .putBoolean(Prefs.KEY_THERMAL_DISABLED, false)
+                .putBoolean(Prefs.KEY_THERMAL_ADAPTIVE, false)
                 .putString(Prefs.KEY_LAST_GAME_MODE, "")
                 .remove(Prefs.KEY_APPOPS_RULES)
                 .apply()
+            syncThermalService(0)
             clearBatteryPrefs(prefs)
             clearDozePrefs(prefs)
             clearAudioPrefs(prefs)

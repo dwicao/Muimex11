@@ -287,8 +287,7 @@ class HibernationTest {
     }
 }
 
-class BenchmarkCalcTest {
-    @Test
+class BenchmarkCalcTest {    @Test
     fun parsesAmStartW() {
         val dump = "Starting: Intent {}\nStatus: ok\nActivity: com.a/.Main\nThisTime: 120\nTotalTime: 345\nWaitTime: 360\nComplete\n"
         assertEquals(345L, BenchmarkCalc.parseAmStartW(dump))
@@ -301,5 +300,25 @@ class BenchmarkCalcTest {
         assertEquals(0L, BenchmarkCalc.avg(emptyList()))
         assertEquals(60, BenchmarkCalc.fps(900, 0, 15_000))
         assertNull(BenchmarkCalc.fps(50_000, 0, 15_000))
+    }
+}
+
+class ThermalPresetsTest {
+    @Test
+    fun presetsAreSane() {
+        ThermalPresets.ALL.forEach {
+            assertTrue(ThermalPresets.isSane(it.low, it.high))
+        }
+        assertEquals(38, ThermalPresets.BALANCED.low)
+        assertEquals(45, ThermalPresets.BALANCED.high)
+    }
+
+    @Test
+    fun rejectsUnsafe() {
+        assertFalse(ThermalPresets.isSane(60, 65))
+        assertFalse(ThermalPresets.isSane(25, 90))
+        assertFalse(ThermalPresets.isSane(44, 45))
+        // clamp falls back to balanced when unfixable
+        assertEquals(38 to 45, ThermalPresets.clamp(60, 20))
     }
 }

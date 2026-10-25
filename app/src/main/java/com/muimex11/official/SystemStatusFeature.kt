@@ -51,8 +51,7 @@ private fun MainActivity.readSystemStatuses(prefs: SharedPreferences): SystemSta
         getString(if (prefs.getBoolean(Prefs.KEY_FIXED_PERF_AGGRESSIVE, false)) R.string.status_enabled_aggr else R.string.status_enabled)
     else getString(R.string.status_default)
 
-    val isThermalDisabled = prefs.getBoolean(Prefs.KEY_THERMAL_DISABLED, false)
-    val thermalStatus = if (isThermalDisabled) getString(R.string.status_throttling_disabled) else getString(R.string.status_default)
+    val thermalStatus = thermalStatusText(prefs)
 
     val lastGameMode = prefs.getString(Prefs.KEY_LAST_GAME_MODE, "")
     val gameModeStatus = if (lastGameMode.isNullOrEmpty()) getString(R.string.status_default) else getString(R.string.status_active, lastGameMode.orEmpty())

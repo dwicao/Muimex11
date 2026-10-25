@@ -114,7 +114,9 @@ internal fun MainActivity.applyBatterySaver(prefs: SharedPreferences, mode: Stri
                         .putBoolean(Prefs.KEY_FIXED_PERF, false)
                         .putBoolean(Prefs.KEY_FIXED_PERF_AGGRESSIVE, false)
                         .putBoolean(Prefs.KEY_THERMAL_DISABLED, false)
+                        .putBoolean(Prefs.KEY_THERMAL_ADAPTIVE, false)
                         .apply()
+                    syncThermalService(0)
                 }
                 findViewById<TextView>(R.id.tvStatusBatterySaver).text = getString(BatterySaver.labelRes(mode))
                 fetchSystemStatuses()

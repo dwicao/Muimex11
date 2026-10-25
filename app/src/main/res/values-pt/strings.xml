@@ -719,4 +719,21 @@
     <string name="status_bench_fmt">Status: %1$s %2$dms · %3$s FPS</string>
     <string name="toast_bench_kept">Histórico mantido — dados de benchmark nunca apagados</string>
 
+    <string name="thermal_off">Desligado</string>
+    <string name="thermal_off_desc">Controle de volta para o sistema</string>
+    <string name="thermal_manual">Bypass manual</string>
+    <string name="thermal_manual_desc">Sempre ignora throttling (esquenta)</string>
+    <string name="thermal_adaptive">Adaptivo</string>
+    <string name="thermal_adaptive_desc">Bypass só com aparelho frio, libera ao esquentar (%1$d°/%2$d°)</string>
+    <string name="thermal_threshold">Limites de temperatura</string>
+    <string name="thermal_threshold_fmt">%1$d° ativa · %2$d° libera</string>
+    <string name="thermal_threshold_msg">Menor = mais frio mas throttla cedo. Maior = mais FPS, mais calor.</string>
+    <string name="thermal_threshold_set">Limites: %1$d° / %2$d°</string>
+    <string name="thermal_preset_conservative">Conservador</string>
+    <string name="thermal_preset_balanced">Equilibrado</string>
+    <string name="thermal_preset_aggressive">Agressivo</string>
+    <string name="thermal_adaptive_note">Adaptivo precisa do dock Game Space rodando — ele hospeda o governador. Ativar inicia o dock.</string>
+    <string name="thermal_adaptive_on">Térmico adaptivo on (%1$d°/%2$d°)</string>
+    <string name="status_thermal_adaptive_fmt">Status: Adaptivo (%1$d°/%2$d°)</string>
+
 </resources>

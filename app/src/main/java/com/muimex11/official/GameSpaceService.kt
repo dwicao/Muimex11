@@ -59,6 +59,9 @@ class GameSpaceService : Service() {
         /** Live state used by MainActivity so toggling always reflects reality. */
         @Volatile
         var isRunning: Boolean = false
+
+        const val ACTION_THERMAL = "com.muimex11.action.THERMAL_MODE"
+        const val EXTRA_THERMAL_MODE = "mode"
     }
 
     private lateinit var wm: WindowManager
@@ -112,6 +115,16 @@ class GameSpaceService : Service() {
         try {
             buildBubble()
             startFpsPolling()
+            // Pick up adaptive mode persisted by MainActivity (e.g. after a restart).
+            val p = getSharedPreferences(Prefs.MAIN, Context.MODE_PRIVATE)
+            if (p.getBoolean(Prefs.KEY_THERMAL_ADAPTIVE, false)) {
+                thermalMode = 2
+                lastAdaptiveBypass = true
+                startAdaptiveLoop()
+            } else if (p.getBoolean(Prefs.KEY_THERMAL_DISABLED, false)) {
+                thermalMode = 1
+                lastAdaptiveBypass = true
+            }
         } catch (e: Exception) {
             toast(getString(R.string.svc_failed, e.message ?: ""))
             stopSelf()
@@ -828,11 +841,16 @@ class GameSpaceService : Service() {
 
     /** OFF -> MANUAL -> ADAPTIVE -> OFF. Returns false only if a shell call failed. */
     private fun cycleThermal(tile: View): Boolean {
+        val prefs = getSharedPreferences(Prefs.MAIN, Context.MODE_PRIVATE)
         return when (thermalMode) {
             1 -> { // manual -> adaptive
                 thermalMode = 2
                 lastAdaptiveBypass = true
                 adaptiveTempC = null
+                prefs.edit()
+                    .putBoolean(Prefs.KEY_THERMAL_DISABLED, false)
+                    .putBoolean(Prefs.KEY_THERMAL_ADAPTIVE, true)
+                    .apply()
                 startAdaptiveLoop()
                 handler.post { refreshThermalText(tile) }
                 true
@@ -842,6 +860,10 @@ class GameSpaceService : Service() {
                 adaptiveRunning = false
                 lastAdaptiveBypass = false
                 adaptiveTempC = null
+                prefs.edit()
+                    .putBoolean(Prefs.KEY_THERMAL_DISABLED, false)
+                    .putBoolean(Prefs.KEY_THERMAL_ADAPTIVE, false)
+                    .apply()
                 exec("cmd thermalservice reset")
             }
             else -> { // off -> manual
@@ -849,6 +871,10 @@ class GameSpaceService : Service() {
                 if (ok) {
                     thermalMode = 1
                     lastAdaptiveBypass = true
+                    prefs.edit()
+                        .putBoolean(Prefs.KEY_THERMAL_DISABLED, true)
+                        .putBoolean(Prefs.KEY_THERMAL_ADAPTIVE, false)
+                        .apply()
                 }
                 ok
             }
@@ -882,7 +908,14 @@ class GameSpaceService : Service() {
                     )
                     if (temp != null) {
                         adaptiveTempC = temp
-                        val want = AdaptiveThermal.decide(bypassed, temp)
+                        val sp = getSharedPreferences(Prefs.MAIN, Context.MODE_PRIVATE)
+                        val low = sp.getInt(Prefs.KEY_THERMAL_ADAPT_LOW, ThermalPresets.BALANCED.low).toFloat()
+                        val high = sp.getInt(Prefs.KEY_THERMAL_ADAPT_HIGH, ThermalPresets.BALANCED.high).toFloat()
+                        val want = when {
+                            temp >= high -> false
+                            temp <= low -> true
+                            else -> bypassed
+                        }
                         if (want != bypassed) {
                             bypassed = want
                             lastAdaptiveBypass = want
@@ -914,6 +947,12 @@ class GameSpaceService : Service() {
                     if (exec("cmd thermalservice override-status 0")) {
                         thermalMode = 1
                         lastAdaptiveBypass = true
+                        try {
+                            getSharedPreferences(Prefs.MAIN, Context.MODE_PRIVATE).edit()
+                                .putBoolean(Prefs.KEY_THERMAL_DISABLED, true)
+                                .putBoolean(Prefs.KEY_THERMAL_ADAPTIVE, false)
+                                .apply()
+                        } catch (_: Exception) {}
                     }
                 }
                 if (p.refresh120) exec("settings put system peak_refresh_rate 120 && settings put system min_refresh_rate 120")
@@ -991,7 +1030,32 @@ class GameSpaceService : Service() {
         } catch (_: Exception) {}
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int = START_STICKY
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent?.action == ACTION_THERMAL) {
+            applyThermalMode(intent.getIntExtra(EXTRA_THERMAL_MODE, 0))
+        }
+        return START_STICKY
+    }
+
+    /** Mirror a mode chosen from MainActivity (shell cmds already executed there). */
+    private fun applyThermalMode(mode: Int) {
+        thermalMode = mode.coerceIn(0, 2)
+        if (mode == 2) {
+            lastAdaptiveBypass = true
+            startAdaptiveLoop()
+            handler.post { thermalTile()?.let { refreshThermalText(it) } }
+        } else {
+            adaptiveRunning = false
+            lastAdaptiveBypass = mode == 1
+            adaptiveTempC = null
+            handler.post {
+                thermalTile()?.let {
+                    setRow(it, mode != 0)
+                    refreshThermalText(it)
+                }
+            }
+        }
+    }
 
     override fun onDestroy() {
         isRunning = false
