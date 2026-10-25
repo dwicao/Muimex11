@@ -1,8 +1,8 @@
 {
-  "versionCode": 32,
-  "versionName": "4.2",
-  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.2/Muimex11-4.2.apk",
-  "releaseNotes": "Muimex11 4.2",
+  "versionCode": 33,
+  "versionName": "4.3",
+  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.3/Muimex11-4.3.apk",
+  "releaseNotes": "Shizuku Process throws IllegalStateException on timed wait/exitValue\npath on some versions. Use plain blocking waitFor() in Future with\ntimeout, no exitValue() call. Migrate GameFeature to runner.",
   "mandatory": false,
-  "sha256": "1b67750b4ae147e73bcddebebff40566f539b4629537201b1103146d6362fdd3"
+  "sha256": "c07aecf54a7cc56894ab02a0157b16cdcae4b92ee0d28f7f4ccd01a5843c3653"
 }
