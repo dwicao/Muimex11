@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
@@ -156,7 +157,7 @@ private fun MainActivity.runBenchmark(
         // Cold-start: force-stop, then `am start -W` 3x and average TotalTime.
         val samples = mutableListOf<Long>()
         repeat(3) { i ->
-            kotlinx.coroutines.ensureActive()
+            ensureActive()
             runShell("am force-stop $safePkg")
             delay(800)
             withContext(Dispatchers.Main) {
@@ -177,7 +178,7 @@ private fun MainActivity.runBenchmark(
             val t0 = gfxFrames(safePkg)
             if (t0 != null) {
                 repeat(15) { s ->
-                    kotlinx.coroutines.ensureActive()
+                    ensureActive()
                     delay(1000)
                     withContext(Dispatchers.Main) {
                         progress.update((s + 1) * 100 / 15, getString(R.string.bench_fps_count, 15 - s - 1))
