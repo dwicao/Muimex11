@@ -2,7 +2,7 @@
   "versionCode": 38,
   "versionName": "4.8",
   "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.8/Muimex11-4.8.apk",
-  "releaseNotes": "Muimex11 4.8",
+  "releaseNotes": "Stabilitas+baterai: ShizukuRunner shared pool, FPS gated 1s/3s, deteksi UsageStats-first, OverlayManager, theme toggle fix. Keamanan: ShellSanitizer di semua shell, updater hanya host github. Fitur: GameProfile validasi + cooldown 30s + Usage Access opt-in, Benchmark cancellable + export CSV.",
   "mandatory": false,
   "sha256": "17349b6cf6dc1dcf526bb354f29a301366278c4ab5f5b55beec4b4ff52d5d27f"
 }
