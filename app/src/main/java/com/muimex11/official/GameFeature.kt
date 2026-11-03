@@ -61,9 +61,16 @@ internal fun MainActivity.showGameModeSelectorDialog() {
 
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                var res = ShizukuRunner.exec("cmd game mode performance $pkgName")
+                val safePkg = ShellSanitizer.cleanPkg(pkgName)
+                if (safePkg == null) {
+                    withContext(Dispatchers.Main) {
+                        UiToast.error(this@showGameModeSelectorDialog, getString(R.string.toast_launch_fail), Toast.LENGTH_SHORT).show()
+                    }
+                    return@launch
+                }
+                var res = ShizukuRunner.exec("cmd game mode performance $safePkg")
                 if (!res.ok) {
-                    res = ShizukuRunner.exec("cmd game mode 2 $pkgName")
+                    res = ShizukuRunner.exec("cmd game mode 2 $safePkg")
                 }
                 var exitCode = res.code
 
@@ -114,7 +121,10 @@ internal fun MainActivity.showGameLauncherDialog() {
 
                 lifecycleScope.launch(Dispatchers.IO) {
                     try {
-                        ShizukuRunner.exec("cmd package compile -m speed -f $pkgName")
+                        val safePkg = ShellSanitizer.cleanPkg(pkgName)
+                        if (safePkg != null) {
+                            ShizukuRunner.exec("cmd package compile -m speed -f $safePkg")
+                        }
                         withContext(Dispatchers.Main) {
                             progress.dismiss()
                             UiToast.success(this@showGameLauncherDialog, getString(R.string.toast_optimized, appName), Toast.LENGTH_SHORT).show()

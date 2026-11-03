@@ -5,6 +5,7 @@ object AppConfig {
     const val MAX_DPI = 1000
 
     const val REPO_RAW_BASE = "https://raw.githubusercontent.com/dwicao/Muimex11/main"
+    const val RELEASE_BASE = "https://github.com/dwicao/Muimex11/releases/download"
     const val SIGNATURE_URL = "$REPO_RAW_BASE/signature.txt"
     const val VERSION_URL = "$REPO_RAW_BASE/version.json"
     const val TELEGRAM_URL = "https://t.me/muimex11"

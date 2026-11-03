@@ -1,6 +1,7 @@
 package com.muimex11.official
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -34,6 +35,17 @@ internal fun MainActivity.showGameProfilesSheet() {
 
 private fun MainActivity.presentGameProfiles(auto: Boolean, count: Int, apps: List<AppEntry>) {
     val list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+    if (!ForegroundAppTracker.hasUsageAccess(this)) {
+        list.addView(optionRow(
+            this,
+            getString(R.string.gprof_usage_title),
+            getString(R.string.gprof_usage_desc),
+        ) {
+            try {
+                startActivity(Intent(android.provider.Settings.ACTION_USAGE_ACCESS_SETTINGS))
+            } catch (_: Exception) {}
+        })
+    }
     list.addView(optionRow(
         this,
         getString(R.string.gprof_auto),

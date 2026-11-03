@@ -55,10 +55,42 @@ class UpdateParserTest {
     }
 
     @Test
+    fun trustedHostsOnly() {
+        assertTrue(UpdateParser.isSafeApkUrl("https://github.com/o/r/releases/download/v1/a.apk"))
+        assertTrue(UpdateParser.isSafeApkUrl("https://objects.githubusercontent.com/foo.apk"))
+        assertFalse(UpdateParser.isSafeApkUrl("http://github.com/o/r/a.apk"))
+        assertFalse(UpdateParser.isSafeApkUrl("https://evil.com/a.apk"))
+        assertFalse(UpdateParser.isSafeApkUrl("https://github.com.evil.com/a.apk"))
+    }
+
+    @Test
     fun shouldUpdate() {
         assertTrue(UpdateParser.shouldUpdate(32, 31))
         assertFalse(UpdateParser.shouldUpdate(31, 31))
         assertFalse(UpdateParser.shouldUpdate(30, 31))
+    }
+}
+
+class ShellSanitizerTest {
+    @Test
+    fun acceptsNormalPkgs() {
+        assertEquals("com.example.game", ShellSanitizer.cleanPkg("com.example.game"))
+        assertEquals("com.example.game", ShellSanitizer.cleanPkg("  com.example.game  "))
+    }
+
+    @Test
+    fun rejectsInjection() {
+        assertNull(ShellSanitizer.cleanPkg("com.a; rm -rf /"))
+        assertNull(ShellSanitizer.cleanPkg("com.a && id"))
+        assertNull(ShellSanitizer.cleanPkg("com.a\nam force-stop x"))
+        assertNull(ShellSanitizer.cleanPkg(""))
+        assertNull(ShellSanitizer.cleanPkg(null))
+        assertNull(ShellSanitizer.cleanPkg("a".repeat(300)))
+    }
+
+    @Test
+    fun escQuotes() {
+        assertEquals("a'\\''b", ShellSanitizer.esc("a'b"))
     }
 }
 

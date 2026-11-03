@@ -17,7 +17,7 @@ import android.widget.Toast
  * made the first tap look dead.
  */
 internal fun MainActivity.toggleGameSpace() {
-    if (!Settings.canDrawOverlays(this)) {
+    if (!OverlayManager.canDraw(this)) {
         val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
         startActivity(intent)
         UiToast.info(this, getString(R.string.toast_allow_overlay), Toast.LENGTH_LONG).show()
@@ -25,18 +25,15 @@ internal fun MainActivity.toggleGameSpace() {
     }
 
     val prefs = getSharedPreferences(Prefs.MAIN, Context.MODE_PRIVATE)
-    val intent = Intent(this, GameSpaceService::class.java)
     val enable = !GameSpaceService.isRunning
 
     if (enable) {
-        try {
-            startService(intent)
-        } catch (e: Exception) {
-            UiToast.error(this, getString(R.string.svc_failed, e.message ?: ""), Toast.LENGTH_LONG).show()
+        if (!OverlayManager.start(this, Prefs.KEY_GAMESPACE_ENABLED, GameSpaceService::class.java)) {
+            UiToast.error(this, getString(R.string.svc_failed, ""), Toast.LENGTH_LONG).show()
             return
         }
     } else {
-        stopService(intent)
+        OverlayManager.stop(this, Prefs.KEY_GAMESPACE_ENABLED, GameSpaceService::class.java)
     }
 
     isGameSpaceEnabled = enable

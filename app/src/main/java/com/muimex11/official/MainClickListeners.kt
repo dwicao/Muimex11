@@ -276,8 +276,9 @@ private fun MainActivity.setupTweakResetListeners(prefs: SharedPreferences) {
     }
     findViewById<TextView>(R.id.btnResetGameMode).setOnClickListener {
         val lastGame = prefs.getString(Prefs.KEY_LAST_GAME_MODE, "")
-        if (!lastGame.isNullOrEmpty()) {
-            runAdbCommand("cmd game mode standard $lastGame", getString(R.string.msg_gm_reset)) {
+        val safe = ShellSanitizer.cleanPkg(lastGame)
+        if (!safe.isNullOrEmpty()) {
+            runAdbCommand("cmd game mode standard $safe", getString(R.string.msg_gm_reset)) {
                 prefs.edit().putString(Prefs.KEY_LAST_GAME_MODE, "").apply()
                 fetchSystemStatuses()
             }
@@ -343,7 +344,7 @@ private fun MainActivity.setupBottomActionListeners(prefs: SharedPreferences) {
 
 internal fun MainActivity.resetAllFunctions(prefs: android.content.SharedPreferences, onDone: (() -> Unit)? = null) {
     run {
-        val lastGame = prefs.getString(Prefs.KEY_LAST_GAME_MODE, "")
+        val lastGame = ShellSanitizer.cleanPkg(prefs.getString(Prefs.KEY_LAST_GAME_MODE, ""))
         val gameModeReset = if (lastGame.isNullOrEmpty()) "" else "cmd game mode standard $lastGame && "
         val aggressiveReset = if (prefs.getBoolean(Prefs.KEY_FIXED_PERF_AGGRESSIVE, false))
             "{ ${fixedPerfAggressiveRestore(prefs)}; true; } && " else ""

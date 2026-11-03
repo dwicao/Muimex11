@@ -53,7 +53,40 @@ object UpdateParser {
 
     fun isHttps(url: String): Boolean = url.startsWith("https://")
 
+    /** Only GitHub release hosts are trusted for APK downloads. */
+    fun isTrustedApkHost(url: String): Boolean = try {
+        val h = java.net.URL(url).host.lowercase()
+        h == "github.com" || h.endsWith(".github.com") ||
+            h == "objects.githubusercontent.com" ||
+            h == "release-assets.githubusercontent.com" ||
+            h == "raw.githubusercontent.com"
+    } catch (_: Exception) { false }
+
+    fun isSafeApkUrl(url: String): Boolean = isHttps(url) && isTrustedApkHost(url)
+
     fun shouldUpdate(latestCode: Int, currentCode: Int): Boolean = latestCode > currentCode
+}
+
+/** Central shell-escaping gate — every dynamic pkg/arg must pass through here. */
+object ShellSanitizer {
+    private val PKG_RE = Regex("^[A-Za-z0-9._]+$")
+    const val MAX_PKG_LEN = 256
+
+    fun isSafePkg(pkg: String): Boolean =
+        pkg.length in 1..MAX_PKG_LEN && PKG_RE.matches(pkg)
+
+    /** Returns pkg if safe, null otherwise — callers must abort on null. */
+    fun cleanPkg(pkg: String?): String? {
+        if (pkg.isNullOrEmpty()) return null
+        val t = pkg.trim()
+        return if (isSafePkg(t)) t else null
+    }
+
+    /** Single-quote escape for settings values. */
+    fun esc(v: String): String = v.replace("'", "'\\''")
+
+    fun requirePkg(pkg: String, what: String = "package"): String =
+        cleanPkg(pkg) ?: throw IllegalArgumentException("unsafe $what: $pkg")
 }
 
 /**

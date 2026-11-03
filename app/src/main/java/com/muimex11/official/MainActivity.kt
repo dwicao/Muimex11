@@ -134,20 +134,24 @@ class MainActivity : AppCompatActivity() {
         val prefs = getSharedPreferences(Prefs.THEME, Context.MODE_PRIVATE)
         val btnThemeToggle = findViewById<ImageView>(R.id.btnThemeToggle)
 
-        if (isNightMode) {
-            btnThemeToggle.setImageResource(R.drawable.ic_light_mode)
-        } else {
-            btnThemeToggle.setImageResource(R.drawable.ic_dark_mode)
+        fun syncIcon(night: Boolean) {
+            btnThemeToggle.setImageResource(
+                if (night) R.drawable.ic_light_mode else R.drawable.ic_dark_mode
+            )
         }
+        syncIcon(isNightMode)
 
         btnThemeToggle.setOnClickListener {
-            if (isNightMode) {
-                prefs.edit().putBoolean(Prefs.KEY_DARK_MODE, false).apply()
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            } else {
-                prefs.edit().putBoolean(Prefs.KEY_DARK_MODE, true).apply()
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            }
+            val curNight = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+                Configuration.UI_MODE_NIGHT_YES
+            val nextNight = !curNight
+            prefs.edit().putBoolean(Prefs.KEY_DARK_MODE, nextNight).apply()
+            AppCompatDelegate.setDefaultNightMode(
+                if (nextNight) AppCompatDelegate.MODE_NIGHT_YES
+                else AppCompatDelegate.MODE_NIGHT_NO
+            )
+            // Icon syncs after recreate; update optimistically for instant feedback.
+            syncIcon(nextNight)
         }
     }
 }

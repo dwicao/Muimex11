@@ -595,7 +595,7 @@ class GameSpaceService : Service() {
                         ok = exec(if (active) spec.offCmd!! else spec.onCmd!!)
                     }
                     Kind.FG_GAME_MODE -> {
-                        val pkg = fgPkg
+                        val pkg = ShellSanitizer.cleanPkg(fgPkg)
                         if (pkg == null) {
                             toast(getString(R.string.gs_no_app))
                         } else {
@@ -690,7 +690,11 @@ class GameSpaceService : Service() {
     // fg parsing now in FgPkgParser (unit-tested)
 
     private fun detectForegroundPkg(): String? {
-        val dump = query("dumpsys activity activities") + "\n" + query("dumpsys window windows")
+        // Battery-first: UsageStats needs no shell. Fall back to ONE dumpsys
+        // (old code ran activities + window dumps every second).
+        ForegroundAppTracker.usageStatsPkg(this, packageName)?.let { return it }
+        if (!ShizukuRunner.isReady()) return ForegroundAppTracker.currentPkg(this, packageName, null)
+        val dump = try { query("dumpsys activity activities") } catch (_: Exception) { "" }
         return FgPkgParser.parse(dump, packageName)
     }
 
@@ -722,10 +726,13 @@ class GameSpaceService : Service() {
                 }
                 // If Game Boost was left on for an app that changed, reset it.
                 gameBoostPkg?.takeIf { it != pkg && it.isNotEmpty() }?.let { old ->
-                    ioScope.launch {
-                        try { exec("cmd game mode standard $old") } catch (_: Exception) {}
-                    }
+                    val safeOld = ShellSanitizer.cleanPkg(old)
                     gameBoostPkg = null
+                    if (safeOld != null) {
+                        ioScope.launch {
+                            try { exec("cmd game mode standard $safeOld") } catch (_: Exception) {}
+                        }
+                    }
                 }
             }
         }
@@ -749,7 +756,9 @@ class GameSpaceService : Service() {
             var lastCount = -1L
             var lastAt = 0L
             while (fpsPolling) {
-                var delayMs = 1000L
+                // Panel open = 1s live counter; bubble-only = 3s to save battery.
+                // No foreground game = 3s idle poll.
+                var delayMs = if (isExpanded()) 1000L else 3000L
                 try {
                     val pkg = detectForegroundPkg()
                     if (pkg != lastPkg) {
@@ -761,8 +770,9 @@ class GameSpaceService : Service() {
                             applyAutoBoost(pkg)
                         }
                     }
-                    if (pkg != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        val out = query("dumpsys gfxinfo $pkg")
+                    val safePkg = ShellSanitizer.cleanPkg(pkg)
+                    if (safePkg != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        val out = query("dumpsys gfxinfo $safePkg")
                         val total = Regex("Total frames rendered:\\s*(\\d+)").find(out)
                             ?.groupValues?.getOrNull(1)?.toLongOrNull()
                         val now = android.os.SystemClock.elapsedRealtime()
@@ -773,10 +783,9 @@ class GameSpaceService : Service() {
                         } else {
                             publishFps(null)
                         }
-                        delayMs = 1000L
                     } else {
                         publishFps(null)
-                        delayMs = 2000L
+                        delayMs = 3000L
                     }
                 } catch (_: Exception) {}
                 kotlinx.coroutines.delay(delayMs)
@@ -936,10 +945,12 @@ class GameSpaceService : Service() {
             BatterySchedule.pauseForGame(this)
         } catch (_: Exception) {}
         if (!GameProfileStore.isAutoBoost(this)) return
-        val p = GameProfileStore.get(this, pkg) ?: return
+        val safePkg = ShellSanitizer.cleanPkg(pkg) ?: return
+        if (!GameProfileStore.shouldAutoApply(safePkg, android.os.SystemClock.elapsedRealtime())) return
+        val p = GameProfileStore.get(this, safePkg) ?: return
         ioScope.launch {
             try {
-                if (p.gameModePerf && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) exec("cmd game mode performance $pkg")
+                if (p.gameModePerf && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) exec("cmd game mode performance $safePkg")
                 if (p.fixedPerf) {
                     if (exec("cmd power set-fixed-performance-mode-enabled true")) fixedPerf = true
                 }
@@ -958,7 +969,7 @@ class GameSpaceService : Service() {
                 if (p.refresh120) exec("settings put system peak_refresh_rate 120 && settings put system min_refresh_rate 120")
                 else if (p.refreshMin > 0 && p.refreshMax > 0) exec("settings put system min_refresh_rate ${p.refreshMin} && settings put system peak_refresh_rate ${p.refreshMax}")
                 if (p.resScale == 0.75f || p.resScale == 0.5f) applyResScale(p.resScale)
-                if (profileHasDisplay(p)) lastDisplayPkg = pkg
+                if (profileHasDisplay(p)) lastDisplayPkg = safePkg
             } catch (_: Exception) {}
         }
     }
@@ -995,7 +1006,8 @@ class GameSpaceService : Service() {
 
     private fun stopForegroundApp(): Boolean {
         val pkg = detectForegroundPkg() ?: return false
-        return exec("am force-stop $pkg")
+        val safe = ShellSanitizer.cleanPkg(pkg) ?: return false
+        return exec("am force-stop $safe")
     }
 
     // -------------------------------------------------------------- helpers

@@ -126,8 +126,13 @@ private fun MainActivity.runBenchmark(
     prefs: SharedPreferences, pkg: String, label: String, prev: BenchRun?
 ) {
     if (!hasShizukuPermission()) return
+    val safePkg = ShellSanitizer.cleanPkg(pkg)
+    if (safePkg == null) {
+        UiToast.error(this, getString(R.string.toast_launch_fail), Toast.LENGTH_SHORT).show()
+        return
+    }
     val comp = try {
-        packageManager.getLaunchIntentForPackage(pkg)?.component
+        packageManager.getLaunchIntentForPackage(safePkg)?.component
     } catch (_: Exception) {
         null
     }
@@ -135,64 +140,96 @@ private fun MainActivity.runBenchmark(
         UiToast.error(this, getString(R.string.toast_launch_fail), Toast.LENGTH_SHORT).show()
         return
     }
+    val safeComp = ShellSanitizer.cleanPkg(comp.packageName) ?: run {
+        UiToast.error(this, getString(R.string.toast_launch_fail), Toast.LENGTH_SHORT).show()
+        return
+    }
+    var job: kotlinx.coroutines.Job? = null
     val progress = ProgressSheet(this)
         .icon(R.drawable.ic_framerate)
         .title(label)
         .message(getString(R.string.bench_phase_launch))
+        .cancelButton(getString(R.string.btn_cancel)) { job?.cancel() }
     progress.show(indeterminate = true)
 
-    lifecycleScope.launch(Dispatchers.IO) {
+    job = lifecycleScope.launch(Dispatchers.IO) {
         // Cold-start: force-stop, then `am start -W` 3x and average TotalTime.
         val samples = mutableListOf<Long>()
         repeat(3) { i ->
-            runShell("am force-stop $pkg")
+            kotlinx.coroutines.ensureActive()
+            runShell("am force-stop $safePkg")
             delay(800)
             withContext(Dispatchers.Main) {
                 progress.setIndeterminate(getString(R.string.bench_phase_launch_n, i + 1, 3))
             }
-            val out = runAdbCommandWithResult("am start -W -n ${comp.packageName}/${comp.className}")
+            val out = runAdbCommandWithResult("am start -W -n $safeComp/${comp.className}")
             BenchmarkCalc.parseAmStartW(out)?.let { samples += it }
             delay(1200)
         }
         val launchMs = BenchmarkCalc.avg(samples)
 
-        // FPS: sample gfxinfo counters over 15s while the user plays.
+        // FPS: sample gfxinfo counters over 15s while the user plays (cancellable).
         var fps: Int? = null
         withContext(Dispatchers.Main) {
             progress.setIndeterminate(getString(R.string.bench_phase_fps))
         }
         try {
-            val t0 = gfxFrames(pkg)
+            val t0 = gfxFrames(safePkg)
             if (t0 != null) {
                 repeat(15) { s ->
+                    kotlinx.coroutines.ensureActive()
                     delay(1000)
                     withContext(Dispatchers.Main) {
                         progress.update((s + 1) * 100 / 15, getString(R.string.bench_fps_count, 15 - s - 1))
                     }
                 }
-                val t1 = gfxFrames(pkg)
+                val t1 = gfxFrames(safePkg)
                 if (t1 != null) fps = BenchmarkCalc.fps(t1, t0, 15_000)
             }
         } catch (_: Exception) {}
 
-        val run = BenchRun(pkg, label, launchMs, fps, System.currentTimeMillis())
+        val run = BenchRun(safePkg, label, launchMs, fps, System.currentTimeMillis())
         saveBenchRun(prefs, run)
         withContext(Dispatchers.Main) {
             progress.dismiss()
             refreshBenchmarkStatus(prefs, run)
             fetchSystemStatuses()
-            showBenchmarkResult(prev, run)
+            showBenchmarkResult(prefs, prev, run)
         }
     }
 }
 
 private fun MainActivity.gfxFrames(pkg: String): Long? {
-    val out = runAdbCommandWithResult("dumpsys gfxinfo $pkg")
+    val safe = ShellSanitizer.cleanPkg(pkg) ?: return null
+    val out = runAdbCommandWithResult("dumpsys gfxinfo $safe")
     return Regex("Total frames rendered:\\s*(\\d+)").find(out)
         ?.groupValues?.getOrNull(1)?.toLongOrNull()
 }
 
-private fun MainActivity.showBenchmarkResult(prev: BenchRun?, run: BenchRun) {
+/** Export bench history to CSV in Downloads for sharing/comparison. */
+internal fun MainActivity.exportBenchCsv(prefs: SharedPreferences) {
+    val runs = readBenchRuns(prefs)
+    if (runs.isEmpty()) {
+        UiToast.info(this, getString(R.string.toast_no_games), Toast.LENGTH_SHORT).show()
+        return
+    }
+    try {
+        val dir = getExternalFilesDir(android.os.Environment.DIRECTORY_DOWNLOADS) ?: return
+        val f = java.io.File(dir, "muimex-bench.csv")
+        f.bufferedWriter().use { w ->
+            w.appendLine("package,label,launch_ms,fps,timestamp")
+            runs.forEach { r ->
+                val safeLabel = r.label.replace(",", " ").replace("\n", " ")
+                w.appendLine("${r.pkg},$safeLabel,${r.launchMs},${r.fps ?: ""},${r.ts}")
+            }
+        }
+        UiToast.success(this, f.absolutePath, Toast.LENGTH_LONG).show()
+    } catch (e: Exception) {
+        UiToast.error(this, e.message ?: "", Toast.LENGTH_LONG).show()
+    }
+}
+
+private fun MainActivity.showBenchmarkResult(prefs: SharedPreferences, prev: BenchRun?, run: BenchRun) {
     val fpsStr = run.fps?.toString() ?: "--"
     var msg = getString(R.string.bench_result_fmt, run.launchMs, fpsStr)
     if (prev != null) {
@@ -208,7 +245,8 @@ private fun MainActivity.showBenchmarkResult(prev: BenchRun?, run: BenchRun) {
         .icon(R.drawable.ic_framerate)
         .title(getString(R.string.bench_done))
         .message(msg)
-        .button(getString(R.string.btn_close), SheetStyle.PRIMARY)
+        .button(getString(R.string.btn_close), SheetStyle.TONAL)
+        .button("CSV", SheetStyle.PRIMARY) { exportBenchCsv(prefs) }
         .show()
 }
 

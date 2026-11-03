@@ -638,6 +638,9 @@
     <string name="gprof_refresh_default">Default</string>
     <string name="gprof_res_fmt">Resolution %1$s</string>
     <string name="gprof_follow_system">Follow system</string>
+    <string name="gprof_usage_title">Faster app detection (no root)</string>
+    <string name="gprof_usage_desc">Grant Usage Access so Game Space detects games without shell polling — saves battery</string>
+    <string name="gprof_usage_open">Grant Usage Access</string>
     <string name="status_gprof_fmt">Status: %1$d profiles · auto %2$s</string>
 
     <string name="title_debloat">Debloat Presets</string>

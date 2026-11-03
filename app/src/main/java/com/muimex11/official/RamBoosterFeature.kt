@@ -134,8 +134,7 @@ internal fun MainActivity.presentRamList(apps: List<MemApp>) {
 
 internal fun MainActivity.boostApps(pkgs: List<String>) {
     if (pkgs.isEmpty()) return
-    val safeName = Regex("^[A-Za-z0-9._]+$")
-    val valid = pkgs.filter { safeName.matches(it) }
+    val valid = pkgs.mapNotNull { ShellSanitizer.cleanPkg(it) }
     if (valid.isEmpty()) return
 
     val before = availRamMb()

@@ -628,6 +628,9 @@
     <string name="gprof_refresh_default">Padrão</string>
     <string name="gprof_res_fmt">Resolução %1$s</string>
     <string name="gprof_follow_system">Segue sistema</string>
+    <string name="gprof_usage_title">Detecção mais rápida (sem root)</string>
+    <string name="gprof_usage_desc">Conceda Acesso a dados de uso para detectar jogos sem polling — economiza bateria</string>
+    <string name="gprof_usage_open">Conceder acesso</string>
     <string name="status_gprof_fmt">Status: %1$d perfis · auto %2$s</string>
 
     <string name="title_debloat">Presets debloat</string>

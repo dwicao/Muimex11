@@ -26,7 +26,7 @@ internal fun MainActivity.checkForUpdates() {
     lifecycleScope.launch(Dispatchers.IO) {
         var conn: HttpURLConnection? = null
         try {
-            if (!UpdateParser.isHttps(AppConfig.VERSION_URL)) return@launch
+            if (!UpdateParser.isSafeApkUrl(AppConfig.VERSION_URL)) return@launch
             val url = URL(AppConfig.VERSION_URL)
             conn = (url.openConnection() as HttpURLConnection).apply {
                 connectTimeout = 5000
@@ -57,6 +57,11 @@ internal fun MainActivity.checkForUpdates() {
                 }
 
                 if (UpdateParser.shouldUpdate(latestVersionCode, currentVersionCode)) {
+                    // Reject off-host APKs even if version.json was tampered via DNS.
+                    if (!UpdateParser.isSafeApkUrl(apkUrl)) {
+                        android.util.Log.w("Muimex11", "Blocked untrusted apkUrl: $apkUrl")
+                        return@launch
+                    }
                     withContext(Dispatchers.Main) {
                         showUpdateDialog(latestVersionName, releaseNotes, apkUrl, mandatory, expectedSha)
                     }
@@ -134,7 +139,7 @@ private suspend fun CoroutineScope.streamToPartFile(
 }
 
 internal fun MainActivity.downloadAndInstall(title: String, url: String, fileName: String, finishAfterInstall: Boolean, expectedSha256: String = "") {
-    if (!UpdateParser.isHttps(url)) {
+    if (!UpdateParser.isSafeApkUrl(url)) {
         UiToast.error(this, getString(R.string.dl_insecure_blocked), Toast.LENGTH_LONG).show()
         if (finishAfterInstall) showShizukuRequiredDialog()
         return

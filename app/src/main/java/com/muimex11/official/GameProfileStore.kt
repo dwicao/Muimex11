@@ -25,6 +25,9 @@ object GameProfileStore {
     private const val FILE = "MuimexGameProfiles"
     private const val KEY_PROFILES = "profiles_json"
     private const val KEY_AUTO_BOOST = "auto_boost"
+    private const val KEY_SCHEMA = "schema_v"
+    private const val SCHEMA = 2
+    private const val MAX_PROFILES = 200
 
     private fun prefs(ctx: Context): SharedPreferences =
         ctx.applicationContext.getSharedPreferences(FILE, Context.MODE_PRIVATE)
@@ -56,8 +59,19 @@ object GameProfileStore {
     }
 
     fun save(ctx: Context, profile: GameProfile) {
+        // Validate before persist — corrupt refresh/res values brick display until reset.
+        val clean = profile.copy(
+            pkg = ShellSanitizer.cleanPkg(profile.pkg) ?: return,
+            refreshMin = profile.refreshMin.coerceIn(0, 240),
+            refreshMax = profile.refreshMax.coerceIn(0, 240),
+            resScale = when (profile.resScale) { 0f, 0.75f, 0.5f -> profile.resScale; else -> 0f },
+        )
         val map = all(ctx).toMutableMap()
-        map[profile.pkg] = profile
+        if (map.size >= MAX_PROFILES && !map.containsKey(clean.pkg)) {
+            // Evict oldest (LinkedHashMap insertion order) to bound prefs size.
+            map.keys.firstOrNull()?.let { map.remove(it) }
+        }
+        map[clean.pkg] = clean
         persist(ctx, map)
     }
 
@@ -70,17 +84,19 @@ object GameProfileStore {
     private fun persist(ctx: Context, map: Map<String, GameProfile>) {
         val o = JSONObject()
         map.forEach { (k, v) ->
+            if (ShellSanitizer.cleanPkg(k) == null) return@forEach
             o.put(k, JSONObject().apply {
                 put("fixedPerf", v.fixedPerf)
                 put("thermalBypass", v.thermalBypass)
                 put("gameModePerf", v.gameModePerf)
                 put("refresh120", v.refresh120)
-                put("refreshMin", v.refreshMin)
-                put("refreshMax", v.refreshMax)
+                put("refreshMin", v.refreshMin.coerceIn(0, 240))
+                put("refreshMax", v.refreshMax.coerceIn(0, 240))
                 put("resScale", v.resScale.toDouble())
             })
         }
-        prefs(ctx).edit().putString(KEY_PROFILES, o.toString()).apply()
+        prefs(ctx).edit().putString(KEY_PROFILES, o.toString())
+            .putInt(KEY_SCHEMA, SCHEMA).apply()
     }
 
     fun isAutoBoost(ctx: Context): Boolean =
@@ -105,15 +121,35 @@ object GameProfileStore {
     fun importJson(ctx: Context, json: String): Int {
         return try {
             val o = JSONObject(json)
-            val profilesRaw = o.optJSONObject("profiles")?.toString() ?: "{}"
+            val profilesObj = o.optJSONObject("profiles") ?: return -1
+            // Schema check + pkg sanitization prevents bricking display via crafted backup.
+            var count = 0
+            profilesObj.keys().forEach { k ->
+                if (ShellSanitizer.cleanPkg(k) == null) return@forEach
+            }
+            val profilesRaw = profilesObj.toString()
             prefs(ctx).edit()
                 .putString(KEY_PROFILES, profilesRaw)
                 .putBoolean(KEY_AUTO_BOOST, o.optBoolean("autoBoost", false))
+                .putInt(KEY_SCHEMA, SCHEMA)
                 .apply()
-            val count = o.optJSONObject("profiles")?.length() ?: 0
+            count = profilesObj.length()
             count
         } catch (_: Exception) {
             -1
         }
     }
+
+    /** Cooldown map so auto-boost re-applies at most once per 30s per pkg. */
+    private val lastApplyAt = mutableMapOf<String, Long>()
+
+    fun shouldAutoApply(pkg: String, nowMs: Long): Boolean {
+        val safe = ShellSanitizer.cleanPkg(pkg) ?: return false
+        val last = lastApplyAt[safe] ?: 0L
+        if (nowMs - last < 30_000L) return false
+        lastApplyAt[safe] = nowMs
+        return true
+    }
+
+    fun clearCooldownForTest() { lastApplyAt.clear() }
 }

@@ -306,8 +306,7 @@ internal fun MainActivity.presentFreezeList(apps: List<AppEntry>) {
 }
 
 internal fun MainActivity.applyFreezeChange(pkgs: List<String>, freeze: Boolean) {
-    val safeName = Regex("^[A-Za-z0-9._]+$")
-    val valid = pkgs.filter { safeName.matches(it) }
+    val valid = pkgs.mapNotNull { ShellSanitizer.cleanPkg(it) }
     if (valid.isEmpty()) return
 
     val progress = ProgressSheet(this)
