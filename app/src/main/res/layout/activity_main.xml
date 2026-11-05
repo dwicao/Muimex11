@@ -20,9 +20,26 @@
         android:textSize="26sp"
         android:textStyle="bold"
         android:letterSpacing="-0.01"
-        app:layout_constraintEnd_toStartOf="@+id/btnThemeToggle"
+        app:layout_constraintEnd_toStartOf="@+id/btnViewToggle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/btnViewToggle"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:contentDescription="@string/cd_view_grid"
+        android:padding="10dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tvTitle"
+        app:layout_constraintEnd_toStartOf="@+id/btnThemeToggle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_view_grid"
+        app:tint="?android:attr/textColorPrimary" />
 
     <ImageView
         android:id="@+id/btnThemeToggle"
@@ -151,6 +168,7 @@
         app:layout_constraintTop_toBottomOf="@+id/chipScrollView">
 
         <LinearLayout
+            android:id="@+id/cardsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -578,18 +596,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:text="@string/title_fixed_perf"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="17sp"
@@ -658,18 +664,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -744,18 +738,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:text="@string/title_samsung_boost"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="17sp"
@@ -824,18 +806,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -910,18 +880,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:text="@string/title_network"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="17sp"
@@ -990,18 +948,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -1076,18 +1022,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:text="@string/title_touch"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="17sp"
@@ -1156,18 +1090,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -1242,18 +1164,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:text="@string/title_anim"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="17sp"
@@ -1322,18 +1232,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -1408,18 +1306,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:text="@string/title_focus"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="17sp"
@@ -1488,18 +1374,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -1577,17 +1451,6 @@
                         android:layout_marginBottom="8dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/bg_badge_free"
-                            android:paddingHorizontal="10dp"
-                            android:paddingVertical="3dp"
-                            android:text="@string/badge_free"
-                            android:textColor="#2E7D32"
-                            android:textSize="11sp"
-                            android:letterSpacing="0.08"
-                            android:textStyle="bold" />
                         <View
                             android:layout_width="0dp"
                             android:layout_height="0dp"
@@ -1645,17 +1508,6 @@
                         android:layout_marginBottom="8dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/bg_badge_free"
-                            android:paddingHorizontal="10dp"
-                            android:paddingVertical="3dp"
-                            android:text="@string/badge_free"
-                            android:textColor="#2E7D32"
-                            android:textSize="11sp"
-                            android:letterSpacing="0.08"
-                            android:textStyle="bold" />
                         <View
                             android:layout_width="0dp"
                             android:layout_height="0dp"
@@ -1741,18 +1593,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:text="@string/title_resolution"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="17sp"
@@ -1821,18 +1661,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -1907,18 +1735,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:text="@string/title_orientation"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="17sp"
@@ -1987,18 +1803,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -2073,18 +1877,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:text="@string/title_crosshair"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="17sp"
@@ -2153,18 +1945,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -2240,18 +2020,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:text="@string/title_autoclick"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="17sp"
@@ -2320,18 +2088,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -2407,18 +2163,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:text="@string/title_gamespace"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="17sp"
@@ -2487,18 +2231,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -2573,18 +2305,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:text="@string/title_battery"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="17sp"
@@ -2653,18 +2373,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -2739,18 +2447,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:text="@string/title_ram"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="17sp"
@@ -2819,18 +2515,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -2905,18 +2589,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:text="@string/title_freeze"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="17sp"
@@ -2985,18 +2657,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -3071,18 +2731,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:text="@string/title_applocale"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="17sp"
@@ -3151,18 +2799,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -3237,18 +2873,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:text="@string/title_debloat"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="17sp"
@@ -3317,18 +2941,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -3403,18 +3015,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:text="@string/title_sensors"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="17sp"
@@ -3486,18 +3086,6 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:text="@string/title_bgrestrict"
                         android:textColor="?android:attr/textColorPrimary"
                         android:textSize="17sp"
@@ -3566,18 +3154,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -3655,17 +3231,6 @@
                         android:layout_marginBottom="8dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/bg_badge_free"
-                            android:paddingHorizontal="10dp"
-                            android:paddingVertical="3dp"
-                            android:text="@string/badge_free"
-                            android:textColor="#2E7D32"
-                            android:textSize="11sp"
-                            android:letterSpacing="0.08"
-                            android:textStyle="bold" />
                         <View
                             android:layout_width="0dp"
                             android:layout_height="0dp"
@@ -3754,17 +3319,6 @@
                         android:layout_marginBottom="8dp"
                         android:gravity="center_vertical"
                         android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@drawable/bg_badge_free"
-                            android:paddingHorizontal="10dp"
-                            android:paddingVertical="3dp"
-                            android:text="@string/badge_free"
-                            android:textColor="#2E7D32"
-                            android:textSize="11sp"
-                            android:letterSpacing="0.08"
-                            android:textStyle="bold" />
                         <View
                             android:layout_width="0dp"
                             android:layout_height="0dp"
@@ -3847,18 +3401,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:padding="16dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge_free"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="3dp"
-                        android:text="@string/badge_free"
-                        android:textColor="#2E7D32"
-                        android:textSize="11sp"
-                        android:letterSpacing="0.08"
-                        android:textStyle="bold"
-                        android:layout_marginBottom="8dp" />
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

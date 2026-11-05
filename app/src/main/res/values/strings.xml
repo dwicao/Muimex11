@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Muimex11</string>
-    <string name="tagline">Performance tweaks powered by Shizuku, no root needed</string>
+    <string name="tagline">Tweaks powered by Shizuku</string>
     <string name="chip_all">All</string>
     <string name="chip_performance">Performance</string>
     <string name="chip_display">Display</string>
@@ -16,7 +16,6 @@
     <string name="lbl_free_space">FREE SPACE</string>
     <string name="lbl_tweaks">Tweaks</string>
     <string name="zero_active">0 active</string>
-    <string name="badge_free">FREE</string>
     <string name="title_fixed_perf">Enable Fixed Performance</string>
     <string name="desc_fixed_perf">Lock device performance to a fixed state to maintain consistent frame rates.</string>
     <string name="title_optimize">Optimize System Performance</string>
@@ -567,6 +566,8 @@
     <string name="backup_failed">Backup restore failed</string>
 
     <string name="cd_theme_toggle">Toggle theme</string>
+    <string name="cd_view_grid">Grid view</string>
+    <string name="cd_view_list">List view</string>
 
     <string name="title_battery">Battery Saver</string>
     <string name="desc_battery">System-level battery saving without root or undervolting. Balanced, Saver and Extreme modes tune battery saver, adaptive battery, Doze and background scans. Fully reversible.</string>

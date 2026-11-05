@@ -83,6 +83,7 @@ class MainActivity : AppCompatActivity() {
         checkShizukuStatus()
         setupClickListeners()
         setupFilterChips()
+        setupViewToggle()
         setupBottomBarScrollBehavior()
         setupStatusStyling()
         refreshFreezeStatus()

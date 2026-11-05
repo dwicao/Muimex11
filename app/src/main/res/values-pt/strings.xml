@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="tagline">Ajustes de desempenho com Shizuku, sem precisar de root</string>
+    <string name="tagline">Ajustes com Shizuku</string>
     <string name="chip_all">Todos</string>
     <string name="chip_performance">Desempenho</string>
     <string name="chip_display">Tela</string>
@@ -15,7 +15,6 @@
     <string name="lbl_free_space">ESPAÇO LIVRE</string>
     <string name="lbl_tweaks">Ajustes</string>
     <string name="zero_active">0 ativos</string>
-    <string name="badge_free">GRÁTIS</string>
     <string name="title_fixed_perf">Ativar Desempenho Fixo</string>
     <string name="desc_fixed_perf">Trava o desempenho do dispositivo em um estado fixo para manter taxas de quadros consistentes.</string>
     <string name="title_optimize">Otimizar desempenho do sistema</string>
@@ -557,6 +556,8 @@
     <string name="backup_imported">Backup restaurado (%1$d perfis)</string>
     <string name="backup_failed">Falha ao restaurar backup</string>
     <string name="cd_theme_toggle">Alternar tema</string>
+    <string name="cd_view_grid">Ver em grade</string>
+    <string name="cd_view_list">Ver em lista</string>
 
     <string name="title_battery">Economia de bateria</string>
     <string name="desc_battery">Economia de bateria sem root ou undervolt. Modos Equilibrado, Econômico e Extremo ajustam economia, bateria adaptativa, Doze e varreduras. Totalmente reversível.</string>

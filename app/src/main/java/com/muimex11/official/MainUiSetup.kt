@@ -13,6 +13,16 @@ import androidx.core.widget.NestedScrollView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 
+/** Single source of truth for tweak card grouping (filter chips + grid mode). */
+private val performanceCardIds = listOf(R.id.cardFixedPerformance, R.id.cardOptimizeSystem, R.id.cardSamsungBoost, R.id.cardThermalThrottling, R.id.cardBatterySaver, R.id.cardDebloat, R.id.cardBgRestrict, R.id.cardFstrim, R.id.cardDisableDevOptions, R.id.cardRamBooster, R.id.cardClearCache, R.id.cardFreezeApps)
+private val displayCardIds = listOf(R.id.cardAdjustRefreshRate, R.id.cardFastAnimations, R.id.cardDisableBlurs, R.id.cardChangeResolution, R.id.cardGraphicsApi, R.id.cardOrientation)
+private val networkCardIds = listOf(R.id.cardImproveNetwork, R.id.cardCustomDns, R.id.cardRadioInfo)
+private val gamingCardIds = listOf(R.id.cardImproveTouch, R.id.cardGamingDnd, R.id.cardCrosshair, R.id.cardRealtimeMonitor, R.id.cardAutoClick, R.id.cardGameMode, R.id.cardGameSpace, R.id.cardFixGyro, R.id.cardGameProfiles, R.id.cardAudioLatency)
+private val toolsCardIds = listOf(R.id.cardShellExecute, R.id.cardApkInstall, R.id.cardApkBackup, R.id.cardReboot, R.id.cardShizukuRecovery, R.id.cardAppOps, R.id.cardAppLocale, R.id.cardSensorsToggle, R.id.cardBenchmark)
+
+internal fun tweakCardIds(): List<Int> =
+    performanceCardIds + displayCardIds + networkCardIds + gamingCardIds + toolsCardIds
+
 internal fun MainActivity.fontify(view: View) {
     ResourcesCompat.getFont(this, R.font.lexendregular)?.let { applyAppFont(view, it) }
 }
@@ -55,24 +65,17 @@ internal fun MainActivity.setupFilterChips() {
         findViewById<Chip>(id)?.typeface = customTypeface
     }
 
-    val performanceCards = listOf(R.id.cardFixedPerformance, R.id.cardOptimizeSystem, R.id.cardSamsungBoost, R.id.cardThermalThrottling, R.id.cardBatterySaver, R.id.cardDebloat, R.id.cardBgRestrict, R.id.cardFstrim, R.id.cardDisableDevOptions, R.id.cardRamBooster, R.id.cardClearCache, R.id.cardFreezeApps)
-    val displayCards = listOf(R.id.cardAdjustRefreshRate, R.id.cardFastAnimations, R.id.cardDisableBlurs, R.id.cardChangeResolution, R.id.cardGraphicsApi, R.id.cardOrientation)
-    val networkCards = listOf(R.id.cardImproveNetwork, R.id.cardCustomDns, R.id.cardRadioInfo)
-    val gamingCards = listOf(R.id.cardImproveTouch, R.id.cardGamingDnd, R.id.cardCrosshair, R.id.cardRealtimeMonitor, R.id.cardAutoClick, R.id.cardGameMode, R.id.cardGameSpace, R.id.cardFixGyro, R.id.cardGameProfiles, R.id.cardAudioLatency)
-
-    val toolsCards = listOf(R.id.cardShellExecute, R.id.cardApkInstall, R.id.cardApkBackup, R.id.cardReboot, R.id.cardShizukuRecovery, R.id.cardAppOps, R.id.cardAppLocale, R.id.cardSensorsToggle, R.id.cardBenchmark)
-
-    val allCards = performanceCards + displayCards + networkCards + gamingCards + toolsCards
+    val allCards = tweakCardIds()
 
     chipGroup.setOnCheckedChangeListener { _, checkedId ->
         allCards.forEach { findViewById<View>(it)?.visibility = View.GONE }
 
         val visibleIds = when (checkedId) {
-            R.id.chipPerformance -> performanceCards
-            R.id.chipDisplay -> displayCards
-            R.id.chipNetwork -> networkCards
-            R.id.chipGaming -> gamingCards
-            R.id.chipTools -> toolsCards
+            R.id.chipPerformance -> performanceCardIds
+            R.id.chipDisplay -> displayCardIds
+            R.id.chipNetwork -> networkCardIds
+            R.id.chipGaming -> gamingCardIds
+            R.id.chipTools -> toolsCardIds
             else -> allCards
         }
 
