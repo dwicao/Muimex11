@@ -2,7 +2,7 @@
   "versionCode": 44,
   "versionName": "4.14",
   "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.14/Muimex11-4.14.apk",
-  "releaseNotes": "Muimex11 4.14",
+  "releaseNotes": "Mode compact: grid 2 kolom tanpa teks deskripsi, siklus list/grid/compact.",
   "mandatory": false,
   "sha256": "a80a1661b64898df15f2afad08fc2e5d3939992b807862f61e246de4f2b3b83d"
 }
