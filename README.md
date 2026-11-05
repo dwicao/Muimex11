@@ -53,8 +53,16 @@ A draggable orb that snaps to the screen edge and opens a glass panel over any g
 ## Hardware monitor
 Floating overlay with CPU temperature and frequency, RAM usage, battery temp and network traffic, updated in real time.
 
+## Graphics API switcher (Vulkan/OpenGL)
+Switch the GPU rendering API without root, over Shizuku. Adapted from [GAMA](https://github.com/palincat/gama) (MIT license).
+
+- **Vulkan** — lower temps and better battery on supported devices
+- **OpenGL** — the Android default, maximum compatibility
+- The switch is verified read-back and applies to newly launched apps; the choice is saved and Vulkan is re-applied automatically after reboot once Shizuku is ready (Android clears the setting on reboot, and Reset-all returns it to OpenGL).
+- Renderer support varies by device and app: some apps ignore Vulkan and fall back on their own, which is normal. If the screen glitches after switching, hold Power + Volume Down to force-restart, then switch back to OpenGL.
+
 ## Performance & system tools
-RAM booster · cache cleaner · app freezer · fstrim · fixed-performance modes · Game Mode selector · thermal override · blur disable · fast animations · refresh rate control (up to 240Hz) · resolution + DPI control · private/custom DNS · touch and network tuners · gyro fix · crosshair overlay · auto clicker · gaming DND · APK/OBB installer · Shizuku shell terminal · device info · English and Brazilian Portuguese.
+RAM booster · cache cleaner · app freezer · fstrim · fixed-performance modes · Game Mode selector · thermal override · blur disable · fast animations · refresh rate control (up to 240Hz) · resolution + DPI control · graphics API switcher (Vulkan/OpenGL) · private/custom DNS · touch and network tuners · gyro fix · crosshair overlay · auto clicker · gaming DND · APK/OBB installer · Shizuku shell terminal · device info · English and Brazilian Portuguese.
 
 ## Self-updating
 The app checks this repository's `version.json`, prompts when a newer release is published, and installs it over itself. Updates are verified against the repo's `signature.txt` fingerprint.
@@ -93,6 +101,7 @@ O Muimex11 é um otimizador de jogos Android gratuito — sem anúncios e sem pr
 - **Game Space flutuante**: bolha arrastável sobre qualquer jogo com **nome + ícone do app aberto**, **contagem de FPS ao vivo** e grade de ações em duas colunas: boost de RAM, Game Boost no app em foco, performance fixa, bypass térmico, trava 120Hz, modo foco, sem blurs, ciclo de resolução (100/75/50%), monitor e fechar jogo.
 - **Painel Samsung**: Max Boost em um toque, desativar o GOS (com restauração), RAM Plus off, congelar daemons de log, Device Security e bloat da Samsung, além de restaurar tudo.
 - **Monitor de hardware** flutuante em tempo real (CPU, RAM, bateria, rede).
+- **API de gráficos (Vulkan/OpenGL)**: alterna a renderização da GPU sem root via Shizuku (adaptado do [GAMA](https://github.com/palincat/gama), licença MIT) — Vulkan para mais frio/economia de bateria em aparelhos suportados, OpenGL como padrão seguro; reaplicado sozinho após reiniciar.
 - Ferramentas de desempenho, display, rede, APK/OBB e terminal Shizuku — tudo em **PT-BR e inglês**.
 
 Baixe em [Releases](https://github.com/Inkflow-Gab/Muimex11/releases/latest), inicie o Shizuku e autorize no app. O Muimex11 atualiza sozinho quando sai uma versão nova aqui no GitHub.
