@@ -54,21 +54,23 @@ object CrashReporter {
         }
     }
 
-    fun pendingReport(ctx: Context): CrashReport? = try {
-        val f = java.io.File(ctx.filesDir, PENDING_FILE)
-        if (!f.exists()) return null
-        val raw = f.readText()
-        if (raw.isBlank()) {
-            try { f.delete() } catch (_: Exception) {}
-            return null
+    internal fun pendingReport(ctx: Context): CrashReport? {
+        return try {
+            val f = java.io.File(ctx.filesDir, PENDING_FILE)
+            if (!f.exists()) return@pendingReport null
+            val raw = f.readText()
+            if (raw.isBlank()) {
+                try { f.delete() } catch (_: Exception) {}
+                return@pendingReport null
+            }
+            val firstLine = raw.lineSequence().firstOrNull().orEmpty()
+            // Header line format: ##file:<name> or ##file: where <name> may be empty.
+            val name = firstLine.removePrefix("##file:").trim().ifEmpty { null }
+            val body = if (firstLine.startsWith("##file:")) raw.substringAfter('\n') else raw
+            CrashReport(name, body.take(MAX_BODY_CHARS))
+        } catch (_: Exception) {
+            null
         }
-        val firstLine = raw.lineSequence().firstOrNull().orEmpty()
-        // Header line format: ##file:<name> or ##file: where <name> may be empty.
-        val name = firstLine.removePrefix("##file:").trim().ifEmpty { null }
-        val body = if (firstLine.startsWith("##file:")) raw.substringAfter('\n') else raw
-        CrashReport(name, body.take(MAX_BODY_CHARS))
-    } catch (_: Exception) {
-        null
     }
 
     fun clearPending(ctx: Context) {
@@ -182,7 +184,7 @@ internal fun MainActivity.showCrashReportSheet(report: CrashReport) {
         .title(getString(R.string.crash_title))
         .message(getString(R.string.crash_msg))
         .content(list)
-        .button(getString(R.string.btn_copy), SheetStyle.TONAL, dismiss = false) {
+        .button(getString(R.string.shell_btn_copy), SheetStyle.TONAL, dismiss = false) {
             try {
                 val cm = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                 cm.setPrimaryClip(ClipData.newPlainText("muimex11-crash", report.body))
