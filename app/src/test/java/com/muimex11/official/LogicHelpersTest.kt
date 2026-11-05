@@ -407,7 +407,7 @@ class ApkBackupTest {
         )
         val cmd = ApkBackup.buildCopyCmd(listOf("/a/base.apk", "/a/split.apk"), dest)!!
         assertTrue(cmd.startsWith("mkdir -p '$dest'"))
-        assertTrue(cmd.contains("cp '/a/base.apk' '$dest/'"))
+        assertTrue(cmd.contains("cp '/a/base.apk' '$dest'/"))
         assertNull(ApkBackup.buildCopyCmd(emptyList(), dest))
     }
 }
