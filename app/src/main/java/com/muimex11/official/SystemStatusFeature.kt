@@ -29,7 +29,10 @@ private class SystemStatuses(
     val sensors: String,
     val bgRestrict: String,
     val benchmark: String,
-    val graphics: String
+    val graphics: String,
+    val orientation: String,
+    val apkBackup: String,
+    val reboot: String
 )
 
 internal fun MainActivity.fetchSystemStatuses() {
@@ -138,6 +141,9 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
     val liveRenderer = GraphicsApi.detectRenderer()
         .takeIf { it == GraphicsApi.VULKAN || it == GraphicsApi.OPENGL }
     val graphicsStatus = graphicsStatusText(prefs, liveRenderer)
+    val orientationStatus = orientationStatusText(prefs)
+    val apkBackupStatus = apkBackupStatusText()
+    val rebootStatus = getString(R.string.status_ready)
 
     return SystemStatuses(
         fixedPerf = fixedPerfStatus,
@@ -160,7 +166,10 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
         sensors = sensorsStatus,
         bgRestrict = bgStatus,
         benchmark = benchStatus,
-        graphics = graphicsStatus
+        graphics = graphicsStatus,
+        orientation = orientationStatus,
+        apkBackup = apkBackupStatus,
+        reboot = rebootStatus
     )
 }
 
@@ -186,6 +195,9 @@ private fun MainActivity.renderSystemStatuses(s: SystemStatuses) {
     findViewById<TextView>(R.id.tvStatusBgRestrict).text = s.bgRestrict
     findViewById<TextView>(R.id.tvStatusBenchmark).text = s.benchmark
     findViewById<TextView>(R.id.tvStatusGraphics).text = s.graphics
+    findViewById<TextView>(R.id.tvStatusOrientation).text = s.orientation
+    findViewById<TextView>(R.id.tvStatusApkBackup).text = s.apkBackup
+    findViewById<TextView>(R.id.tvStatusReboot).text = s.reboot
 }
 
 private fun MainActivity.renderOverlayStatuses(prefs: SharedPreferences) {

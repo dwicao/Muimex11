@@ -90,6 +90,8 @@ private fun MainActivity.showProfileEditor(pkg: String, label: String) {
     var hz120 = cur.refresh120
     var refresh = if (cur.refreshMax > 0) cur.refreshMax else 0
     var scale = cur.resScale
+    var dnd = cur.dndFocus
+    var orient = if (OrientationMode.isValid(cur.orientation)) cur.orientation else OrientationMode.AUTO
 
     val sheet = Sheet(this)
     fun rows() {
@@ -102,6 +104,9 @@ private fun MainActivity.showProfileEditor(pkg: String, label: String) {
         })
         list.addView(optionRow(this, getString(R.string.gprof_thermal), getString(R.string.gprof_thermal_desc), selected = thermal) {
             thermal = !thermal; rows()
+        })
+        list.addView(optionRow(this, getString(R.string.gprof_dnd), getString(R.string.gprof_dnd_desc), selected = dnd) {
+            dnd = !dnd; rows()
         })
         list.addView(optionRow(this, getString(R.string.gprof_120), getString(R.string.gprof_120_desc), selected = hz120) {
             hz120 = !hz120; if (hz120) refresh = 0; rows()
@@ -120,6 +125,19 @@ private fun MainActivity.showProfileEditor(pkg: String, label: String) {
                 scale = v; rows()
             })
         }
+        listOf(
+            OrientationMode.AUTO to getString(R.string.gprof_orient_follow),
+            OrientationMode.PORTRAIT to getString(R.string.gprof_orient_portrait),
+            OrientationMode.LANDSCAPE to getString(R.string.gprof_orient_landscape),
+            OrientationMode.REVERSE_PORTRAIT to getString(R.string.gprof_orient_rportrait),
+            OrientationMode.REVERSE_LANDSCAPE to getString(R.string.gprof_orient_rlandscape)
+        ).forEach { (v, name) ->
+            list.addView(optionRow(this, getString(R.string.gprof_orient_fmt, name),
+                if (v == OrientationMode.AUTO) getString(R.string.gprof_follow_system) else "",
+                selected = orient == v) {
+                orient = v; rows()
+            })
+        }
     }
     rows()
     sheet.icon(R.drawable.ic_gamepad)
@@ -136,7 +154,7 @@ private fun MainActivity.showProfileEditor(pkg: String, label: String) {
     sheet.button(getString(R.string.btn_save), SheetStyle.PRIMARY) {
         GameProfileStore.save(
             this,
-            GameProfile(pkg, fixed, thermal, gm, hz120, refresh, refresh, scale)
+            GameProfile(pkg, fixed, thermal, gm, hz120, refresh, refresh, scale, dnd, orient)
         )
         UiToast.success(this, getString(R.string.profile_saved, label), Toast.LENGTH_SHORT).show()
         refreshGameProfilesStatus()

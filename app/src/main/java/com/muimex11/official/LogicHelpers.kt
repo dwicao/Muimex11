@@ -433,3 +433,100 @@ object BenchmarkCalc {
     fun fps(total: Long, lastCount: Long, dtMs: Long): Int? =
         FgPkgParser.fps(total, lastCount, dtMs)
 }
+
+/** Per-user uninstall with factory restore — pure command builders. */
+object UninstallCmd {
+    /** Keep user data (-k) so a restore brings the app back as it was. */
+    fun buildUninstall(userId: Int, pkg: String): String =
+        "pm uninstall -k --user $userId $pkg"
+
+    /** Re-installs a factory (system-image) app for the user. */
+    fun buildRestore(pkg: String): String =
+        "cmd package install-existing $pkg"
+
+    /** Mirrors the freeze flow: exit 0 with no error markers in output. */
+    fun succeeded(code: Int, out: String): Boolean {
+        if (code != 0) return false
+        val low = out.lowercase()
+        return !low.contains("exception") && !low.contains("error") &&
+            !low.contains("failed") && !low.contains("failure")
+    }
+
+    /** True when `pm list packages --user <uid> <pkg>` shows nothing. */
+    fun isGone(listOutput: String): Boolean = listOutput.trim().isEmpty()
+}
+
+/** APK backup helpers — pure parsing/naming, shell does the copying. */
+object ApkBackup {
+    /** `pm path <pkg>` prints one `package:<path>` line per APK (base + splits). */
+    fun parsePmPath(dump: String): List<String> =
+        dump.lines()
+            .map { it.trim() }
+            .filter { it.startsWith("package:") }
+            .map { it.removePrefix("package:").trim() }
+            .filter { it.isNotEmpty() && it.startsWith("/") }
+
+    private fun safeFilePart(s: String): String =
+        s.replace(Regex("[^A-Za-z0-9._-]+"), "_").take(64).trim('_')
+            .ifEmpty { "app" }
+
+    fun destDir(pkg: String, versionName: String): String =
+        "/sdcard/Download/Muimex11/${safeFilePart(pkg)}-${safeFilePart(versionName)}"
+
+    fun buildCopyCmd(srcs: List<String>, destDir: String): String? {
+        if (srcs.isEmpty()) return null
+        val d = "'${destDir.replace("'", "'\\''")}'"
+        val copies = srcs.joinToString(" && ") { s ->
+            "cp '${s.replace("'", "'\\''")}' $d/"
+        }
+        return "mkdir -p $d && $copies"
+    }
+}
+
+/** Reboot menu — pure command builders, all verified Shizuku-shell safe. */
+object RebootCmd {
+    const val SYSTEM = 0
+    const val RECOVERY = 1
+    const val BOOTLOADER = 2
+    const val SYSTEM_UI = 3
+
+    fun build(mode: Int): String? = when (mode) {
+        SYSTEM -> "svc power reboot"
+        RECOVERY -> "svc power reboot recovery"
+        BOOTLOADER -> "svc power reboot bootloader"
+        SYSTEM_UI -> "am force-stop com.android.systemui"
+        else -> null
+    }
+}
+
+/** Orientation lock — pure builders/parsers around system rotation settings. */
+object OrientationMode {
+    const val AUTO = 0
+    const val PORTRAIT = 1
+    const val LANDSCAPE = 2
+    const val REVERSE_PORTRAIT = 3
+    const val REVERSE_LANDSCAPE = 4
+
+    fun buildApply(mode: Int): String? = when (mode) {
+        AUTO -> "settings put system accelerometer_rotation 1"
+        PORTRAIT -> "settings put system accelerometer_rotation 0 && settings put system user_rotation 0"
+        LANDSCAPE -> "settings put system accelerometer_rotation 0 && settings put system user_rotation 1"
+        REVERSE_PORTRAIT -> "settings put system accelerometer_rotation 0 && settings put system user_rotation 2"
+        REVERSE_LANDSCAPE -> "settings put system accelerometer_rotation 0 && settings put system user_rotation 3"
+        else -> null
+    }
+
+    /** Map live settings to a mode; unknown combos fall back to AUTO display. */
+    fun parse(auto: String?, user: String?): Int {
+        if (auto?.trim() == "1") return AUTO
+        return when (user?.trim()) {
+            "0" -> PORTRAIT
+            "1" -> LANDSCAPE
+            "2" -> REVERSE_PORTRAIT
+            "3" -> REVERSE_LANDSCAPE
+            else -> AUTO
+        }
+    }
+
+    fun isValid(mode: Int): Boolean = mode in AUTO..REVERSE_LANDSCAPE
+}

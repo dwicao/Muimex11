@@ -354,3 +354,102 @@ class ThermalPresetsTest {
         assertEquals(38 to 45, ThermalPresets.clamp(60, 20))
     }
 }
+
+class UninstallCmdTest {
+    @Test
+    fun buildCommands() {
+        assertEquals(
+            "pm uninstall -k --user 0 com.example.bloat",
+            UninstallCmd.buildUninstall(0, "com.example.bloat")
+        )
+        assertEquals(
+            "cmd package install-existing com.example.bloat",
+            UninstallCmd.buildRestore("com.example.bloat")
+        )
+    }
+
+    @Test
+    fun successHeuristics() {
+        assertTrue(UninstallCmd.succeeded(0, "Success"))
+        assertTrue(UninstallCmd.succeeded(0, ""))
+        assertTrue(UninstallCmd.succeeded(0, "Package com.x installed for user: 0"))
+        assertFalse(UninstallCmd.succeeded(1, "Success"))
+        assertFalse(UninstallCmd.succeeded(0, "Failure [DELETE_FAILED_INTERNAL_ERROR]"))
+        assertFalse(UninstallCmd.succeeded(0, "Failure [not installed for 0]"))
+        assertFalse(UninstallCmd.succeeded(0, "Exception occurred while executing"))
+        assertFalse(UninstallCmd.succeeded(0, "Error: unknown package"))
+        assertTrue(UninstallCmd.isGone("  \n"))
+        assertFalse(UninstallCmd.isGone("package:com.example.bloat"))
+    }
+}
+
+class ApkBackupTest {
+    @Test
+    fun parsesPmPath() {
+        val dump = "package:/data/app/~~abc==/com.example-xyz/base.apk\n" +
+            "package:/data/app/~~abc==/com.example-xyz/split_config.arm64_v8a.apk\n" +
+            "garbage line\npackage:relative.apk\n"
+        val out = ApkBackup.parsePmPath(dump)
+        assertEquals(2, out.size)
+        assertTrue(out[0].endsWith("base.apk"))
+        assertTrue(out[1].endsWith("split_config.arm64_v8a.apk"))
+        assertTrue(ApkBackup.parsePmPath("").isEmpty())
+    }
+
+    @Test
+    fun destAndCopyCmd() {
+        val dest = ApkBackup.destDir("com.example.game", "1.2.3")
+        assertEquals("/sdcard/Download/Muimex11/com.example.game-1.2.3", dest)
+        // hostile version names cannot break out of the path
+        assertEquals(
+            "/sdcard/Download/Muimex11/com.a-1.0_x",
+            ApkBackup.destDir("com.a", "1.0/x")
+        )
+        val cmd = ApkBackup.buildCopyCmd(listOf("/a/base.apk", "/a/split.apk"), dest)!!
+        assertTrue(cmd.startsWith("mkdir -p '$dest'"))
+        assertTrue(cmd.contains("cp '/a/base.apk' '$dest/'"))
+        assertNull(ApkBackup.buildCopyCmd(emptyList(), dest))
+    }
+}
+
+class RebootCmdTest {
+    @Test
+    fun buildModes() {
+        assertEquals("svc power reboot", RebootCmd.build(RebootCmd.SYSTEM))
+        assertEquals("svc power reboot recovery", RebootCmd.build(RebootCmd.RECOVERY))
+        assertEquals("svc power reboot bootloader", RebootCmd.build(RebootCmd.BOOTLOADER))
+        assertEquals("am force-stop com.android.systemui", RebootCmd.build(RebootCmd.SYSTEM_UI))
+        assertNull(RebootCmd.build(99))
+    }
+}
+
+class OrientationModeTest {
+    @Test
+    fun buildApply() {
+        assertEquals(
+            "settings put system accelerometer_rotation 1",
+            OrientationMode.buildApply(OrientationMode.AUTO)
+        )
+        assertTrue(
+            OrientationMode.buildApply(OrientationMode.LANDSCAPE)!!
+                .contains("user_rotation 1")
+        )
+        assertTrue(
+            OrientationMode.buildApply(OrientationMode.REVERSE_PORTRAIT)!!
+                .contains("user_rotation 2")
+        )
+        assertNull(OrientationMode.buildApply(99))
+    }
+
+    @Test
+    fun parseLive() {
+        assertEquals(OrientationMode.AUTO, OrientationMode.parse("1", "0"))
+        assertEquals(OrientationMode.PORTRAIT, OrientationMode.parse("0", "0"))
+        assertEquals(OrientationMode.LANDSCAPE, OrientationMode.parse("0", "1"))
+        assertEquals(OrientationMode.REVERSE_LANDSCAPE, OrientationMode.parse("0", "3"))
+        assertEquals(OrientationMode.AUTO, OrientationMode.parse("null", "null"))
+        assertEquals(OrientationMode.AUTO, OrientationMode.parse(null, null))
+        assertTrue(OrientationMode.isValid(OrientationMode.REVERSE_PORTRAIT))
+        assertFalse(OrientationMode.isValid(7))
+    }
+}

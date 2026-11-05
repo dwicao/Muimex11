@@ -18,7 +18,11 @@ data class GameProfile(
     val refreshMin: Int = 0,
     val refreshMax: Int = 0,
     /** 0f = unset (follow system). One of 0.75f / 0.5f when set. */
-    val resScale: Float = 0f
+    val resScale: Float = 0f,
+    /** Auto-enable Gaming Focus (heads-up off) while this game is foreground. */
+    val dndFocus: Boolean = false,
+    /** OrientationMode.AUTO = follow system, else force while foreground. */
+    val orientation: Int = 0
 )
 
 object GameProfileStore {
@@ -26,7 +30,7 @@ object GameProfileStore {
     private const val KEY_PROFILES = "profiles_json"
     private const val KEY_AUTO_BOOST = "auto_boost"
     private const val KEY_SCHEMA = "schema_v"
-    private const val SCHEMA = 2
+    private const val SCHEMA = 3
     private const val MAX_PROFILES = 200
 
     private fun prefs(ctx: Context): SharedPreferences =
@@ -49,7 +53,10 @@ object GameProfileStore {
                     refresh120 = v.optBoolean("refresh120", false),
                     refreshMin = v.optInt("refreshMin", 0),
                     refreshMax = v.optInt("refreshMax", 0),
-                    resScale = v.optDouble("resScale", 0.0).toFloat()
+                    resScale = v.optDouble("resScale", 0.0).toFloat(),
+                    dndFocus = v.optBoolean("dndFocus", false),
+                    orientation = v.optInt("orientation", 0)
+                        .coerceIn(OrientationMode.AUTO, OrientationMode.REVERSE_LANDSCAPE)
                 )
             }
             out
@@ -71,7 +78,10 @@ object GameProfileStore {
             // Evict oldest (LinkedHashMap insertion order) to bound prefs size.
             map.keys.firstOrNull()?.let { map.remove(it) }
         }
-        map[clean.pkg] = clean
+        map[clean.pkg] = clean.copy(
+            orientation = if (OrientationMode.isValid(clean.orientation)) clean.orientation
+            else OrientationMode.AUTO
+        )
         persist(ctx, map)
     }
 
@@ -93,6 +103,8 @@ object GameProfileStore {
                 put("refreshMin", v.refreshMin.coerceIn(0, 240))
                 put("refreshMax", v.refreshMax.coerceIn(0, 240))
                 put("resScale", v.resScale.toDouble())
+                put("dndFocus", v.dndFocus)
+                put("orientation", v.orientation)
             })
         }
         prefs(ctx).edit().putString(KEY_PROFILES, o.toString())

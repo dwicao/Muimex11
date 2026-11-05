@@ -767,6 +767,7 @@ class GameSpaceService : Service() {
                         lastAt = 0L
                         if (pkg != null) {
                             resetProfileDisplay()
+                            resetProfileTransient()
                             applyAutoBoost(pkg)
                         }
                     }
@@ -818,6 +819,13 @@ class GameSpaceService : Service() {
 
     private var lastDisplayPkg: String? = null
 
+    /** Transient per-game states with pre-apply snapshots for exact restore. */
+    private var lastDndPkg: String? = null
+    private var dndPrevValue: String? = null
+    private var lastOrientationPkg: String? = null
+    private var orientPrevAuto: String? = null
+    private var orientPrevUser: String? = null
+
     private fun profileHasDisplay(p: GameProfile): Boolean =
         p.refresh120 || (p.refreshMin > 0 && p.refreshMax > 0) ||
             p.resScale == 0.75f || p.resScale == 0.5f
@@ -832,6 +840,44 @@ class GameSpaceService : Service() {
             } catch (_: Exception) {}
         }
     }
+
+    /**
+     * Restore transient per-game tweaks (focus DND, forced orientation) using
+     * the snapshots taken at apply time — never a hardcoded value, so a
+     * manually-enabled DND or rotation is not clobbered on game exit.
+     */
+    private fun resetProfileTransient() {
+        val dndPkg = lastDndPkg
+        val dndPrev = dndPrevValue
+        lastDndPkg = null
+        dndPrevValue = null
+        val orientPkg = lastOrientationPkg
+        val prevAuto = orientPrevAuto
+        val prevUser = orientPrevUser
+        lastOrientationPkg = null
+        orientPrevAuto = null
+        orientPrevUser = null
+        if (dndPkg == null && orientPkg == null) return
+        ioScope.launch {
+            try {
+                if (dndPkg != null) exec(restoreGlobalCmd("heads_up_notifications_enabled", dndPrev))
+                if (orientPkg != null) {
+                    exec(restoreSystemCmd("accelerometer_rotation", prevAuto))
+                    exec(restoreSystemCmd("user_rotation", prevUser))
+                }
+            } catch (_: Exception) {}
+        }
+    }
+
+    /** Rebuild a `settings put/delete` that restores a snapshotted value. */
+    private fun restoreCmd(ns: String, key: String, prev: String?): String {
+        val p = (prev ?: "").trim()
+        return if (p.isEmpty() || p == "null") "settings delete $ns $key"
+        else "settings put $ns $key $p"
+    }
+
+    private fun restoreGlobalCmd(key: String, prev: String?) = restoreCmd("global", key, prev)
+    private fun restoreSystemCmd(key: String, prev: String?) = restoreCmd("system", key, prev)
 
     private fun applyResScale(scale: Float) {
         if (scale != 0.75f && scale != 0.5f) return
@@ -969,6 +1015,23 @@ class GameSpaceService : Service() {
                 if (p.refresh120) exec("settings put system peak_refresh_rate 120 && settings put system min_refresh_rate 120")
                 else if (p.refreshMin > 0 && p.refreshMax > 0) exec("settings put system min_refresh_rate ${p.refreshMin} && settings put system peak_refresh_rate ${p.refreshMax}")
                 if (p.resScale == 0.75f || p.resScale == 0.5f) applyResScale(p.resScale)
+                // Focus DND: snapshot first so game exit restores the exact prior state.
+                // Gated on backend: a failed query must not poison the snapshot.
+                if (p.dndFocus && ShizukuRunner.isReady()) {
+                    val prev = query("settings get global heads_up_notifications_enabled").trim()
+                    if (prev != "0") {
+                        dndPrevValue = prev
+                        lastDndPkg = safePkg
+                        exec("settings put global heads_up_notifications_enabled 0")
+                    }
+                }
+                // Forced orientation: snapshot both keys, apply profile choice.
+                if (OrientationMode.isValid(p.orientation) && p.orientation != OrientationMode.AUTO && ShizukuRunner.isReady()) {
+                    orientPrevAuto = query("settings get system accelerometer_rotation").trim()
+                    orientPrevUser = query("settings get system user_rotation").trim()
+                    lastOrientationPkg = safePkg
+                    OrientationMode.buildApply(p.orientation)?.let { exec(it) }
+                }
                 if (profileHasDisplay(p)) lastDisplayPkg = safePkg
             } catch (_: Exception) {}
         }

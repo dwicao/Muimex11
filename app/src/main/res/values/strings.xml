@@ -766,4 +766,76 @@
     <string name="msg_graphics_set">Graphics API set to %1$s</string>
     <string name="msg_graphics_reset">Graphics API reset to OpenGL</string>
     <string name="msg_graphics_fail">Graphics API failed — %1$s</string>
+
+    <!-- Uninstall (per-user) with factory restore -->
+    <string name="btn_uninstall">Uninstall</string>
+    <string name="dlg_uninstall_title">Uninstall system apps?</string>
+    <string name="dlg_uninstall_msg">Removes the app for the current user but keeps its data, so it can be reinstalled exactly as it was. Only factory (system) apps can be restored this way — user apps must be removed manually. Critical apps are already excluded from the list.</string>
+    <string name="dlg_uninstalling">Uninstalling apps</string>
+    <string name="uninstalled_row">Uninstalled · restorable</string>
+    <string name="toast_uninstall_system_only">Only system apps can be uninstalled with restore. Remove user apps manually.</string>
+    <string name="toast_uninstall_skipped_user">Skipped %1$d user apps (system apps only).</string>
+    <string name="toast_no_uninstalled">No uninstalled apps to restore</string>
+    <plurals name="uninstalled_apps">
+        <item quantity="one">Uninstalled %1$s app</item>
+        <item quantity="other">Uninstalled %1$s apps</item>
+    </plurals>
+    <plurals name="status_uninstalled_apps">
+        <item quantity="one">Status: %1$s app uninstalled</item>
+        <item quantity="other">Status: %1$s apps uninstalled</item>
+    </plurals>
+
+    <!-- APK backup -->
+    <string name="title_apkbackup">Backup Installed APKs</string>
+    <string name="desc_apkbackup">Copy installed APKs (base + splits) to Download/Muimex11 so you can reinstall them offline or after an uninstall.</string>
+    <string name="dlg_apkbackup_title">Backup APKs</string>
+    <string name="dlg_apkbackup_msg">Pick apps to back up. Each app lands in its own folder under Download/Muimex11.</string>
+    <string name="dlg_apkbackup_working">Backing up APKs</string>
+    <string name="btn_backup">Backup</string>
+    <string name="btn_backup_n">Backup (%1$s)</string>
+    <string name="msg_apkbackup_done">Backed up %1$d apps (%2$d APKs) to Download/Muimex11</string>
+    <string name="status_apkbackup_fmt">Status: %1$d apps backed up</string>
+
+    <!-- Reboot menu -->
+    <string name="title_reboot">Reboot Options</string>
+    <string name="desc_reboot">Restart the system, reboot to recovery or bootloader, or restart SystemUI to apply UI-level changes.</string>
+    <string name="dlg_reboot_title">Reboot options</string>
+    <string name="dlg_reboot_msg">Pick where to go. Recovery and bootloader ask for confirmation first.</string>
+    <string name="reboot_system">Restart system</string>
+    <string name="reboot_system_desc">Normal reboot</string>
+    <string name="reboot_recovery">Recovery</string>
+    <string name="reboot_recovery_desc">Reboot to recovery mode</string>
+    <string name="reboot_bootloader">Bootloader</string>
+    <string name="reboot_bootloader_desc">Reboot to fastboot / download mode</string>
+    <string name="reboot_systemui">Restart SystemUI</string>
+    <string name="reboot_systemui_desc">Restarts status bar and recents, no reboot needed</string>
+    <string name="dlg_reboot_confirm_title">Reboot to %1$s?</string>
+    <string name="dlg_reboot_confirm_msg">The device will leave Android now. Unsaved work in other apps may be lost.</string>
+    <string name="btn_reboot_now">Reboot now</string>
+    <string name="msg_rebooting">Rebooting…</string>
+    <string name="msg_systemui_restarted">System UI restarted</string>
+
+    <!-- Orientation lock -->
+    <string name="title_orientation">Orientation Lock</string>
+    <string name="desc_orientation">Force the screen to stay in auto-rotate, portrait or landscape.</string>
+    <string name="dlg_orient_title">Orientation lock</string>
+    <string name="dlg_orient_msg">Applies immediately. Game Profiles can force a different orientation per game.</string>
+    <string name="orient_auto">Auto-rotate</string>
+    <string name="orient_auto_desc">Follow the rotation sensor (system default)</string>
+    <string name="orient_portrait">Portrait</string>
+    <string name="orient_landscape">Landscape</string>
+    <string name="orient_rportrait">Reverse portrait</string>
+    <string name="orient_rlandscape">Reverse landscape</string>
+    <string name="status_orient_fmt">Status: %1$s</string>
+    <string name="msg_orient_set">Orientation set to %1$s</string>
+
+    <!-- Game Profiles: focus DND + forced orientation -->
+    <string name="gprof_dnd">Focus DND in game</string>
+    <string name="gprof_dnd_desc">Block heads-up banners while this game is open, restore after</string>
+    <string name="gprof_orient_fmt">Orientation %1$s</string>
+    <string name="gprof_orient_follow">Follow system</string>
+    <string name="gprof_orient_portrait">Portrait</string>
+    <string name="gprof_orient_landscape">Landscape</string>
+    <string name="gprof_orient_rportrait">Reverse portrait</string>
+    <string name="gprof_orient_rlandscape">Reverse landscape</string>
 </resources>

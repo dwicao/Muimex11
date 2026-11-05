@@ -45,6 +45,11 @@ object Prefs {
     const val KEY_BGRESTRICT_RULES = "BgRestrictRules"
     const val KEY_BENCH_RUNS = "BenchRuns"
 
+    const val KEY_UNINSTALLED_APPS = "UninstalledApps"
+    const val KEY_APKBACKUP_COUNT = "ApkBackupCount"
+    const val KEY_APKBACKUP_TIME = "ApkBackupTime"
+    const val KEY_ORIENTATION_MODE = "OrientationMode"
+
     const val KEY_GRAPHICS_RENDERER = "GraphicsRenderer"
     const val KEY_GRAPHICS_DESIRED = "GraphicsDesired"
     const val KEY_GRAPHICS_LAST_SWITCH = "GraphicsLastSwitch"

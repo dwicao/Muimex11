@@ -30,6 +30,15 @@ internal fun MainActivity.saveFrozen(set: Set<String>) {
         .edit().putStringSet(Prefs.KEY_FROZEN_APPS, HashSet(set)).apply()
 }
 
+internal fun MainActivity.savedUninstalled(): MutableSet<String> =
+    (getSharedPreferences(Prefs.MAIN, Context.MODE_PRIVATE)
+        .getStringSet(Prefs.KEY_UNINSTALLED_APPS, emptySet()) ?: emptySet()).toMutableSet()
+
+internal fun MainActivity.saveUninstalled(set: Set<String>) {
+    getSharedPreferences(Prefs.MAIN, Context.MODE_PRIVATE)
+        .edit().putStringSet(Prefs.KEY_UNINSTALLED_APPS, HashSet(set)).apply()
+}
+
 internal fun MainActivity.refreshFreezeStatus() {
     val tv = findViewById<TextView?>(R.id.tvStatusFreeze) ?: return
     val saved = savedFrozen()
@@ -37,8 +46,21 @@ internal fun MainActivity.refreshFreezeStatus() {
         try { !packageManager.getApplicationInfo(p, 0).enabled } catch (e: Exception) { true }
     }
     if (stillFrozen.size != saved.size) saveFrozen(stillFrozen.toSet())
-    tv.text = if (stillFrozen.isEmpty()) getString(R.string.status_ready)
-    else resources.getQuantityString(R.plurals.status_frozen_apps, stillFrozen.size, stillFrozen.size)
+    val uninstalled = savedUninstalled()
+    val stillGone = uninstalled.filter { p ->
+        try {
+            packageManager.getApplicationInfo(p, 0)
+            false
+        } catch (e: Exception) { true }
+    }
+    if (stillGone.size != uninstalled.size) saveUninstalled(stillGone.toSet())
+    tv.text = when {
+        stillFrozen.isEmpty() && stillGone.isEmpty() -> getString(R.string.status_ready)
+        stillFrozen.isEmpty() -> resources.getQuantityString(R.plurals.status_uninstalled_apps, stillGone.size, stillGone.size)
+        stillGone.isEmpty() -> resources.getQuantityString(R.plurals.status_frozen_apps, stillFrozen.size, stillFrozen.size)
+        else -> resources.getQuantityString(R.plurals.status_frozen_apps, stillFrozen.size, stillFrozen.size) +
+            " · " + resources.getQuantityString(R.plurals.status_uninstalled_apps, stillGone.size, stillGone.size)
+    }
 }
 
 internal fun MainActivity.freezeBlocklist(): Set<String> {
@@ -178,13 +200,16 @@ internal fun MainActivity.presentFreezeList(apps: List<AppEntry>) {
     val userApps = apps.filter { !it.isSystem && !it.frozen }
     val systemApps = apps.filter { it.isSystem && !it.frozen }
     val frozenApps = apps.filter { it.frozen }
+    val uninstalledPkgs = savedUninstalled().toSet()
+    val uninstalledApps = uninstalledPkgs.sorted().map { AppEntry(it, it, false, false) }
+    val removedApps = frozenApps + uninstalledApps
 
     var tab = 0
     var query = ""
     val selected = mutableSetOf<String>()
     val iconCache = HashMap<String, android.graphics.drawable.Drawable?>()
 
-    val (tabs, tabIds) = createFreezeTabs(userApps.size, systemApps.size, frozenApps.size)
+    val (tabs, tabIds) = createFreezeTabs(userApps.size, systemApps.size, removedApps.size)
 
     val (searchLayout, searchEdit) = styledField(this, getString(R.string.hint_search_apps), android.text.InputType.TYPE_CLASS_TEXT, topMarginDp = 10)
     val warning = createSystemAppsWarning()
@@ -192,10 +217,12 @@ internal fun MainActivity.presentFreezeList(apps: List<AppEntry>) {
     val sheet = Sheet(this)
 
     fun current(): List<AppEntry> {
-        val base = when (tab) { 0 -> userApps; 1 -> systemApps; else -> frozenApps }
+        val base = when (tab) { 0 -> userApps; 1 -> systemApps; else -> removedApps }
         return if (query.isBlank()) base
         else base.filter { it.label.contains(query, true) || it.pkg.contains(query, true) }
     }
+
+    fun isUninstalledRow(a: AppEntry): Boolean = a.pkg in uninstalledPkgs
 
     fun updateButtons() {
         val primary = sheet.buttonViews.getOrNull(1) ?: return
@@ -205,8 +232,10 @@ internal fun MainActivity.presentFreezeList(apps: List<AppEntry>) {
             tab == 2 -> getString(R.string.btn_restore_n, selected.size)
             else -> getString(R.string.btn_freeze_n, selected.size)
         }
-        sheet.buttonViews.getOrNull(2)?.visibility =
-            if (frozenApps.isNotEmpty()) View.VISIBLE else View.GONE
+        // [0]=close [1]=freeze/restore [2]=uninstall [3]=restore-all
+        sheet.buttonViews.getOrNull(2)?.visibility = if (tab == 2) View.GONE else View.VISIBLE
+        sheet.buttonViews.getOrNull(3)?.visibility =
+            if (removedApps.isNotEmpty()) View.VISIBLE else View.GONE
     }
 
     fun render() {
@@ -228,9 +257,13 @@ internal fun MainActivity.presentFreezeList(apps: List<AppEntry>) {
             val icon = iconCache.getOrPut(a.pkg) {
                 try { pm.getApplicationIcon(a.pkg) } catch (e: Exception) { null }
             }
+            val sub = when {
+                isUninstalledRow(a) -> getString(R.string.uninstalled_row)
+                a.isSystem -> getString(R.string.sys_app_pkg, a.pkg)
+                else -> a.pkg
+            }
             list.addView(optionRow(
-                this, a.label,
-                if (a.isSystem) getString(R.string.sys_app_pkg, a.pkg) else a.pkg,
+                this, a.label, sub,
                 icon = icon?.constantState?.newDrawable()?.mutate() ?: icon,
                 tintIcon = false, selected = a.pkg in selected
             ) {
@@ -273,7 +306,9 @@ internal fun MainActivity.presentFreezeList(apps: List<AppEntry>) {
         if (picked.isEmpty()) return
         if (tab == 2) {
             sheet.dismiss()
-            applyFreezeChange(picked, freeze = false)
+            val (uninst, froz) = picked.partition { it in uninstalledPkgs }
+            if (froz.isNotEmpty()) applyFreezeChange(froz, freeze = false)
+            if (uninst.isNotEmpty()) applyUninstallChange(uninst, uninstall = false)
             return
         }
         val sys = apps.filter { it.pkg in selected && it.isSystem }
@@ -288,6 +323,24 @@ internal fun MainActivity.presentFreezeList(apps: List<AppEntry>) {
         }
     }
 
+    fun doUninstall() {
+        val picked = selected.toList()
+        if (picked.isEmpty() || tab == 2) return
+        val sys = apps.filter { it.pkg in selected && it.isSystem }
+        val user = picked.filter { p -> sys.none { it.pkg == p } }
+        if (sys.isEmpty()) {
+            UiToast.info(this, getString(R.string.toast_uninstall_system_only), Toast.LENGTH_LONG).show()
+            return
+        }
+        if (user.isNotEmpty()) {
+            UiToast.info(this, getString(R.string.toast_uninstall_skipped_user, user.size), Toast.LENGTH_LONG).show()
+        }
+        confirmUninstall(sys.map { it.label }) {
+            sheet.dismiss()
+            applyUninstallChange(sys.map { it.pkg }, uninstall = true)
+        }
+    }
+
     sheet.icon(R.drawable.ic_freeze)
         .title(getString(R.string.dlg_freeze_apps))
         .message(getString(R.string.dlg_freeze_apps_msg))
@@ -297,12 +350,28 @@ internal fun MainActivity.presentFreezeList(apps: List<AppEntry>) {
         .content(list)
         .button(getString(R.string.btn_close), SheetStyle.TONAL)
         .button(getString(R.string.btn_freeze), SheetStyle.PRIMARY, dismiss = false) { doChange() }
+        .button(getString(R.string.btn_uninstall), SheetStyle.DANGER, dismiss = false) { doUninstall() }
         .button(getString(R.string.btn_restore_all_frozen), SheetStyle.TEXT, dismiss = false) {
             sheet.dismiss()
             restoreAllFrozen()
+            restoreAllUninstalled(silentEmpty = true)
         }
         .show()
     updateButtons()
+}
+
+private fun MainActivity.confirmUninstall(labels: List<String>, onConfirm: () -> Unit) {
+    Sheet(this)
+        .icon(R.drawable.ic_warning)
+        .title(getString(R.string.dlg_uninstall_title))
+        .message(
+            getString(R.string.dlg_uninstall_msg) + "\n\n" +
+                labels.take(8).joinToString("\n") { "• $it" } +
+                (if (labels.size > 8) getString(R.string.more_n, labels.size - 8) else "")
+        )
+        .button(getString(R.string.btn_cancel), SheetStyle.TONAL)
+        .button(getString(R.string.btn_uninstall), SheetStyle.DANGER) { onConfirm() }
+        .show()
 }
 
 internal fun MainActivity.applyFreezeChange(pkgs: List<String>, freeze: Boolean) {
@@ -364,4 +433,73 @@ internal fun MainActivity.restoreAllFrozen() {
     }
     if (!hasShizukuPermission()) return
     applyFreezeChange(saved, freeze = false)
+}
+
+/** Uninstall (user 0, keep data) or factory-restore uninstalled system apps. */
+internal fun MainActivity.applyUninstallChange(pkgs: List<String>, uninstall: Boolean) {
+    val valid = pkgs.mapNotNull { ShellSanitizer.cleanPkg(it) }
+    if (valid.isEmpty()) return
+    if (!hasShizukuPermission()) return
+
+    val progress = ProgressSheet(this)
+        .icon(R.drawable.ic_freeze)
+        .title(getString(if (uninstall) R.string.dlg_uninstalling else R.string.dlg_restoring))
+        .message(getString(R.string.txt_please_wait))
+    progress.show()
+    val userId = android.os.Process.myUid() / 100000
+
+    lifecycleScope.launch(Dispatchers.IO) {
+        val saved = savedUninstalled()
+        var ok = 0
+        val failed = mutableListOf<String>()
+        valid.forEachIndexed { i, p ->
+            withContext(Dispatchers.Main) {
+                progress.update((i * 100) / valid.size, getString(R.string.progress_n_of, i + 1, valid.size))
+            }
+            if (uninstall) {
+                val r = runShell(UninstallCmd.buildUninstall(userId, p))
+                val gone = runShell("pm list packages --user $userId $p").out
+                if (UninstallCmd.succeeded(r.code, r.merged) && UninstallCmd.isGone(gone)) {
+                    ok++
+                    saved.add(p)
+                    // A frozen entry for a now-uninstalled app is a ghost: drop it.
+                    val froz = savedFrozen()
+                    if (froz.remove(p)) saveFrozen(froz)
+                } else failed += p
+            } else {
+                val r = runShell(UninstallCmd.buildRestore(p))
+                val present = runShell("pm list packages $p").out
+                if (UninstallCmd.succeeded(r.code, r.merged) && !UninstallCmd.isGone(present)) {
+                    ok++
+                    saved.remove(p)
+                } else failed += p
+            }
+        }
+        saveUninstalled(saved)
+        withContext(Dispatchers.Main) {
+            progress.dismiss()
+            refreshFreezeStatus()
+            updateDeviceInfo()
+            if (ok > 0) {
+                val msg = if (uninstall) resources.getQuantityString(R.plurals.uninstalled_apps, ok, ok)
+                else resources.getQuantityString(R.plurals.restored_apps, ok, ok)
+                UiToast.success(this@applyUninstallChange, msg, Toast.LENGTH_LONG).show()
+            }
+            if (failed.isNotEmpty()) {
+                UiToast.warning(
+                    this@applyUninstallChange,
+                    resources.getQuantityString(R.plurals.failed_apps, failed.size, failed.size), Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+    }
+}
+
+internal fun MainActivity.restoreAllUninstalled(silentEmpty: Boolean = false) {
+    val saved = savedUninstalled().toList()
+    if (saved.isEmpty()) {
+        if (!silentEmpty) UiToast.info(this, getString(R.string.toast_no_uninstalled), Toast.LENGTH_SHORT).show()
+        return
+    }
+    applyUninstallChange(saved, uninstall = false)
 }

@@ -55,7 +55,7 @@ private fun MainActivity.bindStatusReset(buttonId: Int, statusId: Int) {
 
 private fun MainActivity.setupTweakCardListeners(prefs: SharedPreferences) {
     findViewById<CardView>(R.id.cardApkInstall).setOnClickListener { showApkInstallSheet() }
-
+    findViewById<CardView>(R.id.cardApkBackup).setOnClickListener { showApkBackupSheet() }
     findViewById<CardView>(R.id.cardFixedPerformance).setOnClickListener {
         if (prefs.getBoolean(Prefs.KEY_FIXED_PERF_AGGRESSIVE, false)) {
             UiToast.info(this, getString(R.string.toast_already_aggr), Toast.LENGTH_SHORT).show()
@@ -122,6 +122,12 @@ private fun MainActivity.setupTweakCardListeners(prefs: SharedPreferences) {
 
     findViewById<CardView>(R.id.cardGraphicsApi).setOnClickListener { showGraphicsApiSheet(prefs) }
 
+    findViewById<CardView>(R.id.cardOrientation).setOnClickListener { showOrientationSheet(prefs) }
+
+    findViewById<TextView>(R.id.btnResetOrientation).setOnClickListener {
+        if (!hasShizukuPermission()) return@setOnClickListener
+        resetOrientationMode(prefs)
+    }
     findViewById<TextView>(R.id.btnResetGraphics).setOnClickListener {
         if (!hasShizukuPermission()) return@setOnClickListener
         resetGraphicsRenderer(prefs)
@@ -160,6 +166,7 @@ private fun MainActivity.setupToolsCardListeners(prefs: SharedPreferences) {
 
     findViewById<CardView>(R.id.cardFreezeApps).setOnClickListener { showFreezeAppsSheet() }
     findViewById<CardView>(R.id.cardShellExecute).setOnClickListener { showShellExecuteSheet() }
+    findViewById<CardView>(R.id.cardReboot).setOnClickListener { showRebootSheet() }
     findViewById<CardView>(R.id.cardRamBooster).setOnClickListener { showRamBoosterSheet() }
     findViewById<CardView>(R.id.cardClearCache).setOnClickListener { confirmClearCaches() }
     findViewById<CardView>(R.id.cardChangeResolution).setOnClickListener { showResolutionModeDialog() }
@@ -269,7 +276,10 @@ private fun MainActivity.setupOverlayResetListeners() {
 }
 
 private fun MainActivity.setupTweakResetListeners(prefs: SharedPreferences) {
-    findViewById<TextView>(R.id.btnResetFreeze).setOnClickListener { restoreAllFrozen() }
+    findViewById<TextView>(R.id.btnResetFreeze).setOnClickListener {
+        restoreAllFrozen()
+        restoreAllUninstalled(silentEmpty = true)
+    }
 
     findViewById<TextView>(R.id.btnResetFixedPerf).setOnClickListener {
         runAdbCommand(fixedPerfResetCmd(prefs), getString(R.string.fp_reset_done)) {
@@ -299,6 +309,15 @@ private fun MainActivity.setupTweakResetListeners(prefs: SharedPreferences) {
     bindStatusReset(R.id.btnResetFstrim, R.id.tvStatusFstrim)
     bindStatusReset(R.id.btnResetGyro, R.id.tvStatusGyro)
     bindStatusReset(R.id.btnResetShell, R.id.tvStatusShell)
+    bindStatusReset(R.id.btnResetReboot, R.id.tvStatusReboot)
+    findViewById<TextView>(R.id.btnResetApkBackup).setOnClickListener {
+        prefs.edit()
+            .remove(Prefs.KEY_APKBACKUP_COUNT)
+            .remove(Prefs.KEY_APKBACKUP_TIME)
+            .apply()
+        findViewById<TextView>(R.id.tvStatusApkBackup).text = getString(R.string.status_ready)
+        UiToast.success(this, getString(R.string.toast_status_reset), Toast.LENGTH_SHORT).show()
+    }
 
     bindCommandReset(
         R.id.btnResetRefresh,
