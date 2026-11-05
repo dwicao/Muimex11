@@ -1,8 +1,8 @@
 {
-  "versionCode": 42,
-  "versionName": "4.12",
-  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.12/Muimex11-4.12.apk",
-  "releaseNotes": "Rapi UI: subtitle Tweaks powered by Shizuku, badge FREE dihapus dari semua kartu, toggle list/grid 2 kolom di kiri tombol tema.",
+  "versionCode": 43,
+  "versionName": "4.13",
+  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.13/Muimex11-4.13.apk",
+  "releaseNotes": "Muimex11 4.13",
   "mandatory": false,
-  "sha256": "39bc2e78176e7d3c0af7e1d647463e8ed7290d559396f49371e7140de3d7b65b"
+  "sha256": "bfbde9ab8e03704963c2f9eb9afa9695e938c796b4804c982b44d35c1b01ac87"
 }
