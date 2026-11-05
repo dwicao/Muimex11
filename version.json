@@ -1,8 +1,8 @@
 {
-  "versionCode": 41,
-  "versionName": "4.11",
-  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.11/Muimex11-4.11.apk",
-  "releaseNotes": "Locale per app (A13+) + verifikasi read-back, preset blokir AppOps massal, keep-awake per game dengan restore, kartu recovery Shizuku (deteksi fork) + izin adb_wifi, alarm baterai penuh via foreground service, launcher phone info *#*#4636#*#*. Termasuk EN+PT + unit test.",
+  "versionCode": 42,
+  "versionName": "4.12",
+  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.12/Muimex11-4.12.apk",
+  "releaseNotes": "Muimex11 4.12",
   "mandatory": false,
-  "sha256": "4cfa5d7bc4eaac07eb3de6a6648fe7b02b7f6c1299e7cdc7f8a11e80d27778fe"
+  "sha256": "39bc2e78176e7d3c0af7e1d647463e8ed7290d559396f49371e7140de3d7b65b"
 }
