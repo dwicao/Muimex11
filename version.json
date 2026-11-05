@@ -1,8 +1,8 @@
 {
-  "versionCode": 40,
-  "versionName": "4.10",
-  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.10/Muimex11-4.10.apk",
-  "releaseNotes": "Uninstall bloat per-user + restore pabrik, backup APK ke Download/Muimex11, menu reboot (system/recovery/bootloader/SystemUI), orientation lock global + per-game, DND fokus per-game dengan restore otomatis. Termasuk EN+PT + unit test.",
+  "versionCode": 41,
+  "versionName": "4.11",
+  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.11/Muimex11-4.11.apk",
+  "releaseNotes": "Locale per app (A13+) + verifikasi read-back, preset blokir AppOps massal, keep-awake per game dengan restore, kartu recovery Shizuku (deteksi fork) + izin adb_wifi, alarm baterai penuh via foreground service, launcher phone info *#*#4636#*#*. Termasuk EN+PT + unit test.",
   "mandatory": false,
-  "sha256": "6e53b333451b9bdbecc57413bfdbbf971c22a4eb65759511a9b0086a1c54f35d"
+  "sha256": "4cfa5d7bc4eaac07eb3de6a6648fe7b02b7f6c1299e7cdc7f8a11e80d27778fe"
 }
