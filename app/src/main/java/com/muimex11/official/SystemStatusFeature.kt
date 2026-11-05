@@ -28,7 +28,8 @@ private class SystemStatuses(
     val audio: String,
     val sensors: String,
     val bgRestrict: String,
-    val benchmark: String
+    val benchmark: String,
+    val graphics: String
 )
 
 internal fun MainActivity.fetchSystemStatuses() {
@@ -45,7 +46,7 @@ internal fun MainActivity.fetchSystemStatuses() {
     }
 }
 
-private fun MainActivity.readSystemStatuses(prefs: SharedPreferences): SystemStatuses {
+private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): SystemStatuses {
     val isFixedPerf = prefs.getBoolean(Prefs.KEY_FIXED_PERF, false)
     val fixedPerfStatus = if (isFixedPerf)
         getString(if (prefs.getBoolean(Prefs.KEY_FIXED_PERF_AGGRESSIVE, false)) R.string.status_enabled_aggr else R.string.status_enabled)
@@ -131,6 +132,13 @@ private fun MainActivity.readSystemStatuses(prefs: SharedPreferences): SystemSta
         benchLast.label, benchLast.launchMs, benchLast.fps?.toString() ?: "--"
     )
 
+    // Graphics API: live prop wins; offline fallback keeps the saved choice.
+    // A reboot clears the prop, so reconcile the saved state first (GAMA).
+    GraphicsApi.reconcileRebootReset(prefs)
+    val liveRenderer = GraphicsApi.detectRenderer()
+        .takeIf { it == GraphicsApi.VULKAN || it == GraphicsApi.OPENGL }
+    val graphicsStatus = graphicsStatusText(prefs, liveRenderer)
+
     return SystemStatuses(
         fixedPerf = fixedPerfStatus,
         thermal = thermalStatus,
@@ -151,7 +159,8 @@ private fun MainActivity.readSystemStatuses(prefs: SharedPreferences): SystemSta
         audio = audioStatus,
         sensors = sensorsStatus,
         bgRestrict = bgStatus,
-        benchmark = benchStatus
+        benchmark = benchStatus,
+        graphics = graphicsStatus
     )
 }
 
@@ -176,6 +185,7 @@ private fun MainActivity.renderSystemStatuses(s: SystemStatuses) {
     findViewById<TextView>(R.id.tvStatusSensors).text = s.sensors
     findViewById<TextView>(R.id.tvStatusBgRestrict).text = s.bgRestrict
     findViewById<TextView>(R.id.tvStatusBenchmark).text = s.benchmark
+    findViewById<TextView>(R.id.tvStatusGraphics).text = s.graphics
 }
 
 private fun MainActivity.renderOverlayStatuses(prefs: SharedPreferences) {

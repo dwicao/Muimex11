@@ -739,4 +739,22 @@
     <string name="thermal_adaptive_on">Térmico adaptivo on (%1$d°/%2$d°)</string>
     <string name="status_thermal_adaptive_fmt">Status: Adaptivo (%1$d°/%2$d°)</string>
 
+    <!-- Graphics API (Vulkan/OpenGL) -->
+    <string name="title_graphics">API de gráficos (Vulkan/OpenGL)</string>
+    <string name="desc_graphics">Alterne a API de renderização da GPU. Vulkan pode esfriar e economizar bateria em aparelhos suportados; OpenGL é o padrão seguro.</string>
+    <string name="dlg_graphics_title">API de gráficos</string>
+    <string name="dlg_graphics_msg">Vulkan = mais frio, mais bateria (em aparelhos suportados). OpenGL = reserva. Vale para apps abertos dali em diante; se a tela falhar, segure Power + Volume Menos para reiniciar, depois volte ao OpenGL.</string>
+    <string name="graphics_vulkan">Vulkan</string>
+    <string name="graphics_vulkan_desc">Mais frio · mais bateria (depende do aparelho)</string>
+    <string name="graphics_opengl">OpenGL</string>
+    <string name="graphics_opengl_desc">Padrão do Android · compatibilidade máxima</string>
+    <string name="graphics_note">O Android limpa esse ajuste ao reiniciar — o Muimex11 reaplica o Vulkan sozinho quando o Shizuku estiver pronto. Alguns apps ignoram o Vulkan e voltam ao OpenGL; isso é normal.</string>
+    <string name="status_graphics_vulkan">Status: Vulkan</string>
+    <string name="status_graphics_opengl">Status: OpenGL (Padrão)</string>
+    <string name="w_vulkan">Vulkan</string>
+    <string name="w_opengl">OpenGL</string>
+    <string name="msg_graphics_set">API de gráficos: %1$s</string>
+    <string name="msg_graphics_reset">API de gráficos de volta ao OpenGL</string>
+    <string name="msg_graphics_fail">Falha na API de gráficos — %1$s</string>
+
 </resources>

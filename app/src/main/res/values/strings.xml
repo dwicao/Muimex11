@@ -748,4 +748,22 @@
     <string name="thermal_adaptive_note">Adaptive needs the Game Space dock running — it hosts the temperature governor. Enabling it starts the dock.</string>
     <string name="thermal_adaptive_on">Adaptive thermal on (%1$d°/%2$d°)</string>
     <string name="status_thermal_adaptive_fmt">Status: Adaptive (%1$d°/%2$d°)</string>
+
+    <!-- Graphics API (Vulkan/OpenGL) — core switch adapted from GAMA (MIT, palincat/gama) -->
+    <string name="title_graphics">Graphics API (Vulkan/OpenGL)</string>
+    <string name="desc_graphics">Switch the GPU rendering API. Vulkan can lower temps and improve battery on supported devices; OpenGL is the safe default.</string>
+    <string name="dlg_graphics_title">Graphics API</string>
+    <string name="dlg_graphics_msg">Vulkan = lower temps, better battery (on supported devices). OpenGL = fallback. Applies to newly launched apps; if the screen glitches, hold Power + Volume Down to force-restart, then switch back to OpenGL.</string>
+    <string name="graphics_vulkan">Vulkan</string>
+    <string name="graphics_vulkan_desc">Lower temps · better battery (device-dependent)</string>
+    <string name="graphics_opengl">OpenGL</string>
+    <string name="graphics_opengl_desc">Android default · maximum compatibility</string>
+    <string name="graphics_note">Android clears this setting on reboot — Muimex11 re-applies Vulkan automatically when Shizuku is ready. Some apps ignore Vulkan and fall back to OpenGL on their own; that is normal.</string>
+    <string name="status_graphics_vulkan">Status: Vulkan</string>
+    <string name="status_graphics_opengl">Status: OpenGL (Default)</string>
+    <string name="w_vulkan">Vulkan</string>
+    <string name="w_opengl">OpenGL</string>
+    <string name="msg_graphics_set">Graphics API set to %1$s</string>
+    <string name="msg_graphics_reset">Graphics API reset to OpenGL</string>
+    <string name="msg_graphics_fail">Graphics API failed — %1$s</string>
 </resources>

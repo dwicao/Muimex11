@@ -44,4 +44,10 @@ object Prefs {
 
     const val KEY_BGRESTRICT_RULES = "BgRestrictRules"
     const val KEY_BENCH_RUNS = "BenchRuns"
+
+    const val KEY_GRAPHICS_RENDERER = "GraphicsRenderer"
+    const val KEY_GRAPHICS_DESIRED = "GraphicsDesired"
+    const val KEY_GRAPHICS_LAST_SWITCH = "GraphicsLastSwitch"
+    const val KEY_GRAPHICS_LAST_UPTIME = "GraphicsLastUptime"
+    const val KEY_GRAPHICS_LAST_BOOT = "GraphicsLastBoot"
 }

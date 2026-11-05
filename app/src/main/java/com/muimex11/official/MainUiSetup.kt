@@ -56,7 +56,7 @@ internal fun MainActivity.setupFilterChips() {
     }
 
     val performanceCards = listOf(R.id.cardFixedPerformance, R.id.cardOptimizeSystem, R.id.cardSamsungBoost, R.id.cardThermalThrottling, R.id.cardBatterySaver, R.id.cardDebloat, R.id.cardBgRestrict, R.id.cardFstrim, R.id.cardDisableDevOptions, R.id.cardRamBooster, R.id.cardClearCache, R.id.cardFreezeApps)
-    val displayCards = listOf(R.id.cardAdjustRefreshRate, R.id.cardFastAnimations, R.id.cardDisableBlurs, R.id.cardChangeResolution)
+    val displayCards = listOf(R.id.cardAdjustRefreshRate, R.id.cardFastAnimations, R.id.cardDisableBlurs, R.id.cardChangeResolution, R.id.cardGraphicsApi)
     val networkCards = listOf(R.id.cardImproveNetwork, R.id.cardCustomDns)
     val gamingCards = listOf(R.id.cardImproveTouch, R.id.cardGamingDnd, R.id.cardCrosshair, R.id.cardRealtimeMonitor, R.id.cardAutoClick, R.id.cardGameMode, R.id.cardGameSpace, R.id.cardFixGyro, R.id.cardGameProfiles, R.id.cardAudioLatency)
 
@@ -93,7 +93,8 @@ internal fun MainActivity.setupStatusStyling() {
         R.id.tvStatusRamBooster, R.id.tvStatusCache, R.id.tvStatusFreeze, R.id.tvStatusAutoClick,
         R.id.tvStatusGameSpace, R.id.tvStatusSamsungBoost, R.id.tvStatusGyro, R.id.tvStatusBatterySaver,
         R.id.tvStatusAppOps, R.id.tvStatusGameProfiles, R.id.tvStatusDebloat, R.id.tvStatusAudio,
-        R.id.tvStatusSensors, R.id.tvStatusBgRestrict, R.id.tvStatusBenchmark
+        R.id.tvStatusSensors, R.id.tvStatusBgRestrict, R.id.tvStatusBenchmark,
+        R.id.tvStatusGraphics
     )
     val states = HashMap<Int, TweakState>()
     val green = Color.parseColor("#2E9E5B")
@@ -108,6 +109,7 @@ internal fun MainActivity.setupStatusStyling() {
                 t.startsWith(en(R.string.w_unknown)) || t.startsWith(en(R.string.w_checking)) -> TweakState.NEUTRAL
             id == R.id.tvStatusDevOptions -> if (t.startsWith(en(R.string.w_enabled))) TweakState.WARN else TweakState.ACTIVE
             id == R.id.tvStatusThermal -> TweakState.WARN
+            id == R.id.tvStatusGraphics -> if (t.contains(en(R.string.w_vulkan))) TweakState.ACTIVE else TweakState.NEUTRAL
             id == R.id.tvStatusBlurs -> if (t.startsWith(en(R.string.w_disabled))) TweakState.ACTIVE else TweakState.NEUTRAL
             t.startsWith(en(R.string.w_disabled)) -> TweakState.NEUTRAL
             else -> TweakState.ACTIVE

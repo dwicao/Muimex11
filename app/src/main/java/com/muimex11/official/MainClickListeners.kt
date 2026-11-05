@@ -120,6 +120,12 @@ private fun MainActivity.setupTweakCardListeners(prefs: SharedPreferences) {
 
     findViewById<CardView>(R.id.cardAdjustRefreshRate).setOnClickListener { showRefreshRateDialog() }
 
+    findViewById<CardView>(R.id.cardGraphicsApi).setOnClickListener { showGraphicsApiSheet(prefs) }
+
+    findViewById<TextView>(R.id.btnResetGraphics).setOnClickListener {
+        if (!hasShizukuPermission()) return@setOnClickListener
+        resetGraphicsRenderer(prefs)
+    }
     findViewById<CardView>(R.id.cardGameMode).setOnClickListener {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
             UiToast.error(this, getString(R.string.toast_needs_a12), Toast.LENGTH_LONG).show()
@@ -377,6 +383,7 @@ internal fun MainActivity.resetAllFunctions(prefs: android.content.SharedPrefere
             settings put global disable_window_blurs 0
             settings put global heads_up_notifications_enabled 1
             settings put global development_settings_enabled 0
+            setprop debug.hwui.renderer opengl
         """.trimIndent().replace("\n", " && ").replace("&&  &&", "&&")
 
         runAdbCommand(resetCmd, getString(R.string.msg_all_reset)) {
@@ -386,6 +393,8 @@ internal fun MainActivity.resetAllFunctions(prefs: android.content.SharedPrefere
                 .putBoolean(Prefs.KEY_THERMAL_DISABLED, false)
                 .putBoolean(Prefs.KEY_THERMAL_ADAPTIVE, false)
                 .putString(Prefs.KEY_LAST_GAME_MODE, "")
+                .putString(Prefs.KEY_GRAPHICS_RENDERER, GraphicsApi.OPENGL)
+                .putString(Prefs.KEY_GRAPHICS_DESIRED, GraphicsApi.OPENGL)
                 .remove(Prefs.KEY_APPOPS_RULES)
                 .apply()
             syncThermalService(0)
@@ -417,6 +426,7 @@ internal fun MainActivity.resetAllFunctions(prefs: android.content.SharedPrefere
             findViewById<TextView>(R.id.tvStatusSensors).text = getString(R.string.status_default)
             findViewById<TextView>(R.id.tvStatusBgRestrict).text = getString(R.string.status_ready)
             findViewById<TextView>(R.id.tvStatusBenchmark).text = getString(R.string.status_ready)
+            findViewById<TextView>(R.id.tvStatusGraphics).text = getString(R.string.status_graphics_opengl)
 
             findViewById<TextView>(R.id.tvStatusFstrim).text = getString(R.string.status_ready)
             findViewById<TextView>(R.id.tvStatusRamBooster).text = getString(R.string.status_ready)
