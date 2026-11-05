@@ -1,8 +1,8 @@
 {
-  "versionCode": 39,
-  "versionName": "4.9",
-  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.9/Muimex11-4.9.apk",
-  "releaseNotes": "Kartu Display baru: beralih renderer GPU via setprop debug.hwui.renderer + verifikasi getprop, status live, restore Vulkan otomatis setelah reboot, reset kembali ke OpenGL. Termasuk EN+PT dan unit test.",
+  "versionCode": 40,
+  "versionName": "4.10",
+  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.10/Muimex11-4.10.apk",
+  "releaseNotes": "Muimex11 4.10",
   "mandatory": false,
-  "sha256": "d4ecfd9ac7fd3981e7ea39749eafd6a61b84c49ef896c929a9bd336f8de98d51"
+  "sha256": "6e53b333451b9bdbecc57413bfdbbf971c22a4eb65759511a9b0086a1c54f35d"
 }
