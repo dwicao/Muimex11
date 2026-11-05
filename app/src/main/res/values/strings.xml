@@ -569,6 +569,12 @@
     <string name="cd_view_grid">Grid view</string>
     <string name="cd_view_list">List view</string>
 
+    <!-- Crash reporter -->
+    <string name="crash_title">Something crashed</string>
+    <string name="crash_msg">The app hit an error and had to close. The full log is below — copy it when reporting the bug.</string>
+    <string name="crash_no_file">log file unavailable</string>
+    <string name="crash_saved_note">Saved to %1$s — attach it or paste the copied text when reporting.</string>
+
     <string name="title_battery">Battery Saver</string>
     <string name="desc_battery">System-level battery saving without root or undervolting. Balanced, Saver and Extreme modes tune battery saver, adaptive battery, Doze and background scans. Fully reversible.</string>
     <string name="bat_title">Battery Saver</string>

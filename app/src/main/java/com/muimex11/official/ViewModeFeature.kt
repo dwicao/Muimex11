@@ -44,6 +44,12 @@ internal fun MainActivity.applyViewMode(grid: Boolean) {
     val transition = container.layoutTransition
     container.layoutTransition = null
     try {
+        // Detach EVERYTHING first: in grid mode the cards live inside row
+        // layouts, so container.removeAllViews() alone leaves them parented
+        // and re-adding would throw IllegalStateException. This was the
+        // grid->list crash.
+        header?.let { (it.parent as? ViewGroup)?.removeView(it) }
+        cards.forEach { (it.parent as? ViewGroup)?.removeView(it) }
         container.removeAllViews()
         header?.let { container.addView(it, listParams(isHeader = true)) }
         if (!grid) {

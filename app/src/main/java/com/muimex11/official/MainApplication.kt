@@ -11,6 +11,7 @@ class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         AppTranslator.init(this)
+        CrashReporter.install(this)
 
         val prefs = getSharedPreferences(Prefs.THEME, Context.MODE_PRIVATE)
         val isDarkModeSaved = prefs.getBoolean(Prefs.KEY_DARK_MODE, false)

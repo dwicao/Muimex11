@@ -72,6 +72,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         AppTranslator.translateTree(findViewById(android.R.id.content))
 
+        // If the previous run crashed, show the saved report now — even a
+        // startup crash lands here on the next launch.
+        try {
+            CrashReporter.pendingReport(this)?.let { showCrashReportSheet(it) }
+        } catch (_: Exception) {}
+
         val isNightMode = setupWindowAppearance()
         setupThemeToggle(isNightMode)
 

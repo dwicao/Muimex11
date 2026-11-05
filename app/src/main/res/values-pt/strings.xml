@@ -559,6 +559,12 @@
     <string name="cd_view_grid">Ver em grade</string>
     <string name="cd_view_list">Ver em lista</string>
 
+    <!-- Relato de crash -->
+    <string name="crash_title">Algo quebrou</string>
+    <string name="crash_msg">O app encontrou um erro e precisou fechar. O log completo está abaixo — copie ao relatar o bug.</string>
+    <string name="crash_no_file">arquivo de log indisponível</string>
+    <string name="crash_saved_note">Salvo em %1$s — anexe ou cole o texto copiado ao relatar.</string>
+
     <string name="title_battery">Economia de bateria</string>
     <string name="desc_battery">Economia de bateria sem root ou undervolt. Modos Equilibrado, Econômico e Extremo ajustam economia, bateria adaptativa, Doze e varreduras. Totalmente reversível.</string>
     <string name="bat_title">Economia de bateria</string>
