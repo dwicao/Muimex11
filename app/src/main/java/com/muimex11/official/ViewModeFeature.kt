@@ -7,38 +7,53 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 
 /**
- * List <-> 2-column grid toggle for the tweak cards. The device-info header
- * always stays full-width on top; every other card reflows into rows of two.
- * Visibility flags (filter chips) survive the re-parenting untouched.
+ * List <-> 2-column grid <-> compact view toggle for the tweak cards.
+ * The device-info header always stays full-width on top; every other card
+ * reflows into rows of two. Compact is the grid with tweak descriptions
+ * hidden. Visibility flags (filter chips) survive the re-parenting untouched.
  */
-internal fun MainActivity.isGridMode(): Boolean =
+internal fun MainActivity.viewMode(): String =
     getSharedPreferences(Prefs.MAIN, Context.MODE_PRIVATE)
-        .getString(Prefs.KEY_VIEW_MODE, "list") == "grid"
+        .getString(Prefs.KEY_VIEW_MODE, ViewMode.LIST) ?: ViewMode.LIST
 
 internal fun MainActivity.setupViewToggle() {
     val btn = findViewById<ImageView>(R.id.btnViewToggle) ?: return
-    syncViewToggleIcon(isGridMode())
+    syncViewToggleIcon(viewMode())
     btn.setOnClickListener {
-        val grid = !isGridMode()
+        val next = ViewMode.next(viewMode())
         getSharedPreferences(Prefs.MAIN, Context.MODE_PRIVATE)
-            .edit().putString(Prefs.KEY_VIEW_MODE, if (grid) "grid" else "list").apply()
-        syncViewToggleIcon(grid)
-        applyViewMode(grid)
+            .edit().putString(Prefs.KEY_VIEW_MODE, next).apply()
+        syncViewToggleIcon(next)
+        applyViewMode(next)
     }
-    applyViewMode(isGridMode())
+    applyViewMode(viewMode())
 }
 
-private fun MainActivity.syncViewToggleIcon(grid: Boolean) {
+private fun MainActivity.syncViewToggleIcon(mode: String) {
     val btn = findViewById<ImageView>(R.id.btnViewToggle) ?: return
     // The icon shows what tapping switches TO.
-    btn.setImageResource(if (grid) R.drawable.ic_view_list else R.drawable.ic_view_grid)
-    btn.contentDescription = getString(if (grid) R.string.cd_view_list else R.string.cd_view_grid)
+    when (ViewMode.next(mode)) {
+        ViewMode.GRID -> {
+            btn.setImageResource(R.drawable.ic_view_grid)
+            btn.contentDescription = getString(R.string.cd_view_grid)
+        }
+        ViewMode.COMPACT -> {
+            btn.setImageResource(R.drawable.ic_view_compact)
+            btn.contentDescription = getString(R.string.cd_view_compact)
+        }
+        else -> {
+            btn.setImageResource(R.drawable.ic_view_list)
+            btn.contentDescription = getString(R.string.cd_view_list)
+        }
+    }
 }
 
-internal fun MainActivity.applyViewMode(grid: Boolean) {
+internal fun MainActivity.applyViewMode(mode: String) {
     val container = findViewById<LinearLayout>(R.id.cardsContainer) ?: return
     val header = findViewById<View>(R.id.cardDeviceInfo)
     val cards = tweakCardIds().mapNotNull { findViewById<View>(it) }
+    val grid = ViewMode.isGridLike(mode)
+    val compact = mode == ViewMode.COMPACT
 
     // Suppress transition bursts while re-parenting; chips animate on their own.
     val transition = container.layoutTransition
@@ -51,9 +66,15 @@ internal fun MainActivity.applyViewMode(grid: Boolean) {
         header?.let { (it.parent as? ViewGroup)?.removeView(it) }
         cards.forEach { (it.parent as? ViewGroup)?.removeView(it) }
         container.removeAllViews()
-        header?.let { container.addView(it, listParams(isHeader = true)) }
+        header?.let {
+            setDescVisible(it, true)
+            container.addView(it, listParams(isHeader = true))
+        }
         if (!grid) {
-            cards.forEach { container.addView(it, listParams(isHeader = false)) }
+            cards.forEach {
+                setDescVisible(it, true)
+                container.addView(it, listParams(isHeader = false))
+            }
         } else {
             cards.chunked(2).forEach { row ->
                 val rowLayout = LinearLayout(this).apply {
@@ -64,9 +85,12 @@ internal fun MainActivity.applyViewMode(grid: Boolean) {
                     )
                 }
                 if (row.size == 1) {
+                    setDescVisible(row[0], !compact)
                     rowLayout.addView(row[0], listParams(isHeader = false))
                 } else {
                     val (left, right) = row
+                    setDescVisible(left, !compact)
+                    setDescVisible(right, !compact)
                     rowLayout.addView(left, gridParams(isFirst = true))
                     rowLayout.addView(right, gridParams(isFirst = false))
                 }
@@ -76,6 +100,12 @@ internal fun MainActivity.applyViewMode(grid: Boolean) {
     } finally {
         container.layoutTransition = transition
     }
+}
+
+/** Show/hide the view tagged as the tweak description inside a card. */
+private fun setDescVisible(card: View, visible: Boolean) {
+    card.findViewWithTag<View>("tweak_desc")?.visibility =
+        if (visible) View.VISIBLE else View.GONE
 }
 
 private fun MainActivity.listParams(isHeader: Boolean): LinearLayout.LayoutParams =

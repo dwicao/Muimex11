@@ -558,6 +558,7 @@
     <string name="cd_theme_toggle">Alternar tema</string>
     <string name="cd_view_grid">Ver em grade</string>
     <string name="cd_view_list">Ver em lista</string>
+    <string name="cd_view_compact">Visão compacta</string>
 
     <!-- Relato de crash -->
     <string name="crash_title">Algo quebrou</string>

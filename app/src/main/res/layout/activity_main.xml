@@ -607,6 +607,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_fixed_perf"
@@ -678,6 +679,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_optimize"
@@ -749,6 +751,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_samsung_boost"
@@ -820,6 +823,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_refresh"
@@ -891,6 +895,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_network"
@@ -962,6 +967,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_radio"
@@ -1033,6 +1039,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_touch"
@@ -1104,6 +1111,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_gyro"
@@ -1175,6 +1183,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_anim"
@@ -1246,6 +1255,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_blurs"
@@ -1317,6 +1327,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_focus"
@@ -1388,6 +1399,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_devopts"
@@ -1476,6 +1488,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_apk_install"
@@ -1533,6 +1546,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_apkbackup"
@@ -1604,6 +1618,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_resolution"
@@ -1675,6 +1690,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_graphics"
@@ -1746,6 +1762,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_orientation"
@@ -1817,6 +1834,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_dns"
@@ -1888,6 +1906,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_crosshair"
@@ -1959,6 +1978,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_monitor"
@@ -2031,6 +2051,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_autoclick"
@@ -2102,6 +2123,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_gamemode"
@@ -2174,6 +2196,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_gamespace"
@@ -2245,6 +2268,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_thermal"
@@ -2316,6 +2340,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_battery"
@@ -2387,6 +2412,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_fstrim"
@@ -2458,6 +2484,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_ram"
@@ -2529,6 +2556,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_cache"
@@ -2600,6 +2628,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_freeze"
@@ -2671,6 +2700,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_appops"
@@ -2742,6 +2772,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_applocale"
@@ -2813,6 +2844,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_gameprofiles"
@@ -2884,6 +2916,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_debloat"
@@ -2955,6 +2988,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_audio"
@@ -3026,6 +3060,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_sensors"
@@ -3097,6 +3132,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_bgrestrict"
@@ -3168,6 +3204,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_bench"
@@ -3256,6 +3293,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_shell"
@@ -3344,6 +3382,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_reboot"
@@ -3415,6 +3454,7 @@
                         android:layout_marginBottom="8dp"
                         android:background="#20808080" />
                     <TextView
+                        android:tag="tweak_desc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/desc_srec"

@@ -540,3 +540,20 @@ class KeepAwakeTest {
         )
     }
 }
+
+class ViewModeTest {
+    @Test
+    fun cyclesListGridCompact() {
+        assertEquals(ViewMode.GRID, ViewMode.next(ViewMode.LIST))
+        assertEquals(ViewMode.COMPACT, ViewMode.next(ViewMode.GRID))
+        assertEquals(ViewMode.LIST, ViewMode.next(ViewMode.COMPACT))
+        assertEquals(ViewMode.LIST, ViewMode.next("bogus"))
+    }
+
+    @Test
+    fun gridLike() {
+        assertFalse(ViewMode.isGridLike(ViewMode.LIST))
+        assertTrue(ViewMode.isGridLike(ViewMode.GRID))
+        assertTrue(ViewMode.isGridLike(ViewMode.COMPACT))
+    }
+}

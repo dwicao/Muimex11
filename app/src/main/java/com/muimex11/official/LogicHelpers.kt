@@ -531,6 +531,21 @@ object OrientationMode {
     fun isValid(mode: Int): Boolean = mode in AUTO..REVERSE_LANDSCAPE
 }
 
+/** List/grid/compact view-mode cycle — pure so the order is unit-tested. */
+object ViewMode {
+    const val LIST = "list"
+    const val GRID = "grid"
+    const val COMPACT = "compact"
+
+    fun next(mode: String): String = when (mode) {
+        LIST -> GRID
+        GRID -> COMPACT
+        else -> LIST
+    }
+
+    fun isGridLike(mode: String): Boolean = mode == GRID || mode == COMPACT
+}
+
 /**
  * Per-app language via the LocaleManager shell (API 33+).
  * Exact AOSP syntax: `cmd locale set-app-locales <pkg> --app-locales <tags>`.
