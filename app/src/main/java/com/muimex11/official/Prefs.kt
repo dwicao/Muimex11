@@ -50,6 +50,8 @@ object Prefs {
     const val KEY_APKBACKUP_TIME = "ApkBackupTime"
     const val KEY_ORIENTATION_MODE = "OrientationMode"
 
+    const val KEY_BATTERY_ALARM = "BatteryAlarm"
+
     const val KEY_GRAPHICS_RENDERER = "GraphicsRenderer"
     const val KEY_GRAPHICS_DESIRED = "GraphicsDesired"
     const val KEY_GRAPHICS_LAST_SWITCH = "GraphicsLastSwitch"

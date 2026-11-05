@@ -32,15 +32,26 @@ private fun saveBatteryPrev(prefs: SharedPreferences, prev: Map<String, String>)
 
 internal fun MainActivity.showBatterySaverSheet(prefs: SharedPreferences) {
     val current = prefsBatteryMode(prefs)
-    if (current != BatterySaver.MODE_OFF && current.isNotEmpty()) {
-        UiToast.info(this, getString(R.string.toast_battery_already), Toast.LENGTH_SHORT).show()
-        return
-    }
     val list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
     val sheet = Sheet(this)
         .icon(R.drawable.ic_battery)
         .title(getString(R.string.bat_title))
         .message(getString(R.string.bat_message))
+    if (current != BatterySaver.MODE_OFF && current.isNotEmpty()) {
+        // Modes stay locked while one is active, but the charge alarm is
+        // independent and remains configurable.
+        val alarm = batteryAlarmThreshold(prefs)
+        list.addView(optionRow(
+            this,
+            getString(R.string.balarm_title),
+            getString(if (alarm > 0) R.string.balarm_on_desc else R.string.balarm_off_desc, alarm)
+        ) {
+            sheet.dismiss()
+            showBatteryAlarmSheet()
+        })
+        sheet.content(list).button(getString(R.string.btn_close), SheetStyle.PRIMARY).show()
+        return
+    }
     list.addView(optionRow(this, getString(R.string.bat_balanced), getString(R.string.bat_balanced_desc)) {
         sheet.dismiss()
         applyBatterySaver(prefs, BatterySaver.MODE_BALANCED)
@@ -88,6 +99,15 @@ internal fun MainActivity.showBatterySaverSheet(prefs: SharedPreferences) {
             showBatterySaverSheet(prefs)
         })
     }
+    val alarm = batteryAlarmThreshold(prefs)
+    list.addView(optionRow(
+        this,
+        getString(R.string.balarm_title),
+        getString(if (alarm > 0) R.string.balarm_on_desc else R.string.balarm_off_desc, alarm)
+    ) {
+        sheet.dismiss()
+        showBatteryAlarmSheet()
+    })
     sheet.content(list).button(getString(R.string.btn_cancel), SheetStyle.TEXT).show()
 }
 
@@ -118,7 +138,7 @@ internal fun MainActivity.applyBatterySaver(prefs: SharedPreferences, mode: Stri
                         .apply()
                     syncThermalService(0)
                 }
-                findViewById<TextView>(R.id.tvStatusBatterySaver).text = getString(BatterySaver.labelRes(mode))
+                findViewById<TextView>(R.id.tvStatusBatterySaver).text = batteryStatusText(this@applyBatterySaver)
                 fetchSystemStatuses()
             }
         }
@@ -140,7 +160,7 @@ internal fun MainActivity.resetBatterySaver(prefs: SharedPreferences) {
             .putString(Prefs.KEY_BATTERY_MODE, BatterySaver.MODE_OFF)
             .remove(Prefs.KEY_BATTERY_PREV)
             .apply()
-        findViewById<TextView>(R.id.tvStatusBatterySaver).text = getString(R.string.status_default)
+        findViewById<TextView>(R.id.tvStatusBatterySaver).text = batteryStatusText(this@resetBatterySaver)
         fetchSystemStatuses()
     }
 }

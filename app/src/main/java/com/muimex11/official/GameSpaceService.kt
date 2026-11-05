@@ -825,6 +825,8 @@ class GameSpaceService : Service() {
     private var lastOrientationPkg: String? = null
     private var orientPrevAuto: String? = null
     private var orientPrevUser: String? = null
+    private var lastAwakePkg: String? = null
+    private var awakePrevValue: String? = null
 
     private fun profileHasDisplay(p: GameProfile): Boolean =
         p.refresh120 || (p.refreshMin > 0 && p.refreshMax > 0) ||
@@ -857,7 +859,11 @@ class GameSpaceService : Service() {
         lastOrientationPkg = null
         orientPrevAuto = null
         orientPrevUser = null
-        if (dndPkg == null && orientPkg == null) return
+        val awakePkg = lastAwakePkg
+        val awakePrev = awakePrevValue
+        lastAwakePkg = null
+        awakePrevValue = null
+        if (dndPkg == null && orientPkg == null && awakePkg == null) return
         ioScope.launch {
             try {
                 if (dndPkg != null) exec(restoreGlobalCmd("heads_up_notifications_enabled", dndPrev))
@@ -865,6 +871,7 @@ class GameSpaceService : Service() {
                     exec(restoreSystemCmd("accelerometer_rotation", prevAuto))
                     exec(restoreSystemCmd("user_rotation", prevUser))
                 }
+                if (awakePkg != null) exec(KeepAwake.buildRestore(awakePrev))
             } catch (_: Exception) {}
         }
     }
@@ -1023,6 +1030,15 @@ class GameSpaceService : Service() {
                         dndPrevValue = prev
                         lastDndPkg = safePkg
                         exec("settings put global heads_up_notifications_enabled 0")
+                    }
+                }
+                // Keep-awake: snapshot timeout, force never while foreground.
+                if (p.keepAwake && ShizukuRunner.isReady()) {
+                    val prev = query("settings get system ${KeepAwake.KEY}").trim()
+                    if (prev != KeepAwake.NEVER_MS) {
+                        awakePrevValue = prev
+                        lastAwakePkg = safePkg
+                        exec(KeepAwake.buildSet())
                     }
                 }
                 // Forced orientation: snapshot both keys, apply profile choice.

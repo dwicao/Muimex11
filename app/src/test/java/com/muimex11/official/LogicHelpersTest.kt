@@ -453,3 +453,90 @@ class OrientationModeTest {
         assertFalse(OrientationMode.isValid(7))
     }
 }
+
+class AppLocaleTest {
+    @Test
+    fun buildCommands() {
+        assertEquals(
+            "cmd locale get-app-locales com.example.game",
+            AppLocale.buildGet("com.example.game")
+        )
+        assertEquals(
+            "cmd locale set-app-locales com.example.game --app-locales ja-JP",
+            AppLocale.buildSet("com.example.game", "ja-JP")
+        )
+        assertEquals(
+            "cmd locale set-app-locales com.example.game --app-locales \"\"",
+            AppLocale.buildClear("com.example.game")
+        )
+        assertNull(AppLocale.buildSet("com.a", "not a tag!!"))
+        assertNull(AppLocale.buildSet("com.a", ""))
+    }
+
+    @Test
+    fun parsesGet() {
+        assertEquals("ja-JP", AppLocale.parseGet("ja-JP\n"))
+        assertEquals("en-US,ja-JP", AppLocale.parseGet("[en-US, ja-JP]"))
+        assertEquals("", AppLocale.parseGet(""))
+        assertEquals("", AppLocale.parseGet("[]"))
+        assertEquals("", AppLocale.parseGet("null"))
+        assertEquals("", AppLocale.parseGet(null))
+        assertEquals("", AppLocale.parseGet("Error: not found"))
+        assertTrue(AppLocale.matches("JA-jp ", "ja-JP"))
+        assertFalse(AppLocale.matches("en-US", "ja-JP"))
+    }
+
+    @Test
+    fun tagValidation() {
+        assertTrue(AppLocale.isValidTags("ja-JP"))
+        assertTrue(AppLocale.isValidTags("en-US,pt-BR"))
+        assertTrue(AppLocale.isValidTags("zh-Hans-CN"))
+        assertFalse(AppLocale.isValidTags(""))
+        assertFalse(AppLocale.isValidTags("en_US"))
+        assertFalse(AppLocale.isValidTags("e"))
+        assertFalse(AppLocale.isValidTags("ja-JP; rm -rf"))
+    }
+}
+
+class AppOpsBatchTest {
+    @Test
+    fun buildCmd() {
+        val cmd = AppOpsBatch.buildCmd(listOf("com.a", "com.b"))!!
+        assertTrue(cmd.contains("cmd appops set com.a CAMERA ignore"))
+        assertTrue(cmd.contains("cmd appops set com.b ACCESS_COARSE_LOCATION ignore"))
+        // 2 pkgs x 4 ops = 8 sets joined with &&
+        assertEquals(7, cmd.split(" && ").size - 1)
+        assertNull(AppOpsBatch.buildCmd(emptyList()))
+        assertNull(AppOpsBatch.buildCmd(listOf("not a pkg!!")))
+    }
+
+    @Test
+    fun ruleEntries() {
+        val m = AppOpsBatch.ruleEntries(listOf("com.a", "com.a", "bad pkg!!"))
+        assertEquals(1, m.size)
+        assertEquals("ignore", m["com.a"]?.get("CAMERA"))
+        assertEquals(4, m["com.a"]?.size)
+    }
+}
+
+class KeepAwakeTest {
+    @Test
+    fun buildCommands() {
+        assertEquals(
+            "settings put system screen_off_timeout 2147483647",
+            KeepAwake.buildSet()
+        )
+        assertEquals(
+            "settings put system screen_off_timeout 60000",
+            KeepAwake.buildRestore("60000")
+        )
+        assertEquals(
+            "settings delete system screen_off_timeout",
+            KeepAwake.buildRestore("null")
+        )
+        assertEquals(
+            "settings delete system screen_off_timeout",
+            KeepAwake.buildRestore("")
+        )
+    }
+}

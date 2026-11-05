@@ -838,4 +838,66 @@
     <string name="gprof_orient_landscape">Landscape</string>
     <string name="gprof_orient_rportrait">Reverse portrait</string>
     <string name="gprof_orient_rlandscape">Reverse landscape</string>
+
+    <!-- Game Profiles: keep screen awake -->
+    <string name="gprof_awake">Keep screen awake</string>
+    <string name="gprof_awake_desc">Never time out the display while this game is open</string>
+
+    <!-- Per-app language (Android 13+) -->
+    <string name="toast_needs_a13">This feature requires Android 13 or newer.</string>
+    <string name="title_applocale">Per-App Language</string>
+    <string name="desc_applocale">Force a language per app without root — handy for games never translated to your language.</string>
+    <string name="applocale_title">Per-app language</string>
+    <string name="applocale_msg">Pick an app, then a language. The app is restarted so it picks the new locale up.</string>
+    <string name="applocale_follow">Follow system</string>
+    <string name="applocale_follow_desc">Use the device language</string>
+    <string name="applocale_current">Active now</string>
+    <string name="msg_applocale_set">Language for %1$s set to %2$s — reopen the app</string>
+    <string name="msg_applocale_fail">Language change failed — %1$s</string>
+
+    <!-- AppOps batch preset -->
+    <string name="appops_block_all">Block all</string>
+    <string name="dlg_appops_batch_title">Block camera, mic and location?</string>
+    <string name="dlg_appops_batch_msg">Sets camera, microphone and both locations to Block for %1$d user apps at once. Launchers, keyboards, dialers and SMS apps are skipped. Restore any time from Reset.</string>
+    <string name="dlg_appops_batch_working">Blocking permissions</string>
+    <string name="msg_appops_batch_done">Blocked camera, mic and location for %1$d apps</string>
+
+    <!-- Shizuku recovery -->
+    <string name="title_srec">Shizuku Recovery</string>
+    <string name="desc_srec">Re-enable wireless debugging and open your Shizuku manager to re-pair in seconds.</string>
+    <string name="dlg_srec_title">Shizuku recovery</string>
+    <string name="dlg_srec_msg">Wireless debugging often drops after reboot. Re-enable it, then pair again inside your Shizuku manager (official Shizuku or a compatible fork like Shevery).</string>
+    <string name="srec_enable_open">Enable + open manager</string>
+    <string name="srec_enable_open_desc">Turn wireless debugging back on, then open the manager</string>
+    <string name="srec_open_only">Open manager only</string>
+    <string name="srec_open_only_desc">Just open the installed Shizuku manager</string>
+    <string name="toast_srec_no_manager">No Shizuku manager found — install Shizuku first</string>
+    <string name="status_srec_ready">Status: Ready — Shizuku connected</string>
+    <string name="status_srec_wifi">Status: Wireless debugging on, Shizuku off</string>
+    <string name="status_srec_off">Status: Wireless debugging off</string>
+
+    <!-- Radio info -->
+    <string name="title_radio">Phone Info (Bands/RAT)</string>
+    <string name="desc_radio">Open the hidden phone info screen to inspect bands, RAT, signal and network type.</string>
+    <string name="dlg_radio_title">Phone info</string>
+    <string name="dlg_radio_msg">Fires the same secret code the dialer uses (*#*#4636#*#*). Best-effort: some OEM skins ignore it.</string>
+    <string name="btn_open_phone_info">Open phone info</string>
+    <string name="msg_radio_sent">Request sent — if nothing opened, your ROM ignores it</string>
+
+    <!-- Battery charge alarm -->
+    <string name="balarm_title">Charge alarm</string>
+    <string name="balarm_msg">Ring once when the battery reaches the threshold while charging.</string>
+    <string name="balarm_off">Off</string>
+    <string name="balarm_on_desc">On — alarm at %1$d%%</string>
+    <string name="balarm_off_desc">Off — never notify</string>
+    <string name="balarm_note">Plays a loud notification once per charge session. Allow notifications when asked, or the alarm stays silent.</string>
+    <string name="balarm_off_done">Charge alarm off</string>
+    <string name="balarm_set">Charge alarm set to %1$d%%</string>
+    <string name="balarm_need_perm">Allow notifications so the alarm can ring</string>
+    <string name="notif_battery_alarm">Battery alarm</string>
+    <string name="notif_battery_alarm_desc">Loud alert when the charge threshold is reached</string>
+    <string name="battery_alarm_service">Battery charge alarm</string>
+    <string name="alarm_battery_full">Battery at %1$d%% — unplug the charger</string>
+    <string name="alarm_battery_full_desc">Charge threshold reached</string>
+    <string name="status_battery_alarm_fmt">Alarm %1$d%%</string>
 </resources>

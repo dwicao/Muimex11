@@ -530,3 +530,73 @@ object OrientationMode {
 
     fun isValid(mode: Int): Boolean = mode in AUTO..REVERSE_LANDSCAPE
 }
+
+/**
+ * Per-app language via the LocaleManager shell (API 33+).
+ * Exact AOSP syntax: `cmd locale set-app-locales <pkg> --app-locales <tags>`.
+ * Every mutation must be verified with [parseGet] — ROMs without the shell
+ * command fail the read-back instead of lying about success.
+ */
+object AppLocale {
+    /** AOSP default when no app-locales are set. */
+    const val FOLLOW_SYSTEM = ""
+
+    fun buildGet(pkg: String): String = "cmd locale get-app-locales $pkg"
+
+    fun buildSet(pkg: String, tags: String): String? {
+        if (!isValidTags(tags)) return null
+        return "cmd locale set-app-locales $pkg --app-locales $tags"
+    }
+
+    fun buildClear(pkg: String): String =
+        "cmd locale set-app-locales $pkg --app-locales \"\""
+
+    fun isValidTags(tags: String): Boolean {
+        if (tags.isBlank() || tags.length > 64) return false
+        return tags.split(",").all { t ->
+            t.trim().matches(Regex("^[A-Za-z]{2,3}(-[A-Za-z]{2,4})?(-[A-Za-z0-9]+)?$"))
+        }
+    }
+
+    /** Normalize `get-app-locales` output to a canonical tag list ("" = system). */
+    fun parseGet(raw: String?): String {
+        val t = (raw ?: "").trim().removePrefix("[").removeSuffix("]").trim()
+        if (t.isEmpty() || t.equals("null", ignoreCase = true)) return FOLLOW_SYSTEM
+        if (t.startsWith("Error", ignoreCase = true)) return FOLLOW_SYSTEM
+        return t.split(",").map { it.trim() }.filter { it.isNotEmpty() }.joinToString(",")
+    }
+
+    fun matches(raw: String?, tags: String): Boolean =
+        parseGet(raw).equals(tags.trim(), ignoreCase = true)
+}
+
+/** One-tap AppOps batch preset — pure command joinery over AppOpsParser. */
+object AppOpsBatch {
+    /** Build a single chained `cmd appops set <pkg> <op> ignore` command. */
+    fun buildCmd(pkgs: List<String>): String? {
+        val parts = pkgs.mapNotNull { ShellSanitizer.cleanPkg(it) }
+            .distinct()
+            .flatMap { pkg -> AppOpsParser.OPS.map { op -> AppOpsParser.buildSet(pkg, op, AppOpsParser.MODE_IGNORE) } }
+        if (parts.isEmpty()) return null
+        return parts.joinToString(" && ")
+    }
+
+    fun ruleEntries(pkgs: List<String>): Map<String, Map<String, String>> =
+        pkgs.mapNotNull { ShellSanitizer.cleanPkg(it) }.distinct()
+            .associateWith { AppOpsParser.OPS.associateWith { AppOpsParser.MODE_IGNORE } }
+}
+
+/** Keep screen awake while gaming — snapshot/restore of screen_off_timeout. */
+object KeepAwake {
+    /** ~24 days: the conventional "never time out" value. */
+    const val NEVER_MS = "2147483647"
+    const val KEY = "screen_off_timeout"
+
+    fun buildSet(): String = "settings put system $KEY $NEVER_MS"
+
+    fun buildRestore(prev: String?): String {
+        val p = (prev ?: "").trim()
+        return if (p.isEmpty() || p == "null") "settings delete system $KEY"
+        else "settings put system $KEY $p"
+    }
+}

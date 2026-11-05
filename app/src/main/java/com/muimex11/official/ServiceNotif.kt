@@ -14,6 +14,7 @@ object ServiceNotif {
     const val CROSSHAIR_ID = 4203
     const val AUTOCLICK_ID = 4204
     const val RESOLUTION_ID = 4205
+    const val BATTERY_ID = 4206
 
     fun ensureChannel(ctx: Context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return

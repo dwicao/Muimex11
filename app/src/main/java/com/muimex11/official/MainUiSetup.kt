@@ -57,10 +57,10 @@ internal fun MainActivity.setupFilterChips() {
 
     val performanceCards = listOf(R.id.cardFixedPerformance, R.id.cardOptimizeSystem, R.id.cardSamsungBoost, R.id.cardThermalThrottling, R.id.cardBatterySaver, R.id.cardDebloat, R.id.cardBgRestrict, R.id.cardFstrim, R.id.cardDisableDevOptions, R.id.cardRamBooster, R.id.cardClearCache, R.id.cardFreezeApps)
     val displayCards = listOf(R.id.cardAdjustRefreshRate, R.id.cardFastAnimations, R.id.cardDisableBlurs, R.id.cardChangeResolution, R.id.cardGraphicsApi, R.id.cardOrientation)
-    val networkCards = listOf(R.id.cardImproveNetwork, R.id.cardCustomDns)
+    val networkCards = listOf(R.id.cardImproveNetwork, R.id.cardCustomDns, R.id.cardRadioInfo)
     val gamingCards = listOf(R.id.cardImproveTouch, R.id.cardGamingDnd, R.id.cardCrosshair, R.id.cardRealtimeMonitor, R.id.cardAutoClick, R.id.cardGameMode, R.id.cardGameSpace, R.id.cardFixGyro, R.id.cardGameProfiles, R.id.cardAudioLatency)
 
-    val toolsCards = listOf(R.id.cardShellExecute, R.id.cardApkInstall, R.id.cardApkBackup, R.id.cardReboot, R.id.cardAppOps, R.id.cardSensorsToggle, R.id.cardBenchmark)
+    val toolsCards = listOf(R.id.cardShellExecute, R.id.cardApkInstall, R.id.cardApkBackup, R.id.cardReboot, R.id.cardShizukuRecovery, R.id.cardAppOps, R.id.cardAppLocale, R.id.cardSensorsToggle, R.id.cardBenchmark)
 
     val allCards = performanceCards + displayCards + networkCards + gamingCards + toolsCards
 
@@ -95,7 +95,8 @@ internal fun MainActivity.setupStatusStyling() {
         R.id.tvStatusAppOps, R.id.tvStatusGameProfiles, R.id.tvStatusDebloat, R.id.tvStatusAudio,
         R.id.tvStatusSensors, R.id.tvStatusBgRestrict, R.id.tvStatusBenchmark,
         R.id.tvStatusGraphics, R.id.tvStatusOrientation, R.id.tvStatusApkBackup,
-        R.id.tvStatusReboot
+        R.id.tvStatusReboot, R.id.tvStatusAppLocale, R.id.tvStatusRadio,
+        R.id.tvStatusShizukuRecovery
     )
     val states = HashMap<Int, TweakState>()
     val green = Color.parseColor("#2E9E5B")
@@ -112,6 +113,7 @@ internal fun MainActivity.setupStatusStyling() {
             id == R.id.tvStatusThermal -> TweakState.WARN
             id == R.id.tvStatusGraphics -> if (t.contains(en(R.string.w_vulkan))) TweakState.ACTIVE else TweakState.NEUTRAL
             id == R.id.tvStatusOrientation -> if (t.contains(en(R.string.orient_auto))) TweakState.NEUTRAL else TweakState.ACTIVE
+            id == R.id.tvStatusShizukuRecovery -> if (t.startsWith(en(R.string.w_ready))) TweakState.NEUTRAL else TweakState.WARN
             id == R.id.tvStatusBlurs -> if (t.startsWith(en(R.string.w_disabled))) TweakState.ACTIVE else TweakState.NEUTRAL
             t.startsWith(en(R.string.w_disabled)) -> TweakState.NEUTRAL
             else -> TweakState.ACTIVE

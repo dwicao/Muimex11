@@ -80,6 +80,8 @@ private fun MainActivity.setupTweakCardListeners(prefs: SharedPreferences) {
         )
     }
 
+    findViewById<CardView>(R.id.cardRadioInfo).setOnClickListener { showRadioInfoSheet() }
+
     findViewById<CardView>(R.id.cardImproveTouch).setOnClickListener {
         runTweakOnce(
             R.id.tvStatusTouch, { en(R.string.w_improved) }, R.string.toast_already_improved,
@@ -167,6 +169,7 @@ private fun MainActivity.setupToolsCardListeners(prefs: SharedPreferences) {
     findViewById<CardView>(R.id.cardFreezeApps).setOnClickListener { showFreezeAppsSheet() }
     findViewById<CardView>(R.id.cardShellExecute).setOnClickListener { showShellExecuteSheet() }
     findViewById<CardView>(R.id.cardReboot).setOnClickListener { showRebootSheet() }
+    findViewById<CardView>(R.id.cardShizukuRecovery).setOnClickListener { showShizukuRecoverySheet() }
     findViewById<CardView>(R.id.cardRamBooster).setOnClickListener { showRamBoosterSheet() }
     findViewById<CardView>(R.id.cardClearCache).setOnClickListener { confirmClearCaches() }
     findViewById<CardView>(R.id.cardChangeResolution).setOnClickListener { showResolutionModeDialog() }
@@ -193,6 +196,7 @@ private fun MainActivity.setupToolsCardListeners(prefs: SharedPreferences) {
     }
 
     findViewById<CardView>(R.id.cardAppOps).setOnClickListener { showAppOpsSheet(prefs) }
+    findViewById<CardView>(R.id.cardAppLocale).setOnClickListener { showAppLocaleSheet() }
 
     findViewById<CardView>(R.id.cardGameProfiles).setOnClickListener { showGameProfilesSheet() }
 
@@ -310,6 +314,9 @@ private fun MainActivity.setupTweakResetListeners(prefs: SharedPreferences) {
     bindStatusReset(R.id.btnResetGyro, R.id.tvStatusGyro)
     bindStatusReset(R.id.btnResetShell, R.id.tvStatusShell)
     bindStatusReset(R.id.btnResetReboot, R.id.tvStatusReboot)
+    bindStatusReset(R.id.btnResetAppLocale, R.id.tvStatusAppLocale)
+    bindStatusReset(R.id.btnResetRadio, R.id.tvStatusRadio)
+    bindStatusReset(R.id.btnResetShizukuRecovery, R.id.tvStatusShizukuRecovery)
     findViewById<TextView>(R.id.btnResetApkBackup).setOnClickListener {
         prefs.edit()
             .remove(Prefs.KEY_APKBACKUP_COUNT)

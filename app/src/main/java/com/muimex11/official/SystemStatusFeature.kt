@@ -32,7 +32,10 @@ private class SystemStatuses(
     val graphics: String,
     val orientation: String,
     val apkBackup: String,
-    val reboot: String
+    val reboot: String,
+    val appLocale: String,
+    val radio: String,
+    val shizukuRecovery: String
 )
 
 internal fun MainActivity.fetchSystemStatuses() {
@@ -105,8 +108,7 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
     val devOpt = runAdbCommandWithResult("settings get global development_settings_enabled")
     val devOptStatus = if (devOpt == "1") getString(R.string.status_devopt_on) else getString(R.string.status_devopt_off)
 
-    val batteryMode = prefs.getString(Prefs.KEY_BATTERY_MODE, BatterySaver.MODE_OFF).orEmpty()
-    val batteryStatus = getString(BatterySaver.labelRes(batteryMode))
+    val batteryStatus = batteryStatusText(this@readSystemStatuses)
 
     val opsCount = appOpsRulesCount(prefs)
     val appOpsStatus = if (opsCount == 0) getString(R.string.status_default)
@@ -144,6 +146,9 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
     val orientationStatus = orientationStatusText(prefs)
     val apkBackupStatus = apkBackupStatusText()
     val rebootStatus = getString(R.string.status_ready)
+    val appLocaleStatus = getString(R.string.status_ready)
+    val radioStatus = getString(R.string.status_ready)
+    val shizukuRecoveryStatus = shizukuRecoveryStatusText()
 
     return SystemStatuses(
         fixedPerf = fixedPerfStatus,
@@ -169,7 +174,10 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
         graphics = graphicsStatus,
         orientation = orientationStatus,
         apkBackup = apkBackupStatus,
-        reboot = rebootStatus
+        reboot = rebootStatus,
+        appLocale = appLocaleStatus,
+        radio = radioStatus,
+        shizukuRecovery = shizukuRecoveryStatus
     )
 }
 
@@ -198,6 +206,9 @@ private fun MainActivity.renderSystemStatuses(s: SystemStatuses) {
     findViewById<TextView>(R.id.tvStatusOrientation).text = s.orientation
     findViewById<TextView>(R.id.tvStatusApkBackup).text = s.apkBackup
     findViewById<TextView>(R.id.tvStatusReboot).text = s.reboot
+    findViewById<TextView>(R.id.tvStatusAppLocale).text = s.appLocale
+    findViewById<TextView>(R.id.tvStatusRadio).text = s.radio
+    findViewById<TextView>(R.id.tvStatusShizukuRecovery).text = s.shizukuRecovery
 }
 
 private fun MainActivity.renderOverlayStatuses(prefs: SharedPreferences) {

@@ -41,6 +41,14 @@ class MainActivity : AppCompatActivity() {
         cb?.invoke(uri)
     }
 
+    internal var onNotifPermResult: ((Boolean) -> Unit)? = null
+    internal val notifPermLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            val cb = onNotifPermResult
+            onNotifPermResult = null
+            cb?.invoke(granted)
+        }
+
     internal val permissionListener = Shizuku.OnRequestPermissionResultListener { requestCode, grantResult ->
         if (requestCode == SHIZUKU_REQUEST_CODE) {
             if (grantResult == PackageManager.PERMISSION_GRANTED) {

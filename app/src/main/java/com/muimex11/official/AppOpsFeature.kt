@@ -81,7 +81,66 @@ private fun MainActivity.presentAppOpsPicker(prefs: SharedPreferences, apps: Lis
         .message(getString(R.string.appops_message))
         .content(list)
         .button(getString(R.string.btn_cancel), SheetStyle.TONAL)
+        .button(getString(R.string.appops_block_all), SheetStyle.DANGER, dismiss = false) {
+            confirmAppOpsBatch(prefs, apps)
+        }
         .show()
+}
+
+private fun MainActivity.confirmAppOpsBatch(prefs: SharedPreferences, apps: List<AppEntry>) {
+    val targets = apps.filter { !it.isSystem && !freezeBlocklist().contains(it.pkg) }
+    if (targets.isEmpty()) {
+        UiToast.info(this, getString(R.string.toast_no_apps), Toast.LENGTH_SHORT).show()
+        return
+    }
+    Sheet(this)
+        .icon(R.drawable.ic_warning)
+        .title(getString(R.string.dlg_appops_batch_title))
+        .message(getString(R.string.dlg_appops_batch_msg, targets.size))
+        .button(getString(R.string.btn_cancel), SheetStyle.TONAL)
+        .button(getString(R.string.appops_block_all), SheetStyle.DANGER) {
+            runAppOpsBatch(prefs, targets.map { it.pkg })
+        }
+        .show()
+}
+
+private fun MainActivity.runAppOpsBatch(prefs: SharedPreferences, pkgs: List<String>) {
+    val cmd = AppOpsBatch.buildCmd(pkgs.take(100)) ?: return
+    if (!hasShizukuPermission()) return
+    val progress = ProgressSheet(this)
+        .icon(R.drawable.ic_security)
+        .title(getString(R.string.dlg_appops_batch_working))
+        .message(getString(R.string.txt_please_wait))
+    progress.show()
+    lifecycleScope.launch(Dispatchers.IO) {
+        // One chained command: hundreds of round-trips would take minutes.
+        val res = ShizukuRunner.exec(cmd, 60_000L)
+        withContext(Dispatchers.Main) {
+            progress.dismiss()
+            if (res.ok) {
+                saveAppOpsBatchRules(prefs, pkgs)
+                UiToast.success(this@runAppOpsBatch, getString(R.string.msg_appops_batch_done, pkgs.size), Toast.LENGTH_LONG).show()
+            } else {
+                val msg = if (res.err.isNotBlank()) res.err.take(120)
+                else getString(R.string.toast_cmd_failed, res.code)
+                UiToast.error(this@runAppOpsBatch, msg, Toast.LENGTH_LONG).show()
+            }
+            fetchSystemStatuses()
+        }
+    }
+}
+
+private fun saveAppOpsBatchRules(prefs: SharedPreferences, pkgs: List<String>) {
+    try {
+        val raw = prefs.getString(Prefs.KEY_APPOPS_RULES, null)
+        val o = if (raw != null) JSONObject(raw) else JSONObject()
+        AppOpsBatch.ruleEntries(pkgs).forEach { (pkg, modes) ->
+            val v = o.optJSONObject(pkg) ?: JSONObject()
+            modes.forEach { (op, mode) -> v.put(op, mode) }
+            o.put(pkg, v)
+        }
+        prefs.edit().putString(Prefs.KEY_APPOPS_RULES, o.toString()).apply()
+    } catch (_: Exception) {}
 }
 
 private fun MainActivity.showAppOpsEditor(prefs: SharedPreferences, pkg: String, label: String) {

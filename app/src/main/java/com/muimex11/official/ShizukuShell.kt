@@ -60,6 +60,9 @@ internal fun MainActivity.isShizukuInstalled(): Boolean {
 }
 
 internal fun MainActivity.launchShizukuApp() {
+    try {
+        ShizukuMgr.launchIntent(this)?.let { startActivity(it); finishAffinity(); return }
+    } catch (_: Exception) {}
     val intent = packageManager.getLaunchIntentForPackage(AppConfig.SHIZUKU_PACKAGE)
     if (intent != null) {
         startActivity(intent)

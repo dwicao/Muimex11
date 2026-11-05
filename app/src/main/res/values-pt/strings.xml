@@ -829,4 +829,66 @@
     <string name="gprof_orient_rportrait">Retrato invertido</string>
     <string name="gprof_orient_rlandscape">Paisagem invertida</string>
 
+    <!-- Perfis de jogo: manter tela ligada -->
+    <string name="gprof_awake">Manter tela ligada</string>
+    <string name="gprof_awake_desc">Nunca apaga a tela enquanto o jogo abre</string>
+
+    <!-- Idioma por app (Android 13+) -->
+    <string name="toast_needs_a13">Este recurso exige Android 13 ou mais recente.</string>
+    <string name="title_applocale">Idioma por app</string>
+    <string name="desc_applocale">Force um idioma por app sem root — útil para jogos nunca traduzidos.</string>
+    <string name="applocale_title">Idioma por app</string>
+    <string name="applocale_msg">Escolha um app e um idioma. O app reinicia para aplicar.</string>
+    <string name="applocale_follow">Segue sistema</string>
+    <string name="applocale_follow_desc">Usa o idioma do aparelho</string>
+    <string name="applocale_current">Ativo agora</string>
+    <string name="msg_applocale_set">Idioma de %1$s: %2$s — reabra o app</string>
+    <string name="msg_applocale_fail">Falha ao trocar idioma — %1$s</string>
+
+    <!-- Preset em massa AppOps -->
+    <string name="appops_block_all">Bloquear tudo</string>
+    <string name="dlg_appops_batch_title">Bloquear câmera, mic e localização?</string>
+    <string name="dlg_appops_batch_msg">Bloqueia câmera, microfone e localizações de %1$d apps de uma vez. Launchers, teclados, discador e SMS pulados. Restaure em Reset.</string>
+    <string name="dlg_appops_batch_working">Bloqueando permissões</string>
+    <string name="msg_appops_batch_done">Câmera, mic e localização bloqueados em %1$d apps</string>
+
+    <!-- Recuperação Shizuku -->
+    <string name="title_srec">Recuperar Shizuku</string>
+    <string name="desc_srec">Religa a depuração sem fio e abre o gerenciador Shizuku para parear de novo.</string>
+    <string name="dlg_srec_title">Recuperar Shizuku</string>
+    <string name="dlg_srec_msg">A depuração sem fio costuma cair após reiniciar. Religue e pareie de novo no gerenciador (Shizuku oficial ou fork compatível como Shevery).</string>
+    <string name="srec_enable_open">Ligar + abrir gerenciador</string>
+    <string name="srec_enable_open_desc">Religa a depuração e abre o gerenciador</string>
+    <string name="srec_open_only">Só abrir gerenciador</string>
+    <string name="srec_open_only_desc">Abre o gerenciador Shizuku instalado</string>
+    <string name="toast_srec_no_manager">Nenhum gerenciador Shizuku — instale o Shizuku</string>
+    <string name="status_srec_ready">Status: Pronto — Shizuku conectado</string>
+    <string name="status_srec_wifi">Status: Depuração sem fio on, Shizuku off</string>
+    <string name="status_srec_off">Status: Depuração sem fio off</string>
+
+    <!-- Info do telefone -->
+    <string name="title_radio">Info do telefone (bandas/RAT)</string>
+    <string name="desc_radio">Abre a tela oculta de telefonia: bandas, RAT, sinal e tipo de rede.</string>
+    <string name="dlg_radio_title">Info do telefone</string>
+    <string name="dlg_radio_msg">Dispara o código secreto do discador (*#*#4636#*#*). Nem toda ROM obedece.</string>
+    <string name="btn_open_phone_info">Abrir info do telefone</string>
+    <string name="msg_radio_sent">Pedido enviado — se nada abriu, sua ROM ignora</string>
+
+    <!-- Alarme de carga -->
+    <string name="balarm_title">Alarme de carga</string>
+    <string name="balarm_msg">Avisa uma vez ao atingir o nível com carregador.</string>
+    <string name="balarm_off">Desligado</string>
+    <string name="balarm_on_desc">Ligado — alarme em %1$d%%</string>
+    <string name="balarm_off_desc">Desligado — nunca avisa</string>
+    <string name="balarm_note">Toca um alerta alto uma vez por carga. Permita notificações ou fica mudo.</string>
+    <string name="balarm_off_done">Alarme de carga desligado</string>
+    <string name="balarm_set">Alarme de carga em %1$d%%</string>
+    <string name="balarm_need_perm">Permita notificações para o alarme tocar</string>
+    <string name="notif_battery_alarm">Alarme de bateria</string>
+    <string name="notif_battery_alarm_desc">Alerta alto ao atingir o nível de carga</string>
+    <string name="battery_alarm_service">Alarme de carga da bateria</string>
+    <string name="alarm_battery_full">Bateria em %1$d%% — tire do carregador</string>
+    <string name="alarm_battery_full_desc">Nível de carga atingido</string>
+    <string name="status_battery_alarm_fmt">Alarme %1$d%%</string>
+
 </resources>
