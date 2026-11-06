@@ -1,8 +1,8 @@
 {
-  "versionCode": 53,
-  "versionName": "4.23",
-  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.23/Muimex11-4.23.apk",
-  "releaseNotes": "Subtitle dihapus. Search + chips dibungkus headerControls yang collapse saat scroll bawah dan muncul lagi saat scroll atas.",
+  "versionCode": 54,
+  "versionName": "4.24",
+  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.24/Muimex11-4.24.apk",
+  "releaseNotes": "Animasi height per-frame me-relayout 40+ kartu saat fling. Sekarang: fade GPU + collapse/expand sekali jalan.",
   "mandatory": false,
-  "sha256": "871ecbdf2f2942ef326d227152a1ca4ba52a0e1085eb32211016c4a6855834d6"
+  "sha256": "a1fdd7aa17e3ae6bb5e153812414ea0102541ecbe609d53deae715a19126f010"
 }
