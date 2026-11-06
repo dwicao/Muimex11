@@ -5,8 +5,11 @@ import android.content.SharedPreferences
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 
 private class SystemStatuses(
     val fixedPerf: String,
@@ -52,7 +55,42 @@ internal fun MainActivity.fetchSystemStatuses() {
     }
 }
 
-private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): SystemStatuses {
+private data class DisplayStatus(
+    val refresh: String,
+    val resolution: String,
+    val graphics: String,
+    val orientation: String
+)
+
+private data class NetStatus(
+    val network: String,
+    val touch: String,
+    val dns: String,
+    val dnd: String
+)
+
+private data class SysStatus(
+    val anim: String,
+    val blurs: String,
+    val devOpts: String,
+    val srec: String
+)
+
+/**
+ * One status section: time-boxed AND exception-proof. A single bad section
+ * (dead backend, missing string, odd ROM output) degrades to Unknown
+ * instead of killing the whole status page.
+ */
+private suspend fun <T> sectionOrNull(block: suspend () -> T): T? = try {
+    withTimeoutOrNull(8_000L) { block() }
+} catch (_: Exception) {
+    null
+}
+
+private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): SystemStatuses = coroutineScope {
+    val fbUnknown = getString(R.string.status_unknown)
+
+    // Prefs-only section: instant, no shell involved.
     val isFixedPerf = prefs.getBoolean(Prefs.KEY_FIXED_PERF, false)
     val fixedPerfStatus = if (isFixedPerf)
         getString(if (prefs.getBoolean(Prefs.KEY_FIXED_PERF_AGGRESSIVE, false)) R.string.status_enabled_aggr else R.string.status_enabled)
@@ -63,68 +101,13 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
     val lastGameMode = prefs.getString(Prefs.KEY_LAST_GAME_MODE, "")
     val gameModeStatus = if (lastGameMode.isNullOrEmpty()) getString(R.string.status_default) else getString(R.string.status_active, lastGameMode.orEmpty())
 
-    val minRefresh = runAdbCommandWithResult("settings get system min_refresh_rate")
-    val maxRefresh = runAdbCommandWithResult("settings get system peak_refresh_rate")
-
-    val refreshStatus = if (minRefresh.isNotEmpty() && minRefresh != "null" && maxRefresh.isNotEmpty() && maxRefresh != "null") {
-        getString(R.string.status_value, "$minRefresh - $maxRefresh Hz")
-    } else {
-        getString(R.string.status_default)
-    }
-
-    val wmSize = runAdbCommandWithResult("wm size")
-    val resStatus = if (wmSize.contains("Override size:")) {
-        getString(R.string.status_value, wmSize.substringAfter("Override size:").trim())
-    } else if (wmSize.contains("Physical size:")) {
-        getString(R.string.status_value, wmSize.substringAfter("Physical size:").trim())
-    } else {
-        getString(R.string.status_default)
-    }
-
-    val networkOpt = runAdbCommandWithResult("settings get global tether_dun_required")
-    val netStatus = if (networkOpt == "0") getString(R.string.status_optimized) else getString(R.string.status_default)
-
-    val touchOpt = runAdbCommandWithResult("settings get system pointer_speed")
-    val touchLpOpt = runAdbCommandWithResult("settings get secure long_press_timeout")
-    val touchStatus = when (
-        TouchTweak.appliedCount(
-            TouchTweak.isPointerApplied(touchOpt),
-            TouchTweak.isLongPressApplied(touchLpOpt)
-        )
-    ) {
-        2 -> getString(R.string.status_improved)
-        1 -> getString(R.string.status_touch_partial)
-        else -> getString(R.string.status_default)
-    }
-
-    val dnsMode = runAdbCommandWithResult("settings get global private_dns_mode")
-    val dnsSpecifier = runAdbCommandWithResult("settings get global private_dns_specifier")
-
-    val dnsStatus = if (dnsMode.trim() == "hostname" && dnsSpecifier.isNotEmpty() && dnsSpecifier != "null") {
-        getString(R.string.status_value, dnsSpecifier.trim())
-    } else {
-        getString(R.string.status_default)
-    }
-
-    val animScale = runAdbCommandWithResult("settings get global window_animation_scale")
-    val animStatus = if (animScale == "0.5") getString(R.string.status_anim_fast) else getString(R.string.status_default)
-
-    val blursOpt = runAdbCommandWithResult("settings get global disable_window_blurs")
-    val blursStatus = if (blursOpt == "1") getString(R.string.status_blurs_off) else getString(R.string.status_default)
-
-    val headsUpOpt = runAdbCommandWithResult("settings get global heads_up_notifications_enabled")
-    val headsUpStatus = if (headsUpOpt == "0") getString(R.string.status_dnd_blocked) else getString(R.string.status_default)
-
-    val devOpt = runAdbCommandWithResult("settings get global development_settings_enabled")
-    val devOptStatus = if (devOpt == "1") getString(R.string.status_devopt_on) else getString(R.string.status_devopt_off)
-
     val batteryStatus = batteryStatusText(this@readSystemStatuses)
 
     val opsCount = appOpsRulesCount(prefs)
     val appOpsStatus = if (opsCount == 0) getString(R.string.status_default)
     else getString(R.string.status_value, opsCount.toString())
 
-    val gameProfilesStatus = gameProfilesStatusText(this)
+    val gameProfilesStatus = gameProfilesStatusText(this@readSystemStatuses)
 
     val debloatN = debloatRemovedCount(prefs)
     val debloatStatus = if (debloatN == 0) getString(R.string.status_ready)
@@ -147,32 +130,106 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
         benchLast.label, benchLast.launchMs, benchLast.fps?.toString() ?: "--"
     )
 
-    // Graphics API: live prop wins; offline fallback keeps the saved choice.
-    // A reboot clears the prop, so reconcile the saved state first (GAMA).
-    GraphicsApi.reconcileRebootReset(prefs)
-    val liveRenderer = GraphicsApi.detectRenderer()
-        .takeIf { it == GraphicsApi.VULKAN || it == GraphicsApi.OPENGL }
-    val graphicsStatus = graphicsStatusText(prefs, liveRenderer)
-    val orientationStatus = orientationStatusText(prefs)
     val apkBackupStatus = apkBackupStatusText()
     val rebootStatus = getString(R.string.status_ready)
     val appLocaleStatus = getString(R.string.status_ready)
     val radioStatus = getString(R.string.status_ready)
-    val shizukuRecoveryStatus = shizukuRecoveryStatusText()
 
-    return SystemStatuses(
+    // Graphics API: reconcile the post-reboot fallback before reading live.
+    GraphicsApi.reconcileRebootReset(prefs)
+
+    // Shell sections run in parallel; each is independently time-boxed so one
+    // hung command (e.g. Shizuku dying mid-fetch) cannot stall the whole page.
+    val displayJob = async {
+        sectionOrNull {
+            val minRefresh = runAdbCommandWithResult("settings get system min_refresh_rate")
+            val maxRefresh = runAdbCommandWithResult("settings get system peak_refresh_rate")
+            val refreshStatus = if (minRefresh.isNotEmpty() && minRefresh != "null" && maxRefresh.isNotEmpty() && maxRefresh != "null") {
+                getString(R.string.status_value, "$minRefresh - $maxRefresh Hz")
+            } else {
+                getString(R.string.status_default)
+            }
+
+            val wmSize = runAdbCommandWithResult("wm size")
+            val resStatus = if (wmSize.contains("Override size:")) {
+                getString(R.string.status_value, wmSize.substringAfter("Override size:").trim())
+            } else if (wmSize.contains("Physical size:")) {
+                getString(R.string.status_value, wmSize.substringAfter("Physical size:").trim())
+            } else {
+                getString(R.string.status_default)
+            }
+
+            val liveRenderer = GraphicsApi.detectRenderer()
+                .takeIf { it == GraphicsApi.VULKAN || it == GraphicsApi.OPENGL }
+            DisplayStatus(
+                refreshStatus, resStatus,
+                graphicsStatusText(prefs, liveRenderer),
+                orientationStatusText(prefs)
+            )
+        }
+    }
+
+    val netJob = async {
+        sectionOrNull {
+            val networkOpt = runAdbCommandWithResult("settings get global tether_dun_required")
+            val touchPtr = runAdbCommandWithResult("settings get system pointer_speed")
+            val touchLp = runAdbCommandWithResult("settings get secure long_press_timeout")
+            val dnsMode = runAdbCommandWithResult("settings get global private_dns_mode")
+            val dnsSpecifier = runAdbCommandWithResult("settings get global private_dns_specifier")
+            val headsUpOpt = runAdbCommandWithResult("settings get global heads_up_notifications_enabled")
+            NetStatus(
+                network = if (networkOpt == "0") getString(R.string.status_optimized) else getString(R.string.status_default),
+                touch = when (
+                    TouchTweak.appliedCount(
+                        TouchTweak.isPointerApplied(touchPtr),
+                        TouchTweak.isLongPressApplied(touchLp)
+                    )
+                ) {
+                    2 -> getString(R.string.status_improved)
+                    1 -> getString(R.string.status_touch_partial)
+                    else -> getString(R.string.status_default)
+                },
+                dns = if (dnsMode.trim() == "hostname" && dnsSpecifier.isNotEmpty() && dnsSpecifier != "null") {
+                    getString(R.string.status_value, dnsSpecifier.trim())
+                } else {
+                    getString(R.string.status_default)
+                },
+                dnd = if (headsUpOpt == "0") getString(R.string.status_dnd_blocked) else getString(R.string.status_default)
+            )
+        }
+    }
+
+    val sysJob = async {
+        sectionOrNull {
+            val animScale = runAdbCommandWithResult("settings get global window_animation_scale")
+            val blursOpt = runAdbCommandWithResult("settings get global disable_window_blurs")
+            val devOpt = runAdbCommandWithResult("settings get global development_settings_enabled")
+            SysStatus(
+                anim = if (animScale == "0.5") getString(R.string.status_anim_fast) else getString(R.string.status_default),
+                blurs = if (blursOpt == "1") getString(R.string.status_blurs_off) else getString(R.string.status_default),
+                devOpts = if (devOpt == "1") getString(R.string.status_devopt_on) else getString(R.string.status_devopt_off),
+                srec = shizukuRecoveryStatusText()
+            )
+        }
+    }
+
+    val display = displayJob.await() ?: DisplayStatus(fbUnknown, fbUnknown, fbUnknown, fbUnknown)
+    val net = netJob.await() ?: NetStatus(fbUnknown, fbUnknown, fbUnknown, fbUnknown)
+    val sys = sysJob.await() ?: SysStatus(fbUnknown, fbUnknown, fbUnknown, fbUnknown)
+
+    return@coroutineScope SystemStatuses(
         fixedPerf = fixedPerfStatus,
         thermal = thermalStatus,
         gameMode = gameModeStatus,
-        refresh = refreshStatus,
-        resolution = resStatus,
-        network = netStatus,
-        touch = touchStatus,
-        dns = dnsStatus,
-        animations = animStatus,
-        blurs = blursStatus,
-        dnd = headsUpStatus,
-        devOptions = devOptStatus,
+        refresh = display.refresh,
+        resolution = display.resolution,
+        network = net.network,
+        touch = net.touch,
+        dns = net.dns,
+        animations = sys.anim,
+        blurs = sys.blurs,
+        dnd = net.dnd,
+        devOptions = sys.devOpts,
         battery = batteryStatus,
         appOps = appOpsStatus,
         gameProfiles = gameProfilesStatus,
@@ -181,13 +238,13 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
         sensors = sensorsStatus,
         bgRestrict = bgStatus,
         benchmark = benchStatus,
-        graphics = graphicsStatus,
-        orientation = orientationStatus,
+        graphics = display.graphics,
+        orientation = display.orientation,
         apkBackup = apkBackupStatus,
         reboot = rebootStatus,
         appLocale = appLocaleStatus,
         radio = radioStatus,
-        shizukuRecovery = shizukuRecoveryStatus
+        shizukuRecovery = sys.srec
     )
 }
 

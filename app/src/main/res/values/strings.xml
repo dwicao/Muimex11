@@ -415,6 +415,8 @@
     <string name="shell_file_meta">%1$s  ·  %2$d lines</string>
     <string name="shell_preview">SCRIPT PREVIEW</string>
     <string name="shell_btn_execute">Execute script</string>
+    <string name="shell_danger_title">Dangerous commands found</string>
+    <string name="shell_danger_msg">%1$d risky lines detected. Review them before running with Shizuku privileges.</string>
     <string name="shell_err_read">Couldn\'t read that file</string>
     <string name="shell_err_binary">That doesn\'t look like a text script</string>
     <string name="shell_err_large">That script is too large (max 1 MB)</string>
@@ -635,6 +637,14 @@
     <string name="appops_mic">Microphone</string>
     <string name="appops_fine_loc">Precise location</string>
     <string name="appops_coarse_loc">Approximate location</string>
+    <string name="appops_clipboard">Clipboard</string>
+    <string name="appops_notif">Notifications</string>
+    <string name="appops_timeline">Access timeline</string>
+    <string name="appops_timeline_desc">Who used camera, mic, location or clipboard — and when</string>
+    <string name="appops_timeline_title">Access timeline</string>
+    <string name="appops_timeline_msg">Last recorded access per app. Newest first.</string>
+    <string name="appops_timeline_working">Reading access log…</string>
+    <string name="appops_timeline_empty">No access recorded — or this ROM hides the log.</string>
     <string name="appops_state_fmt">%1$s</string>
     <string name="appops_set_fmt">%1$s → %2$s</string>
     <string name="appops_reset_done">App permissions reset to default</string>

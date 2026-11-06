@@ -772,7 +772,10 @@ class GameSpaceService : Service() {
                         }
                     }
                     val safePkg = ShellSanitizer.cleanPkg(pkg)
-                    if (safePkg != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    // gfxinfo needs the privileged backend; UsageStats-based
+                    // foreground detection above keeps working without it.
+                    val backendUp = ShizukuRunner.isReady()
+                    if (safePkg != null && backendUp && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                         val out = query("dumpsys gfxinfo $safePkg")
                         val total = Regex("Total frames rendered:\\s*(\\d+)").find(out)
                             ?.groupValues?.getOrNull(1)?.toLongOrNull()
@@ -786,7 +789,9 @@ class GameSpaceService : Service() {
                         }
                     } else {
                         publishFps(null)
-                        delayMs = 3000L
+                        // Back off when the backend is gone instead of
+                        // hammering a dead binder every poll.
+                        delayMs = if (ShizukuRunner.isReady()) 3000L else 10_000L
                     }
                 } catch (_: Exception) {}
                 kotlinx.coroutines.delay(delayMs)
@@ -965,9 +970,12 @@ class GameSpaceService : Service() {
             var bypassed = lastAdaptiveBypass
             while (thermalMode == 2) {
                 try {
-                    val temp = AdaptiveThermal.parseZoneTemps(
+                    // Direct sysfs read — no Shizuku round-trip every 5 s.
+                    // Shell `cat` stays as fallback for locked-down kernels.
+                    val dump = readThermalZonesDirect().ifBlank {
                         query("cat /sys/class/thermal/thermal_zone*/temp 2>/dev/null")
-                    )
+                    }
+                    val temp = AdaptiveThermal.parseZoneTemps(dump)
                     if (temp != null) {
                         adaptiveTempC = temp
                         val sp = getSharedPreferences(Prefs.MAIN, Context.MODE_PRIVATE)
@@ -978,7 +986,7 @@ class GameSpaceService : Service() {
                             temp <= low -> true
                             else -> bypassed
                         }
-                        if (want != bypassed) {
+                        if (want != bypassed && ShizukuRunner.isReady()) {
                             bypassed = want
                             lastAdaptiveBypass = want
                             exec(if (want) "cmd thermalservice override-status 0" else "cmd thermalservice reset")
@@ -986,10 +994,24 @@ class GameSpaceService : Service() {
                         handler.post { thermalTile()?.let { refreshThermalText(it) } }
                     }
                 } catch (_: Exception) {}
-                kotlinx.coroutines.delay(5000)
+                // Back off when the privileged backend is gone instead of
+                // hammering a dead binder every 5 s.
+                kotlinx.coroutines.delay(if (ShizukuRunner.isReady()) 5000 else 15_000)
             }
             adaptiveRunning = false
         }
+    }
+
+    /** Best-effort direct read of thermal_zone temps (no shell needed). */
+    private fun readThermalZonesDirect(): String = try {
+        val dir = java.io.File("/sys/class/thermal")
+        dir.listFiles { f -> f.isDirectory && f.name.startsWith("thermal_zone") }
+            ?.sortedBy { it.name }
+            ?.joinToString("\n") { z ->
+                try { java.io.File(z, "temp").readText().trim() } catch (_: Exception) { "" }
+            }.orEmpty()
+    } catch (_: Exception) {
+        ""
     }
 
     private fun applyAutoBoost(pkg: String) {

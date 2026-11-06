@@ -82,7 +82,9 @@ class MainActivity : AppCompatActivity() {
         setupThemeToggle(isNightMode)
 
         verifyAppSignature()
-        checkForUpdates()
+        // Update check hits the network: run it after the first frame so a
+        // slow connection never delays startup.
+        findViewById<android.view.View>(android.R.id.content).post { checkForUpdates() }
         updateDeviceInfo()
 
         Shizuku.addRequestPermissionResultListener(permissionListener)

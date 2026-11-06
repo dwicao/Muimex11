@@ -67,6 +67,14 @@ internal fun MainActivity.showAppOpsSheet(prefs: SharedPreferences) {
 
 private fun MainActivity.presentAppOpsPicker(prefs: SharedPreferences, apps: List<AppEntry>) {
     val list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+    list.addView(optionRow(
+        this,
+        getString(R.string.appops_timeline),
+        getString(R.string.appops_timeline_desc),
+        selected = false
+    ) {
+        showAppOpsTimeline()
+    })
     apps.take(80).forEach { a ->
         list.addView(optionRow(this, a.label, a.pkg) {
             showAppOpsEditor(prefs, a.pkg, a.label)
@@ -85,6 +93,51 @@ private fun MainActivity.presentAppOpsPicker(prefs: SharedPreferences, apps: Lis
             confirmAppOpsBatch(prefs, apps)
         }
         .show()
+}
+
+/** "Who spied on me": last camera/mic/location/clipboard access per app. */
+private fun MainActivity.showAppOpsTimeline() {
+    if (!hasShizukuPermission()) return
+    val progress = ProgressSheet(this)
+        .icon(R.drawable.ic_monitor)
+        .title(getString(R.string.appops_timeline_title))
+        .message(getString(R.string.appops_timeline_working))
+    progress.show(indeterminate = true)
+    lifecycleScope.launch(Dispatchers.IO) {
+        // dumpsys appops is slow on big app lists; never block the UI on it.
+        val dump = ShizukuRunner.exec("dumpsys appops", 60_000L).out
+        val entries = AppOpsTimeline.parseDump(dump, System.currentTimeMillis()).take(60)
+        withContext(Dispatchers.Main) {
+            progress.dismiss()
+            if (isFinishing || isDestroyed) return@withContext
+            val list = LinearLayout(this@showAppOpsTimeline).apply {
+                orientation = LinearLayout.VERTICAL
+            }
+            if (entries.isEmpty()) {
+                list.addView(infoCard(this@showAppOpsTimeline, getString(R.string.appops_timeline_empty)))
+            } else {
+                entries.forEach { e ->
+                    val whenText = android.text.format.DateUtils.getRelativeTimeSpanString(
+                        e.timeMs, System.currentTimeMillis(),
+                        android.text.format.DateUtils.MINUTE_IN_MILLIS
+                    ).toString()
+                    list.addView(optionRow(
+                        this@showAppOpsTimeline,
+                        opName(e.op),
+                        "${e.pkg} · $whenText",
+                        selected = false
+                    ) {})
+                }
+            }
+            Sheet(this@showAppOpsTimeline)
+                .icon(R.drawable.ic_monitor)
+                .title(getString(R.string.appops_timeline_title))
+                .message(getString(R.string.appops_timeline_msg))
+                .content(list)
+                .button(getString(R.string.btn_close), SheetStyle.PRIMARY)
+                .show()
+        }
+    }
 }
 
 private fun MainActivity.confirmAppOpsBatch(prefs: SharedPreferences, apps: List<AppEntry>) {
@@ -188,7 +241,10 @@ private fun MainActivity.opName(op: String): String = when (op) {
     "CAMERA" -> getString(R.string.appops_camera)
     "RECORD_AUDIO" -> getString(R.string.appops_mic)
     "ACCESS_FINE_LOCATION" -> getString(R.string.appops_fine_loc)
-    else -> getString(R.string.appops_coarse_loc)
+    "ACCESS_COARSE_LOCATION" -> getString(R.string.appops_coarse_loc)
+    "READ_CLIPBOARD" -> getString(R.string.appops_clipboard)
+    "POST_NOTIFICATION" -> getString(R.string.appops_notif)
+    else -> op
 }
 
 /** Cycle allow -> ignore -> default -> allow. */

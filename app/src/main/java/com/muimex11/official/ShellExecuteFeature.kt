@@ -242,10 +242,33 @@ private fun MainActivity.showShellWarning(script: PickedScript) {
         .message(getString(R.string.shell_warn_msg))
         .content(infoCard(this, getString(R.string.shell_warn_trust), tint = C_WARN))
         .button(getString(R.string.shell_btn_reset_run), SheetStyle.DANGER) {
-            resetAllFunctions(prefs) { runShellScript(script) }
+            proceedAfterDangerCheck(script) { resetAllFunctions(prefs) { runShellScript(script) } }
         }
-        .button(getString(R.string.shell_btn_run_anyway), SheetStyle.TONAL) { runShellScript(script) }
+        .button(getString(R.string.shell_btn_run_anyway), SheetStyle.TONAL) {
+            proceedAfterDangerCheck(script) { runShellScript(script) }
+        }
         .button(getString(R.string.btn_cancel), SheetStyle.TEXT)
+        .show()
+}
+
+/** Static danger scan before executing with Shizuku privileges. */
+private fun MainActivity.proceedAfterDangerCheck(script: PickedScript, onClean: () -> Unit) {
+    val hits = DangerScan.scan(script.text)
+    if (hits.isEmpty()) {
+        onClean()
+        return
+    }
+    val list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+    hits.take(5).forEach { h ->
+        list.addView(infoCard(this, "${h.pattern}\n${h.line}", tint = C_FAIL))
+    }
+    Sheet(this)
+        .icon(R.drawable.ic_warning, C_FAIL)
+        .title(getString(R.string.shell_danger_title))
+        .message(getString(R.string.shell_danger_msg, hits.size))
+        .content(list)
+        .button(getString(R.string.btn_cancel), SheetStyle.TONAL)
+        .button(getString(R.string.shell_btn_run_anyway), SheetStyle.DANGER) { onClean() }
         .show()
 }
 

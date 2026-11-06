@@ -501,11 +501,12 @@ class AppLocaleTest {
 class AppOpsBatchTest {
     @Test
     fun buildCmd() {
+        val n = AppOpsParser.OPS.size
         val cmd = AppOpsBatch.buildCmd(listOf("com.a", "com.b"))!!
         assertTrue(cmd.contains("cmd appops set com.a CAMERA ignore"))
-        assertTrue(cmd.contains("cmd appops set com.b ACCESS_COARSE_LOCATION ignore"))
-        // 2 pkgs x 4 ops = 8 sets joined with &&
-        assertEquals(7, cmd.split(" && ").size - 1)
+        assertTrue(cmd.contains("cmd appops set com.b READ_CLIPBOARD ignore"))
+        // 2 pkgs x N ops joined with &&
+        assertEquals(2 * n - 1, cmd.split(" && ").size - 1)
         assertNull(AppOpsBatch.buildCmd(emptyList()))
         assertNull(AppOpsBatch.buildCmd(listOf("not a pkg!!")))
     }
@@ -515,7 +516,7 @@ class AppOpsBatchTest {
         val m = AppOpsBatch.ruleEntries(listOf("com.a", "com.a", "bad pkg!!"))
         assertEquals(1, m.size)
         assertEquals("ignore", m["com.a"]?.get("CAMERA"))
-        assertEquals(4, m["com.a"]?.size)
+        assertEquals(AppOpsParser.OPS.size, m["com.a"]?.size)
     }
 }
 
@@ -587,5 +588,91 @@ class TouchTweakTest {
         assertEquals(1, TouchTweak.appliedCount(true, false))
         assertEquals(1, TouchTweak.appliedCount(false, true))
         assertEquals(0, TouchTweak.appliedCount(false, false))
+    }
+}
+
+class DangerScanTest {
+    @Test
+    fun flagsDestructive() {
+        assertTrue(DangerScan.scan("rm -rf /").any { it.pattern == "rm -rf /" })
+        assertTrue(DangerScan.scan("sudo rm -rf / --no-preserve-root").isNotEmpty())
+        assertTrue(DangerScan.scan("dd if=x of=/dev/block/mmcblk0").any { it.pattern == "dd to block device" })
+        assertTrue(DangerScan.scan("mkfs.ext4 /dev/sda1").any { it.pattern == "mkfs" })
+        assertTrue(DangerScan.scan(":(){ :|:& };:").any { it.pattern == "fork bomb" })
+        assertTrue(DangerScan.scan("fastboot flash boot boot.img").any { it.pattern == "fastboot/flash" })
+        assertTrue(DangerScan.scan("chmod -R 777 /").any { it.pattern == "chmod 777 /" })
+    }
+
+    @Test
+    fun ignoresBenign() {
+        assertTrue(DangerScan.scan("rm -rf /sdcard/Download/tmp").isEmpty())
+        assertTrue(DangerScan.scan("rm -rf /data/local/tmp/x").isEmpty())
+        assertTrue(DangerScan.scan("dd if=/dev/zero of=/sdcard/out.bin bs=1M count=1").isEmpty())
+        assertTrue(DangerScan.scan("# rm -rf / (commented)").isEmpty())
+        assertTrue(DangerScan.scan("echo hello\nsettings put global foo 1").isEmpty())
+        assertTrue(DangerScan.scan("").isEmpty())
+    }
+
+    @Test
+    fun capsAndDedupes() {
+        val big = (1..50).joinToString("\n") { "rm -rf / #$it" }
+        assertTrue(DangerScan.scan(big).size <= 8)
+    }
+}
+
+class AutomationAuthTest {
+    @Test
+    fun roundTrip() {
+        val t = AutomationAuth.newToken()
+        assertTrue(AutomationAuth.isWellFormed(t))
+        assertTrue(AutomationAuth.matches(t, t))
+        assertFalse(AutomationAuth.matches(t, t + "x"))
+        assertFalse(AutomationAuth.matches(t, null))
+        assertFalse(AutomationAuth.matches(null, t))
+        assertFalse(AutomationAuth.matches("", ""))
+        assertFalse(AutomationAuth.matches("short", "short"))
+    }
+}
+
+class AppOpsTimelineTest {
+    @Test
+    fun parsesDurations() {
+        assertEquals(90_000L, AppOpsTimeline.parseDurationAgo("1m30s"))
+        assertEquals(3_600_000L + 120_000L, AppOpsTimeline.parseDurationAgo("1h2m"))
+        assertEquals(86_400_000L, AppOpsTimeline.parseDurationAgo("1d"))
+        assertEquals(500L, AppOpsTimeline.parseDurationAgo("500ms"))
+        assertEquals(4500L, AppOpsTimeline.parseDurationAgo("4.5s"))
+        assertNull(AppOpsTimeline.parseDurationAgo("never"))
+        assertNull(AppOpsTimeline.parseDurationAgo(""))
+    }
+
+    @Test
+    fun parsesDump() {
+        val dump = """
+            Uid 10123:
+              Package com.evil.cam:
+                CAMERA: allow; time=+1h2m ago; duration=+5s ago;
+                RECORD_AUDIO: ignore; time=+2d ago;
+              Package com.nice.app:
+                CAMERA(26): allow; time=+30s ago;
+                WIFI_SCAN: allow; time=+1m ago;
+              Package com.other:
+                ACCESS_FINE_LOCATION: allow; time=+10m5s ago;
+        """.trimIndent()
+        val now = 1_700_000_000_000L
+        val out = AppOpsTimeline.parseDump(dump, now)
+        // WIFI_SCAN not watched; 4 watched entries expected, newest first.
+        assertEquals(4, out.size)
+        assertEquals("CAMERA", out[0].op)
+        assertEquals("com.nice.app", out[0].pkg)
+        assertEquals(now - 30_000L, out[0].timeMs)
+        assertTrue(out.all { it.op in AppOpsTimeline.WATCHED })
+        assertTrue(out.zipWithNext().all { (a, b) -> a.timeMs >= b.timeMs })
+    }
+
+    @Test
+    fun skipsUnknown() {
+        assertTrue(AppOpsTimeline.parseDump("total garbage\nno headers", 1000L).isEmpty())
+        assertTrue(AppOpsTimeline.parseDump("", 1000L).isEmpty())
     }
 }

@@ -196,7 +196,10 @@ object AppOpsParser {
     const val MODE_DEFAULT = "default"
 
     /** Ops exposed in the UI. */
-    val OPS = listOf("CAMERA", "RECORD_AUDIO", "ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION")
+    val OPS = listOf(
+        "CAMERA", "RECORD_AUDIO", "ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION",
+        "READ_CLIPBOARD", "POST_NOTIFICATION"
+    )
 
     private val lineRe = Regex("^\\s*([A-Z_]+)\\s*:\\s*(\\w+)", RegexOption.MULTILINE)
 
@@ -646,5 +649,108 @@ object KeepAwake {
         val p = (prev ?: "").trim()
         return if (p.isEmpty() || p == "null") "settings delete system $KEY"
         else "settings put system $KEY $p"
+    }
+}
+
+/**
+ * Static danger scan for user-supplied shell scripts. Conservative on purpose:
+ * only flags patterns that are destructive with no plausible benign use on
+ * the matched path (wiping /, dd to block devices, mkfs, fork bombs,
+ * flashing, chmod 777 on /). `rm -rf /sdcard/foo` does NOT match.
+ */
+object DangerScan {
+    data class Hit(val pattern: String, val line: String)
+
+    private val rules: List<Pair<String, Regex>> = listOf(
+        "rm -rf /" to Regex("""(^|[;&|]\s*)(sudo\s+)?rm\s+[^\n|;&]*\s/(?:\s|$|[;&*])"""),
+        "dd to block device" to Regex("""\bdd\b[^\n|;&]*of=/dev/"""),
+        "mkfs" to Regex("""(^|[;&|]\s*)(sudo\s+)?mkfs[\s.]"""),
+        "fork bomb" to Regex(""":\(\)\s*\{\s*:\s*\|\s*:&\s*\}"""),
+        "fastboot/flash" to Regex("""fastboot\s+flash|\bflash_image\b"""),
+        "chmod 777 /" to Regex("""chmod\s+(-R\s+)?777\s+/(?:\s|$)""")
+    )
+
+    fun scan(text: String, maxHits: Int = 8): List<Hit> {
+        val out = mutableListOf<Hit>()
+        text.lines().take(2000).forEach { raw ->
+            val line = raw.trim()
+            if (line.isEmpty() || line.startsWith("#")) return@forEach
+            rules.forEach { (name, re) ->
+                if (out.size >= maxHits) return out
+                if (re.containsMatchIn(line)) out += Hit(name, line.take(160))
+            }
+        }
+        return out.distinct()
+    }
+}
+
+/** Token guard for a future automation (Tasker/MacroDroid) API. Pure + tested. */
+object AutomationAuth {
+    fun newToken(): String =
+        java.util.UUID.randomUUID().toString().replace("-", "")
+
+    fun isWellFormed(t: String?): Boolean =
+        t != null && t.length >= 16 && t.all { it.isLetterOrDigit() }
+
+    fun matches(stored: String?, provided: String?): Boolean {
+        if (!isWellFormed(stored) || !isWellFormed(provided)) return false
+        return java.security.MessageDigest.isEqual(
+            stored!!.toByteArray(), provided!!.toByteArray()
+        )
+    }
+}
+
+/**
+ * "Who spied on me" timeline from `dumpsys appops`. The dump format varies
+ * across OEMs/versions, so parsing is best-effort: unknown lines are skipped,
+ * never fatal. Timestamps are `time=+<dur> ago` relative to dump time.
+ */
+object AppOpsTimeline {
+    data class Access(val op: String, val pkg: String, val timeMs: Long)
+
+    val WATCHED = setOf(
+        "CAMERA", "RECORD_AUDIO", "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION", "READ_CLIPBOARD"
+    )
+
+    private val pkgHeader = Regex("^\\s*[Pp]ackage\\s+([A-Za-z0-9._]+)")
+    private val opToken = Regex("^\\s*([A-Z_]+)(?:\\(\\d+\\))?\\s*:")
+    private val timeToken = Regex("time=\\+([^\\s;]+)")
+
+    private val durToken = Regex("(\\d+(?:\\.\\d+)?)(d|h|ms|m|s)")
+
+    /** Android duration strings like 1d2h3m, 500ms, 4.5s → millis. */
+    fun parseDurationAgo(raw: String): Long? {
+        var total = 0L
+        var matched = false
+        // ms must win over m: regex alternation tries d|h|ms|m|s in order.
+        durToken.findAll(raw).forEach { m ->
+            matched = true
+            val v = m.groupValues[1].toDoubleOrNull() ?: return@forEach
+            total += when (m.groupValues[2]) {
+                "d" -> (v * 86_400_000L).toLong()
+                "h" -> (v * 3_600_000L).toLong()
+                "ms" -> v.toLong()
+                "m" -> (v * 60_000L).toLong()
+                else -> (v * 1000L).toLong()
+            }
+        }
+        return if (matched) total else null
+    }
+
+    fun parseDump(dump: String, nowMs: Long, maxEntries: Int = 150): List<Access> {
+        val out = mutableListOf<Access>()
+        var pkg = ""
+        dump.lines().forEach { line ->
+            pkgHeader.find(line)?.let { pkg = it.groupValues[1]; return@forEach }
+            if (pkg.isEmpty()) return@forEach
+            val op = opToken.find(line)?.groupValues?.getOrNull(1) ?: return@forEach
+            if (op !in WATCHED) return@forEach
+            val dur = timeToken.find(line)?.groupValues?.getOrNull(1) ?: return@forEach
+            val agoMs = parseDurationAgo(dur) ?: return@forEach
+            out += Access(op, pkg, (nowMs - agoMs).coerceAtLeast(0L))
+            if (out.size >= maxEntries) return out.sortedByDescending { it.timeMs }
+        }
+        return out.sortedByDescending { it.timeMs }
     }
 }
