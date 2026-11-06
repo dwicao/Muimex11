@@ -1,8 +1,8 @@
 {
-  "versionCode": 50,
-  "versionName": "4.20",
-  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.20/Muimex11-4.20.apk",
-  "releaseNotes": "Kolom search + filter gabungan chips. Stroke warna per kategori. Hapus prefix Status di 54+54 string. 42 tombol reset jadi icon button. Bersihkan header ikon yatim. Onboarding sekali jalan.",
+  "versionCode": 51,
+  "versionName": "4.21",
+  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.21/Muimex11-4.21.apk",
+  "releaseNotes": "Semua tombol reset kini ImageButton; satu helper masih cast ke TextView sehingga crash saat startup. Juga menambahkan pengecekan pola generik agar tidak terulang.",
   "mandatory": false,
-  "sha256": "765a5bcb5e5cae76c3f864825573e22f19b7681c01c1e81c2dd71dd9287622fd"
+  "sha256": "04e8adc6aa87332db19d2e4b7e407ab485f1d5501902b0f9d7fb2cd5e10c4db1"
 }
