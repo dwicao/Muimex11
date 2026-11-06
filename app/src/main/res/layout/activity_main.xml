@@ -3594,17 +3594,24 @@
                 app:iconSize="18dp"
                 app:iconTint="#FFFFFF" />
 
-            <ImageButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnResetAll"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/bg_reset_pill"
-                android:contentDescription="@string/desc_reset"
-                android:padding="9dp"
-                android:src="@drawable/ic_reset"
-                app:tint="@color/statusText"
-                android:clickable="true"
-                android:focusable="true" />
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:layout_marginStart="6dp"
+                android:backgroundTint="@null"
+                android:background="@drawable/bg_btn_reset"
+                android:contentDescription="@string/cd_reset_all"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:minWidth="0dp"
+                android:padding="0dp"
+                app:cornerRadius="22dp"
+                app:icon="@drawable/ic_reset"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconSize="24dp"
+                app:iconTint="#FF6E76" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
