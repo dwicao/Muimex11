@@ -26,12 +26,12 @@ abstract class MuimexTile : TileService() {    protected val tileScope = Corouti
 
     protected fun openApp() {
         try {
-            unlockAndCollapse()
             val intent = packageManager.getLaunchIntentForPackage(packageName)?.apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             } ?: Intent(Settings.ACTION_SETTINGS).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
+            // Collapses the shade too; on a locked device the launch waits for unlock.
             startActivityAndCollapse(intent)
         } catch (_: Exception) {}
     }
