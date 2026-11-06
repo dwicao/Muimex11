@@ -72,7 +72,7 @@ object ComfortTweaks {
     const val TAPWAKE_NS = "secure"
     const val TAPWAKE_KEY = "doze_tap_gesture"
 
-    const val UIMODE_EXPECT = mapOf("auto" to "0", "no" to "1", "yes" to "2")
+    val UIMODE_EXPECT = mapOf("auto" to "0", "no" to "1", "yes" to "2")
 
     const val EXTRADIM_NS = "secure"
     const val EXTRADIM_KEY = "reduce_bright_colors_activated"
