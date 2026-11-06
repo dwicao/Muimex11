@@ -1,8 +1,8 @@
 {
-  "versionCode": 51,
-  "versionName": "4.21",
-  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.21/Muimex11-4.21.apk",
-  "releaseNotes": "Semua tombol reset kini ImageButton; satu helper masih cast ke TextView sehingga crash saat startup. Juga menambahkan pengecekan pola generik agar tidak terulang.",
+  "versionCode": 52,
+  "versionName": "4.22",
+  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.22/Muimex11-4.22.apk",
+  "releaseNotes": "Konversi massal kemarin ikut mengubah btnResetAll yang memang tombol berlabel \u2014 kembalikan ke MaterialButton semula agar cast Button valid dan label tetap ada.",
   "mandatory": false,
-  "sha256": "04e8adc6aa87332db19d2e4b7e407ab485f1d5501902b0f9d7fb2cd5e10c4db1"
+  "sha256": "ccf034f465afa53042c9d783221790907f89f2247272e05f15b9153f407ea0df"
 }
