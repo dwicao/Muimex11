@@ -832,6 +832,8 @@ class GameSpaceService : Service() {
     private var orientPrevUser: String? = null
     private var lastAwakePkg: String? = null
     private var awakePrevValue: String? = null
+    private var lastBlurPkg: String? = null
+    private var blurPrevValue: String? = null
 
     private fun profileHasDisplay(p: GameProfile): Boolean =
         p.refresh120 || (p.refreshMin > 0 && p.refreshMax > 0) ||
@@ -868,7 +870,11 @@ class GameSpaceService : Service() {
         val awakePrev = awakePrevValue
         lastAwakePkg = null
         awakePrevValue = null
-        if (dndPkg == null && orientPkg == null && awakePkg == null) return
+        val blurPkg = lastBlurPkg
+        val blurPrev = blurPrevValue
+        lastBlurPkg = null
+        blurPrevValue = null
+        if (dndPkg == null && orientPkg == null && awakePkg == null && blurPkg == null) return
         ioScope.launch {
             try {
                 if (dndPkg != null) exec(restoreGlobalCmd("heads_up_notifications_enabled", dndPrev))
@@ -877,6 +883,7 @@ class GameSpaceService : Service() {
                     exec(restoreSystemCmd("user_rotation", prevUser))
                 }
                 if (awakePkg != null) exec(KeepAwake.buildRestore(awakePrev))
+                if (blurPkg != null) exec(restoreGlobalCmd("disable_window_blurs", blurPrev))
             } catch (_: Exception) {}
         }
     }
@@ -1061,6 +1068,15 @@ class GameSpaceService : Service() {
                         awakePrevValue = prev
                         lastAwakePkg = safePkg
                         exec(KeepAwake.buildSet())
+                    }
+                }
+                // No-blur: snapshot, force off while foreground.
+                if (p.blurOff && ShizukuRunner.isReady()) {
+                    val prev = query("settings get global disable_window_blurs").trim()
+                    if (prev != "1") {
+                        blurPrevValue = prev
+                        lastBlurPkg = safePkg
+                        exec("settings put global disable_window_blurs 1")
                     }
                 }
                 // Forced orientation: snapshot both keys, apply profile choice.

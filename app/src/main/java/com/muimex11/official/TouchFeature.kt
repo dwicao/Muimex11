@@ -56,7 +56,7 @@ internal fun MainActivity.improveTouchLatency() {
                     showCommandErrorSheet(
                         getString(R.string.dlg_touch_partial_title), badCmd,
                         ShellResult(if (vPtr) rLp.code else ptrCode, badOut)
-                    )
+                    ) { improveTouchLatency() }
                 }
                 else -> {
                     val combined = ShellResult(
@@ -64,7 +64,7 @@ internal fun MainActivity.improveTouchLatency() {
                         "$rPtrDesc\n$ptrProbeOut\n\n" +
                             "${TouchTweak.buildLongPress()}\n${rLp.merged}"
                     )
-                    showCommandErrorSheet(getString(R.string.dlg_cmd_failed_title), getString(R.string.touch_both_cmds), combined)
+                    showCommandErrorSheet(getString(R.string.dlg_cmd_failed_title), getString(R.string.touch_both_cmds), combined) { improveTouchLatency() }
                 }
             }
             fetchSystemStatuses()

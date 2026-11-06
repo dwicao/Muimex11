@@ -101,6 +101,9 @@ internal fun MainActivity.showShellExecuteSheet() {
         .button(getString(R.string.shell_btn_execute), SheetStyle.PRIMARY) {
             script?.let { showShellWarning(it) }
         }
+        .button(getString(R.string.automation_token), SheetStyle.TEXT) {
+            showAutomationTokenSheet()
+        }
         .button(getString(R.string.btn_close), SheetStyle.TONAL)
         .show()
     sheetRef?.buttonViews?.firstOrNull()?.isEnabled = false

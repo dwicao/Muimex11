@@ -24,7 +24,9 @@ data class GameProfile(
     /** OrientationMode.AUTO = follow system, else force while foreground. */
     val orientation: Int = 0,
     /** Keep the screen awake while this game is foreground. */
-    val keepAwake: Boolean = false
+    val keepAwake: Boolean = false,
+    /** Disable window blurs while this game is foreground. */
+    val blurOff: Boolean = false
 )
 
 object GameProfileStore {
@@ -32,7 +34,7 @@ object GameProfileStore {
     private const val KEY_PROFILES = "profiles_json"
     private const val KEY_AUTO_BOOST = "auto_boost"
     private const val KEY_SCHEMA = "schema_v"
-    private const val SCHEMA = 4
+    private const val SCHEMA = 5
     private const val MAX_PROFILES = 200
 
     private fun prefs(ctx: Context): SharedPreferences =
@@ -59,7 +61,8 @@ object GameProfileStore {
                     dndFocus = v.optBoolean("dndFocus", false),
                     orientation = v.optInt("orientation", 0)
                         .coerceIn(OrientationMode.AUTO, OrientationMode.REVERSE_LANDSCAPE),
-                    keepAwake = v.optBoolean("keepAwake", false)
+                    keepAwake = v.optBoolean("keepAwake", false),
+                    blurOff = v.optBoolean("blurOff", false)
                 )
             }
             out
@@ -109,6 +112,7 @@ object GameProfileStore {
                 put("dndFocus", v.dndFocus)
                 put("orientation", v.orientation)
                 put("keepAwake", v.keepAwake)
+                put("blurOff", v.blurOff)
             })
         }
         prefs(ctx).edit().putString(KEY_PROFILES, o.toString())

@@ -93,6 +93,7 @@ private fun MainActivity.showProfileEditor(pkg: String, label: String) {
     var dnd = cur.dndFocus
     var orient = if (OrientationMode.isValid(cur.orientation)) cur.orientation else OrientationMode.AUTO
     var awake = cur.keepAwake
+    var noBlur = cur.blurOff
 
     val sheet = Sheet(this)
     fun rows() {
@@ -111,6 +112,9 @@ private fun MainActivity.showProfileEditor(pkg: String, label: String) {
         })
         list.addView(optionRow(this, getString(R.string.gprof_awake), getString(R.string.gprof_awake_desc), selected = awake) {
             awake = !awake; rows()
+        })
+        list.addView(optionRow(this, getString(R.string.gprof_noblur), getString(R.string.gprof_noblur_desc), selected = noBlur) {
+            noBlur = !noBlur; rows()
         })
         list.addView(optionRow(this, getString(R.string.gprof_120), getString(R.string.gprof_120_desc), selected = hz120) {
             hz120 = !hz120; if (hz120) refresh = 0; rows()
@@ -158,7 +162,7 @@ private fun MainActivity.showProfileEditor(pkg: String, label: String) {
     sheet.button(getString(R.string.btn_save), SheetStyle.PRIMARY) {
         GameProfileStore.save(
             this,
-            GameProfile(pkg, fixed, thermal, gm, hz120, refresh, refresh, scale, dnd, orient, awake)
+            GameProfile(pkg, fixed, thermal, gm, hz120, refresh, refresh, scale, dnd, orient, awake, noBlur)
         )
         UiToast.success(this, getString(R.string.profile_saved, label), Toast.LENGTH_SHORT).show()
         refreshGameProfilesStatus()

@@ -754,3 +754,42 @@ object AppOpsTimeline {
         return out.sortedByDescending { it.timeMs }
     }
 }
+
+/**
+ * Tasker/MacroDroid automation commands (pure parsing; the receiver enforces
+ * the token). v1 actions: `renderer` (value vulkan|opengl) and `game_boost`.
+ */
+object TaskerCmd {
+    const val ACTION_RENDERER = "renderer"
+    const val ACTION_BOOST = "game_boost"
+
+    fun parseRenderer(raw: String?): String? = when (raw?.trim()?.lowercase()) {
+        "vulkan", "skiavk" -> "Vulkan"
+        "opengl", "opengl-es", "skiagl" -> "OpenGL"
+        else -> null
+    }
+
+    fun parseAction(raw: String?): String? = when (raw?.trim()?.lowercase()) {
+        ACTION_RENDERER -> ACTION_RENDERER
+        ACTION_BOOST -> ACTION_BOOST
+        else -> null
+    }
+}
+
+/** Ping sampling for the latency overlay — pure output parsing. */
+object PingProbe {
+    const val PRIMARY_HOST = "8.8.8.8"
+    const val FALLBACK_HOST = "1.1.1.1"
+
+    fun build(host: String): String = "ping -c 1 -W 2 $host"
+
+    private val timeRe = Regex("time=(\\d+(?:\\.\\d+)?)\\s*ms")
+
+    /** Round-trip ms from `ping -c1` output, or null when unreachable. */
+    fun parseMs(output: String): Double? =
+        timeRe.find(output)?.groupValues?.getOrNull(1)?.toDoubleOrNull()
+
+    /** Jitter proxy: absolute delta vs the previous sample. */
+    fun jitterMs(prevMs: Double?, curMs: Double): Double? =
+        if (prevMs == null) null else kotlin.math.abs(curMs - prevMs)
+}

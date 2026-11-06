@@ -676,3 +676,41 @@ class AppOpsTimelineTest {
         assertTrue(AppOpsTimeline.parseDump("", 1000L).isEmpty())
     }
 }
+
+class TaskerCmdTest {
+    @Test
+    fun parsesActions() {
+        assertEquals(TaskerCmd.ACTION_RENDERER, TaskerCmd.parseAction("renderer"))
+        assertEquals(TaskerCmd.ACTION_BOOST, TaskerCmd.parseAction(" Game_Boost "))
+        assertNull(TaskerCmd.parseAction("format"))
+        assertNull(TaskerCmd.parseAction(null))
+    }
+
+    @Test
+    fun parsesRendererValues() {
+        assertEquals("Vulkan", TaskerCmd.parseRenderer("vulkan"))
+        assertEquals("Vulkan", TaskerCmd.parseRenderer("SKIAVK"))
+        assertEquals("OpenGL", TaskerCmd.parseRenderer("opengl"))
+        assertNull(TaskerCmd.parseRenderer("directx"))
+        assertNull(TaskerCmd.parseRenderer(null))
+    }
+}
+
+class PingProbeTest {
+    @Test
+    fun buildCommand() {
+        assertEquals("ping -c 1 -W 2 8.8.8.8", PingProbe.build(PingProbe.PRIMARY_HOST))
+        assertEquals("ping -c 1 -W 2 1.1.1.1", PingProbe.build(PingProbe.FALLBACK_HOST))
+    }
+
+    @Test
+    fun parsesRtt() {
+        val ok = "PING 8.8.8.8: 56 data bytes\n64 bytes from 8.8.8.8: icmp_seq=0 ttl=116 time=23.7 ms\n"
+        assertEquals(23.7, PingProbe.parseMs(ok)!!, 0.001)
+        assertNull(PingProbe.parseMs("PING 8.8.8.8: connect: Network is unreachable\n"))
+        assertNull(PingProbe.parseMs(""))
+        assertEquals(0.0, PingProbe.jitterMs(23.7, 23.7)!!, 0.001)
+        assertEquals(5.0, PingProbe.jitterMs(20.0, 25.0)!!, 0.001)
+        assertNull(PingProbe.jitterMs(null, 25.0))
+    }
+}

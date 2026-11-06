@@ -572,6 +572,18 @@
     <string name="cd_view_list">List view</string>
     <string name="cd_view_compact">Compact view</string>
 
+    <!-- Automation (Tasker) token -->
+    <string name="automation_token">Automation token</string>
+    <string name="automation_title">Automation (Tasker)</string>
+    <string name="automation_msg">Pass this token to Tasker or MacroDroid: send a broadcast with action %1$s.</string>
+    <string name="automation_token_hint">Actions: action=renderer value=vulkan|opengl, action=game_boost. Broadcasts without a matching token are ignored.</string>
+    <string name="automation_howto">In Tasker: Send Intent, action com.muimex11.official.TASKER_RUN, extras token:&lt;paste&gt;, action:renderer, value:vulkan.</string>
+    <string name="automation_new_token">New token</string>
+
+    <!-- Shared buttons -->
+    <string name="btn_retry">Retry</string>
+    <string name="btn_share">Share</string>
+
     <!-- Copyable command errors -->
     <string name="dlg_cmd_failed_title">Command failed</string>
     <string name="dlg_cmd_failed_msg">The command below failed. Copy the full output when reporting the bug.</string>
@@ -874,6 +886,13 @@
     <!-- Game Profiles: keep screen awake -->
     <string name="gprof_awake">Keep screen awake</string>
     <string name="gprof_awake_desc">Never time out the display while this game is open</string>
+    <string name="gprof_noblur">No window blurs</string>
+    <string name="gprof_noblur_desc">Disable blur effects that eat GPU time while gaming</string>
+
+    <!-- Backup to file -->
+    <string name="backup_save_file">Save to file</string>
+    <string name="backup_load_file">Load from file</string>
+    <string name="backup_file_saved">Backup saved to Download/Muimex11</string>
 
     <!-- Per-app language (Android 13+) -->
     <string name="toast_needs_a13">This feature requires Android 13 or newer.</string>

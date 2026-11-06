@@ -93,7 +93,11 @@ internal fun MainActivity.runAdbCommand(command: String, successMessage: String,
             } else {
                 // Full copyable output — truncated toasts hid ROM-specific
                 // failures (e.g. Realme blocking pointer_speed).
-                showCommandErrorSheet(getString(R.string.dlg_cmd_failed_title), command, res)
+                showCommandErrorSheet(
+                    getString(R.string.dlg_cmd_failed_title), command, res
+                ) {
+                    runAdbCommand(command, successMessage, onSuccess)
+                }
             }
         }
     }

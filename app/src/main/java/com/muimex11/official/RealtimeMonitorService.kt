@@ -55,10 +55,16 @@ class RealtimeMonitorService : Service() {
     private lateinit var pbStorage: ProgressBar
     private lateinit var tvNetDown: TextView
     private lateinit var tvNetUp: TextView
+    private lateinit var tvPingMs: TextView
+    private lateinit var tvPingJitter: TextView
 
     private var lastRxBytes = 0L
     private var lastTxBytes = 0L
     private var lastNetSampleAt = 0L
+    private var tickCount = 0L
+    private var lastPingMs: Double? = null
+    private var lastPingAt = 0L
+    private var lastJitterMs: Double? = null
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -84,6 +90,8 @@ class RealtimeMonitorService : Service() {
         pbStorage = overlayView.findViewById(R.id.pbOverlayStorage)
         tvNetDown = overlayView.findViewById(R.id.tvNetDown)
         tvNetUp = overlayView.findViewById(R.id.tvNetUp)
+        tvPingMs = overlayView.findViewById(R.id.tvPingMs)
+        tvPingJitter = overlayView.findViewById(R.id.tvPingJitter)
 
         val layoutFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
@@ -187,6 +195,10 @@ class RealtimeMonitorService : Service() {
 
         val net = sampleNetworkSpeed()
 
+        // Ping every ~5 s: a single ICMP echo is cheap, every second is not.
+        tickCount++
+        if (tickCount % 5L == 0L) samplePing()
+
         withContext(Dispatchers.Main) {
             tvCpuTemp.text = formatHtml(span(cpuTemp, "°C", tempColor(cpuTempC)))
             tvCpuFreq.text = formatHtml(span(cpuFreq, "MHz", white))
@@ -207,6 +219,40 @@ class RealtimeMonitorService : Service() {
 
             tvNetDown.text = formatHtml(span("↓ " + net.first.first, net.first.second, "#4ADE80"))
             tvNetUp.text = formatHtml(span("↑ " + net.second.first, net.second.second, "#F9A8D4"))
+
+            val pingColor = when {
+                lastPingMs == null -> "#E5E7EB"
+                lastPingMs!! >= 150 -> "#F87171"
+                lastPingMs!! >= 80 -> "#FBBF24"
+                else -> "#4ADE80"
+            }
+            tvPingMs.text = formatHtml(
+                span(if (lastPingMs == null) "--" else "${lastPingMs!!.toInt()}", "ms", pingColor)
+            )
+            tvPingJitter.text = formatHtml(
+                span(
+                    if (lastJitterMs == null) "--" else "±${lastJitterMs!!.toInt()}",
+                    "ms", "#E5E7EB"
+                )
+            )
+        }
+    }
+
+    /**
+     * One ICMP echo via Shizuku shell. Falls back to a secondary host when
+     * the primary is filtered. No backend → keep the last reading.
+     */
+    private suspend fun samplePing() = withContext(Dispatchers.IO) {
+        if (!ShizukuRunner.isReady()) return@withContext
+        val now = SystemClock.elapsedRealtime()
+        // Don't spam: at most one probe per 4 s even if ticks bunch up.
+        if (now - lastPingAt < 4000L) return@withContext
+        lastPingAt = now
+        val rtt = PingProbe.parseMs(ShizukuRunner.query(PingProbe.build(PingProbe.PRIMARY_HOST)))
+            ?: PingProbe.parseMs(ShizukuRunner.query(PingProbe.build(PingProbe.FALLBACK_HOST)))
+        if (rtt != null) {
+            lastJitterMs = PingProbe.jitterMs(lastPingMs, rtt)
+            lastPingMs = rtt
         }
     }
 

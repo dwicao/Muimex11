@@ -16,7 +16,8 @@ import android.widget.Toast
 internal fun MainActivity.showCommandErrorSheet(
     title: String,
     command: String,
-    result: ShellResult
+    result: ShellResult,
+    onRetry: (() -> Unit)? = null
 ) {
     val out = result.merged.trim().ifEmpty { "(no output)" }.take(4096)
     val body = "${getString(R.string.cmd_failed_command)}\n$command\n\n" +
@@ -47,6 +48,11 @@ internal fun MainActivity.showCommandErrorSheet(
                 cm.setPrimaryClip(ClipData.newPlainText("muimex11-cmd-error", body))
                 UiToast.success(this, getString(R.string.shell_copied), Toast.LENGTH_SHORT).show()
             } catch (_: Exception) {}
+        }
+        .apply {
+            if (onRetry != null) {
+                button(getString(R.string.btn_retry), SheetStyle.PRIMARY) { onRetry() }
+            }
         }
         .button(getString(R.string.btn_close), SheetStyle.PRIMARY)
         .show()

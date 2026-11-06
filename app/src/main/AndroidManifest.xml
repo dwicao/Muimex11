@@ -119,6 +119,15 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name=".TaskerReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.muimex11.official.TASKER_RUN" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

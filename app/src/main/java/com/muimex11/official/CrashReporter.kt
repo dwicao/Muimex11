@@ -191,6 +191,16 @@ internal fun MainActivity.showCrashReportSheet(report: CrashReport) {
                 UiToast.success(this, getString(R.string.shell_copied), Toast.LENGTH_SHORT).show()
             } catch (_: Exception) {}
         }
+        .button(getString(R.string.btn_share), SheetStyle.TEXT) {
+            try {
+                val send = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                    type = "text/plain"
+                    putExtra(android.content.Intent.EXTRA_SUBJECT, "Muimex11 crash report")
+                    putExtra(android.content.Intent.EXTRA_TEXT, report.body.take(100_000))
+                }
+                startActivity(android.content.Intent.createChooser(send, getString(R.string.btn_share)))
+            } catch (_: Exception) {}
+        }
         .button(getString(R.string.btn_close), SheetStyle.PRIMARY) {
             CrashReporter.clearPending(this)
         }
