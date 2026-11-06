@@ -862,3 +862,53 @@ class BatteryHealthTest {
         assertNull(BatteryHealth.parse("garbage\n"))
     }
 }
+class SysTweaksTest {
+    @Test
+    fun buildSet() {
+        assertEquals("settings put global enable_msaa 1", SysTweaks.buildSet("global", "enable_msaa", "1"))
+        assertEquals("settings put secure doze_always_on 0", SysTweaks.buildSet("secure", "doze_always_on", "0"))
+    }
+
+    @Test
+    fun parseSwitches() {
+        assertTrue(SysTweaks.isOn("1"))
+        assertFalse(SysTweaks.isOn("0"))
+        assertFalse(SysTweaks.isOn("null"))
+        assertFalse(SysTweaks.isOn(""))
+        assertFalse(SysTweaks.isOn(null))
+        assertTrue(SysTweaks.isSafeVolSuppressed("2"))
+        assertFalse(SysTweaks.isSafeVolSuppressed("0"))
+        assertTrue(SysTweaks.isStayAwake("7"))
+        assertFalse(SysTweaks.isStayAwake("0"))
+    }
+
+    @Test
+    fun blacklistRoundTrip() {
+        assertEquals(emptySet<String>(), SysTweaks.parseBlacklist(null))
+        assertEquals(emptySet<String>(), SysTweaks.parseBlacklist("null"))
+        assertEquals(emptySet<String>(), SysTweaks.parseBlacklist(""))
+        assertEquals(setOf("clock", "nfc"), SysTweaks.parseBlacklist("clock,nfc"))
+        assertEquals(setOf("clock", "nfc"), SysTweaks.parseBlacklist("nfc, clock,nfc "))
+        // Built value is sorted and stable for read-back comparison.
+        assertEquals("clock,nfc", SysTweaks.buildBlacklist(setOf("nfc", "clock")))
+        assertEquals("", SysTweaks.buildBlacklist(emptySet()))
+    }
+
+    @Test
+    fun buildAnim() {
+        assertEquals(
+            "settings put global window_animation_scale 0.0 && settings put global transition_animation_scale 0.0 && settings put global animator_duration_scale 0.0",
+            SysTweaks.buildAnim("0.0")
+        )
+    }
+
+    @Test
+    fun buildResetCoversAllKeys() {
+        val reset = SysTweaks.buildReset()
+        listOf("enable_msaa", "show_touches", "doze_always_on", "audio_safe_volume_state",
+            "force_resizable_activities", "stay_on_while_plugged_in", "icon_blacklist",
+            "window_animation_scale").forEach { key ->
+            assertTrue("reset missing $key", reset.contains(key))
+        }
+    }
+}

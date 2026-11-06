@@ -25,6 +25,7 @@ import androidx.lifecycle.lifecycleScope
 import java.io.Closeable
 import java.io.File
 import java.io.FileNotFoundException
+import java.io.IOException
 import java.util.Locale
 import java.util.zip.ZipException
 import java.util.zip.ZipFile
@@ -181,10 +182,17 @@ private fun shizukuReady(): Boolean = try {
 
 internal fun MainActivity.showApkInstallSheet() {
     var bundle: PickedBundle? = null
+    var allowDowngrade = false
     var sheetRef: Sheet? = null
     val box = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
 
     var pick: () -> Unit = {}
+    fun refreshPicker() {
+        renderBundlePicker(box, bundle, pick, allowDowngrade) {
+            allowDowngrade = !allowDowngrade
+            refreshPicker()
+        }
+    }
     pick = {
         onScriptPicked = { uri ->
             if (uri != null) {
@@ -194,7 +202,7 @@ internal fun MainActivity.showApkInstallSheet() {
                         is BundleRead.Ok -> {
                             bundle = result.bundle
                             sheetRef?.buttonViews?.firstOrNull()?.isEnabled = true
-                            renderBundlePicker(box, result.bundle, pick)
+                            refreshPicker()
                         }
                         BundleRead.Unreadable -> apkToastErr(R.string.apk_err_read)
                         BundleRead.NotZip -> apkToastErr(R.string.apk_err_zip)
@@ -205,7 +213,7 @@ internal fun MainActivity.showApkInstallSheet() {
         }
         scriptPicker.launch(arrayOf("*/*"))
     }
-    renderBundlePicker(box, null, pick)
+    refreshPicker()
 
     sheetRef = Sheet(this)
         .icon(R.drawable.ic_download)
@@ -213,7 +221,10 @@ internal fun MainActivity.showApkInstallSheet() {
         .message(getString(R.string.apk_msg))
         .content(box)
         .button(getString(R.string.apk_btn_install), SheetStyle.PRIMARY) {
-            bundle?.let { beginApkInstall(it) }
+            bundle?.let {
+                if (allowDowngrade) beginApkDowngradeInstall(it)
+                else beginApkInstall(it)
+            }
         }
         .button(getString(R.string.btn_close), SheetStyle.TONAL)
         .show()
@@ -224,7 +235,10 @@ private fun MainActivity.apkToastErr(res: Int) {
     UiToast.error(this, getString(res), Toast.LENGTH_SHORT).show()
 }
 
-private fun MainActivity.renderBundlePicker(box: LinearLayout, bundle: PickedBundle?, pick: () -> Unit) {
+private fun MainActivity.renderBundlePicker(
+    box: LinearLayout, bundle: PickedBundle?, pick: () -> Unit,
+    allowDowngrade: Boolean, onToggleDowngrade: () -> Unit
+) {
     val ctx: Context = this
     box.removeAllViews()
 
@@ -247,7 +261,6 @@ private fun MainActivity.renderBundlePicker(box: LinearLayout, bundle: PickedBun
         )
         return
     }
-
     box.addView(
         optionRow(
             ctx,
@@ -263,6 +276,17 @@ private fun MainActivity.renderBundlePicker(box: LinearLayout, bundle: PickedBun
                 setTextColor(Ui.accent(ctx))
             })
         }
+    )
+
+    // ShizuTools LookBack-style downgrade: `pm install -r -d` over the
+    // Shizuku shell. Single APK only — split bundles stay on Session API.
+    box.addView(
+        optionRow(
+            ctx,
+            getString(R.string.apk_downgrade_title),
+            getString(R.string.apk_downgrade_sub),
+            selected = allowDowngrade
+        ) { onToggleDowngrade() }.also { styleRow(it) }
     )
 
     if (bundle.obbs.isNotEmpty()) {
@@ -416,6 +440,61 @@ private fun MainActivity.beginApkInstall(b: PickedBundle) {
                 progress.dismiss()
                 if (e !is UserCancelled) showApkFailure(e.message)
             }
+        }
+    }
+}
+
+
+/**
+ * Downgrade install for a single APK via the Shizuku shell
+ * (`pm install -r -d`), mirroring ShizuTools LookBack. The framework
+ * Session API used by [beginApkInstall] exposes no downgrade flag, so
+ * this path stages the APK through /data/local/tmp (shell-writable)
+ * and installs from there. Split bundles stay on the Session API.
+ */
+private fun MainActivity.beginApkDowngradeInstall(b: PickedBundle) {
+    if (b.apks.size != 1) {
+        UiToast.error(this, getString(R.string.apk_downgrade_multi), Toast.LENGTH_LONG).show()
+        return
+    }
+    if (!shizukuReady()) {
+        UiToast.warning(this, getString(R.string.apk_downgrade_noshizuku), Toast.LENGTH_LONG).show()
+        return
+    }
+    val progress = ProgressSheet(this)
+        .icon(R.drawable.ic_download)
+        .title(getString(R.string.title_apk_install))
+        .message(b.name)
+        .show()
+    progress.setIndeterminate(getString(R.string.apk_phase_read))
+
+    lifecycleScope.launch(Dispatchers.IO) {
+        val tmp = "/data/local/tmp/muimex11_dg.apk"
+        var staged = false
+        try {
+            val opened = openZip(b.uri) ?: throw FileNotFoundException(b.name)
+            opened.use { oz ->
+                val entry = oz.zip.getEntry(b.apks[0]) ?: throw FileNotFoundException(b.apks[0])
+                val p = Shizuku.newProcess(arrayOf("sh", "-c", "cat > '$tmp'"), null, null)
+                oz.zip.getInputStream(entry).use { input ->
+                    p.outputStream.use { out -> input.copyTo(out, COPY_BUFFER) }
+                }
+                if (p.waitFor() != 0) throw IOException("stage failed")
+                staged = true
+            }
+            runOnUiThread { progress.setIndeterminate(getString(R.string.apk_phase_install)) }
+            val res = ShizukuRunner.exec("pm install -r -d '$tmp'")
+            if (!res.merged.contains("Success", ignoreCase = true)) {
+                throw IOException(res.merged.ifBlank { "exit ${res.code}" }.take(2048))
+            }
+            withContext(Dispatchers.Main) { onApkInstalled(b, progress) }
+        } catch (e: Exception) {
+            withContext(Dispatchers.Main) {
+                progress.dismiss()
+                showApkFailure(e.message)
+            }
+        } finally {
+            if (staged) runCatching { ShizukuRunner.exec("rm -f '$tmp'") }
         }
     }
 }

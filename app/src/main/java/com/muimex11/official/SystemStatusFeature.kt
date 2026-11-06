@@ -24,6 +24,7 @@ private class SystemStatuses(
     val blurs: String,
     val dnd: String,
     val devOptions: String,
+    val sysTweaks: String,
     val battery: String,
     val appOps: String,
     val gameProfiles: String,
@@ -210,7 +211,11 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
             val blursOpt = runAdbCommandWithResult("settings get global disable_window_blurs")
             val devOpt = runAdbCommandWithResult("settings get global development_settings_enabled")
             SysStatus(
-                anim = if (animScale == "0.5") getString(R.string.status_anim_fast) else getString(R.string.status_default),
+                anim = when (animScale) {
+                    "0.5" -> getString(R.string.status_anim_fast)
+                    "0.0" -> getString(R.string.status_anim_off)
+                    else -> getString(R.string.status_default)
+                },
                 blurs = if (blursOpt == "1") getString(R.string.status_blurs_off) else getString(R.string.status_default),
                 devOpts = if (devOpt == "1") getString(R.string.status_devopt_on) else getString(R.string.status_devopt_off),
                 srec = shizukuRecoveryStatusText(),
@@ -219,9 +224,14 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
         }
     }
 
+    val tweaksJob = async {
+        sectionOrNull { sysTweaksStatusText() }
+    }
+
     val display = displayJob.await() ?: DisplayStatus(fbUnknown, fbUnknown, fbUnknown, fbUnknown)
     val net = netJob.await() ?: NetStatus(fbUnknown, fbUnknown, fbUnknown, fbUnknown, fbUnknown)
     val sys = sysJob.await() ?: SysStatus(fbUnknown, fbUnknown, fbUnknown, fbUnknown, fbUnknown)
+    val tweaks = tweaksJob.await() ?: fbUnknown
 
     return@coroutineScope SystemStatuses(
         fixedPerf = fixedPerfStatus,
@@ -236,6 +246,7 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
         blurs = sys.blurs,
         dnd = net.dnd,
         devOptions = sys.devOpts,
+        sysTweaks = tweaks,
         battery = batteryStatus,
         appOps = appOpsStatus,
         gameProfiles = gameProfilesStatus,
@@ -269,6 +280,7 @@ private fun MainActivity.renderSystemStatuses(s: SystemStatuses) {
     findViewById<TextView>(R.id.tvStatusBlurs).text = s.blurs
     findViewById<TextView>(R.id.tvStatusDnd).text = s.dnd
     findViewById<TextView>(R.id.tvStatusDevOptions).text = s.devOptions
+    findViewById<TextView>(R.id.tvStatusSysTweaks).text = s.sysTweaks
     findViewById<TextView>(R.id.tvStatusBatterySaver).text = s.battery
     findViewById<TextView>(R.id.tvStatusAppOps).text = s.appOps
     findViewById<TextView>(R.id.tvStatusGameProfiles).text = s.gameProfiles

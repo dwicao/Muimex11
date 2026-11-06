@@ -125,6 +125,8 @@ private fun MainActivity.setupTweakCardListeners(prefs: SharedPreferences) {
 
     findViewById<CardView>(R.id.cardGraphicsApi).setOnClickListener { showGraphicsApiSheet(prefs) }
 
+    findViewById<CardView>(R.id.cardSysTweaks).setOnClickListener { showSysTweaksSheet() }
+
     findViewById<CardView>(R.id.cardOrientation).setOnClickListener { showOrientationSheet(prefs) }
 
     findViewById<android.view.View>(R.id.btnResetOrientation).setOnClickListener {
@@ -134,6 +136,10 @@ private fun MainActivity.setupTweakCardListeners(prefs: SharedPreferences) {
     findViewById<android.view.View>(R.id.btnResetGraphics).setOnClickListener {
         if (!hasShizukuPermission()) return@setOnClickListener
         resetGraphicsRenderer(prefs)
+    }
+    findViewById<android.view.View>(R.id.btnResetSysTweaks).setOnClickListener {
+        if (!hasShizukuPermission()) return@setOnClickListener
+        resetSysTweaks()
     }
     findViewById<CardView>(R.id.cardGameMode).setOnClickListener {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
@@ -418,6 +424,13 @@ internal fun MainActivity.resetAllFunctions(prefs: android.content.SharedPrefere
             settings put global heads_up_notifications_enabled 1
             settings put global development_settings_enabled 0
             setprop debug.hwui.renderer opengl
+            settings put global enable_msaa 0
+            settings put system show_touches 0
+            settings delete secure doze_always_on
+            settings put secure audio_safe_volume_state 0
+            settings put global force_resizable_activities 0
+            settings put global stay_on_while_plugged_in 0
+            settings delete secure icon_blacklist
         """.trimIndent().replace("\n", " && ").replace("&&  &&", "&&")
 
         runAdbCommand(resetCmd, getString(R.string.msg_all_reset)) {

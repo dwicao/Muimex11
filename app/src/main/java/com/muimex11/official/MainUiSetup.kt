@@ -17,7 +17,7 @@ import com.google.android.material.chip.ChipGroup
 
 /** Single source of truth for tweak card grouping (filter chips + grid mode). */
 private val performanceCardIds = listOf(R.id.cardFixedPerformance, R.id.cardOptimizeSystem, R.id.cardSamsungBoost, R.id.cardThermalThrottling, R.id.cardBatterySaver, R.id.cardBatteryHealth, R.id.cardDebloat, R.id.cardBgRestrict, R.id.cardFstrim, R.id.cardDisableDevOptions, R.id.cardRamBooster, R.id.cardClearCache, R.id.cardFreezeApps)
-private val displayCardIds = listOf(R.id.cardAdjustRefreshRate, R.id.cardFastAnimations, R.id.cardDisableBlurs, R.id.cardChangeResolution, R.id.cardGraphicsApi, R.id.cardOrientation)
+private val displayCardIds = listOf(R.id.cardAdjustRefreshRate, R.id.cardFastAnimations, R.id.cardDisableBlurs, R.id.cardChangeResolution, R.id.cardGraphicsApi, R.id.cardSysTweaks, R.id.cardOrientation)
 private val networkCardIds = listOf(R.id.cardImproveNetwork, R.id.cardCustomDns, R.id.cardRadioInfo, R.id.cardNetBlock)
 private val gamingCardIds = listOf(R.id.cardImproveTouch, R.id.cardGamingDnd, R.id.cardCrosshair, R.id.cardRealtimeMonitor, R.id.cardAutoClick, R.id.cardGameMode, R.id.cardGameSpace, R.id.cardFixGyro, R.id.cardGameProfiles, R.id.cardAudioLatency)
 private val toolsCardIds = listOf(R.id.cardShellExecute, R.id.cardApkInstall, R.id.cardApkBackup, R.id.cardReboot, R.id.cardShizukuRecovery, R.id.cardAppOps, R.id.cardAppLocale, R.id.cardSensorsToggle, R.id.cardBenchmark)
@@ -44,6 +44,7 @@ private val tweakTitles: Map<Int, Int> = mapOf(
     R.id.cardApkBackup to R.string.title_apkbackup,
     R.id.cardChangeResolution to R.string.title_resolution,
     R.id.cardGraphicsApi to R.string.title_graphics,
+    R.id.cardSysTweaks to R.string.title_systweaks,
     R.id.cardOrientation to R.string.title_orientation,
     R.id.cardCustomDns to R.string.title_dns,
     R.id.cardCrosshair to R.string.title_crosshair,
@@ -206,7 +207,8 @@ internal fun MainActivity.setupStatusStyling() {
         R.id.tvStatusSensors, R.id.tvStatusBgRestrict, R.id.tvStatusBenchmark,
         R.id.tvStatusGraphics, R.id.tvStatusOrientation, R.id.tvStatusApkBackup,
         R.id.tvStatusReboot, R.id.tvStatusAppLocale, R.id.tvStatusRadio,
-        R.id.tvStatusShizukuRecovery, R.id.tvStatusNetBlock, R.id.tvStatusBattHealth
+        R.id.tvStatusShizukuRecovery, R.id.tvStatusNetBlock, R.id.tvStatusBattHealth,
+        R.id.tvStatusSysTweaks
     )
     val states = HashMap<Int, TweakState>()
     val green = Color.parseColor("#2E9E5B")
