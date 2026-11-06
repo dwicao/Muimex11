@@ -2,7 +2,7 @@
   "versionCode": 48,
   "versionName": "4.18",
   "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.18/Muimex11-4.18.apk",
-  "releaseNotes": "Muimex11 4.18",
+  "releaseNotes": "Automasi Tasker bertoken, ping+jitter di HW monitor, no-blur per game, tombol Retry di error + Share di dialog crash, backup profil ke file.",
   "mandatory": false,
   "sha256": "67e1db9f9f7377e97694cd9b8ed1e4d404f4c0722977d5bb1f83ca50e5fbb150"
 }
