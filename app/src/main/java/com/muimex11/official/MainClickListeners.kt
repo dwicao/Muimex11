@@ -40,7 +40,7 @@ private fun MainActivity.runTweakOnce(
 }
 
 private fun MainActivity.bindCommandReset(buttonId: Int, command: String, messageRes: Int) {
-    findViewById<TextView>(buttonId).setOnClickListener {
+    findViewById<android.view.View>(buttonId).setOnClickListener {
         runAdbCommand(command, getString(messageRes)) { fetchSystemStatuses() }
     }
 }
