@@ -17,8 +17,7 @@ import kotlinx.coroutines.withContext
  * command over Shizuku; without a backend it unlocks the screen and opens
  * Muimex11 instead of failing silently.
  */
-private abstract class MuimexTile : TileService() {
-    protected val tileScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+abstract class MuimexTile : TileService() {    protected val tileScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onDestroy() {
         tileScope.cancel()
