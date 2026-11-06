@@ -240,6 +240,11 @@
     <string name="hint_max_hz">Maximum (Hz)</string>
     <string name="dlg_refresh">Refresh rate</string>
     <string name="dlg_refresh_msg">Pick a preset or set your own range. Not every phone supports every rate.</string>
+    <string name="dlg_refresh_supported">This panel supports: %1$s</string>
+    <string name="dlg_refresh_reverted_title">ROM reverted the value</string>
+    <string name="dlg_refresh_reverted_msg">You asked for %1$s but the system kept %2$s. Some ROMs only allow their own display modes.</string>
+    <string name="refresh_apply_nearest">Apply %1$s instead</string>
+    <string name="refresh_apply_nearest_desc">Closest rate this panel supports</string>
     <string name="toast_valid_numbers">Please enter valid numbers</string>
     <string name="toast_hz_range">Use a value between 30 and 240 Hz</string>
     <string name="toast_min_gt_max">Minimum can\'t be higher than maximum</string>

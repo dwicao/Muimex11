@@ -1,5 +1,7 @@
 package com.muimex11.official
 
+import kotlin.math.roundToInt
+
 /** Pure foreground-package parser — unit-testable, no Android deps. */
 object FgPkgParser {
     private val fgRegex =
@@ -827,8 +829,7 @@ object NetPolicy {
 }
 
 /** Heat response: drop to 60 Hz while hot, restore the snapshot when cool. */
-object HeatResponse {
-    const val COOL_HZ = 60
+object HeatResponse {    const val COOL_HZ = 60
 
     fun buildDrop(): String =
         "settings put system min_refresh_rate $COOL_HZ && settings put system peak_refresh_rate $COOL_HZ"
@@ -900,4 +901,33 @@ object BatteryHealth {
             cycles = cycles
         )
     }
+}
+
+/**
+ * Refresh-rate handling. Presets come from the OS-reported display modes
+ * (Display.getSupportedModes), NOT a hardcoded list: panels that lack a
+ * mode (e.g. no 30 Hz on many 120 Hz phones) make the ROM silently revert
+ * `peak_refresh_rate` to the nearest supported value — Realme does this,
+ * One UI tolerates it. Every apply is verified with a read-back.
+ */
+object RefreshRates {
+    fun supportedFromModes(rates: List<Float>): List<Int> =
+        rates.map { it.roundToInt() }.filter { it in 1..1000 }.distinct().sorted()
+
+    fun nearestSupported(want: Int, supported: List<Int>): Int? {
+        if (supported.isEmpty()) return null
+        var best = supported[0]
+        var bestDiff = kotlin.math.abs(best - want)
+        for (r in supported) {
+            val d = kotlin.math.abs(r - want)
+            if (d < bestDiff || (d == bestDiff && r > best)) {
+                best = r
+                bestDiff = d
+            }
+        }
+        return best
+    }
+
+    fun buildSet(min: Int, max: Int): String =
+        "settings put system min_refresh_rate $min && settings put system peak_refresh_rate $max"
 }

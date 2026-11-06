@@ -239,6 +239,11 @@
     <string name="hint_max_hz">Máximo (Hz)</string>
     <string name="dlg_refresh">Taxa de atualização</string>
     <string name="dlg_refresh_msg">Escolha uma predefinição ou defina seu próprio intervalo. Nem todo celular suporta todas as taxas.</string>
+    <string name="dlg_refresh_supported">Esta tela suporta: %1$s</string>
+    <string name="dlg_refresh_reverted_title">A ROM reverteu o valor</string>
+    <string name="dlg_refresh_reverted_msg">Você pediu %1$s, mas o sistema manteve %2$s. Algumas ROMs só aceitam seus próprios modos de tela.</string>
+    <string name="refresh_apply_nearest">Aplicar %1$s</string>
+    <string name="refresh_apply_nearest_desc">Taxa mais próxima que esta tela suporta</string>
     <string name="toast_valid_numbers">Digite números válidos</string>
     <string name="toast_hz_range">Use um valor entre 30 e 240 Hz</string>
     <string name="toast_min_gt_max">O mínimo não pode ser maior que o máximo</string>

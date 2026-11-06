@@ -716,6 +716,39 @@ class PingProbeTest {
     }
 }
 
+class RefreshRatesTest {
+    @Test
+    fun mapsOsModes() {
+        // Fractional panel rates round to whole Hz, deduped and sorted.
+        assertEquals(
+            listOf(60, 90, 120),
+            RefreshRates.supportedFromModes(listOf(60.0f, 90.0f, 120.0f, 120.0f))
+        )
+        assertEquals(listOf(60, 120), RefreshRates.supportedFromModes(listOf(59.94f, 119.88f)))
+        assertEquals(emptyList<Int>(), RefreshRates.supportedFromModes(emptyList()))
+    }
+
+    @Test
+    fun nearestSupported() {
+        val modes = listOf(60, 90, 120)
+        assertEquals(60, RefreshRates.nearestSupported(30, modes))
+        assertEquals(90, RefreshRates.nearestSupported(100, modes))
+        assertEquals(120, RefreshRates.nearestSupported(120, modes))
+        assertEquals(120, RefreshRates.nearestSupported(144, modes))
+        // Tie prefers the higher rate.
+        assertEquals(90, RefreshRates.nearestSupported(75, listOf(60, 90)))
+        assertNull(RefreshRates.nearestSupported(60, emptyList()))
+    }
+
+    @Test
+    fun buildCmd() {
+        assertEquals(
+            "settings put system min_refresh_rate 30 && settings put system peak_refresh_rate 30",
+            RefreshRates.buildSet(30, 30)
+        )
+    }
+}
+
 class NetPolicyTest {
     @Test
     fun buildCommands() {
