@@ -942,4 +942,56 @@
     <string name="alarm_battery_full_desc">Nível de carga atingido</string>
     <string name="status_battery_alarm_fmt">Alarme %1$d%%</string>
 
+    <!-- Bloqueio de dados em segundo plano (netpolicy) -->
+    <string name="title_netblock">Bloquear dados em segundo plano</string>
+    <string name="desc_netblock">Bloqueie dados móveis em segundo plano por app — igual ao ajuste do sistema, reversível. Wi-Fi não é afetado.</string>
+    <string name="dlg_netblock_title">Bloquear dados em segundo plano</string>
+    <string name="dlg_netblock_msg">Toque nos apps para bloquear seus dados móveis em segundo plano. ROMs não verificadas falham com erro seguro.</string>
+    <string name="netblock_saver">Economia de dados móveis</string>
+    <string name="netblock_saver_on">Ligada — dados medidos em segundo plano restritos</string>
+    <string name="netblock_saver_off">Desligada — segue regras por app</string>
+    <string name="netblock_hint">Só dados móveis em segundo plano são bloqueados — uso em primeiro plano e Wi-Fi funcionam.</string>
+    <string name="netblock_blocked_suffix"> · bloqueado</string>
+    <string name="status_netblock_fmt">Status: %1$d apps bloqueados</string>
+    <string name="msg_netblock_on">Dados em segundo plano bloqueados: %1$s</string>
+    <string name="msg_netblock_off">Dados em segundo plano liberados: %1$s</string>
+    <string name="msg_netblock_reset">Dados restaurados em %1$d apps</string>
+
+    <!-- Saúde da bateria -->
+    <string name="title_batthealth">Saúde da bateria</string>
+    <string name="desc_batthealth">Saúde, voltagem, temperatura e ciclos em tempo real.</string>
+    <string name="batthealth_health">Saúde</string>
+    <string name="batthealth_voltage">Voltagem</string>
+    <string name="batthealth_temp">Temperatura</string>
+    <string name="batthealth_cycles">Ciclos de carga</string>
+    <string name="batthealth_tech">Tecnologia</string>
+    <string name="batthealth_row_fmt">%1$s: %2$s</string>
+    <string name="status_batthealth_fmt">Status: %1$s</string>
+    <string name="toast_batthealth_fail">Não foi possível ler a bateria nesta ROM</string>
+    <string name="toast_batthealth_refresh">Status da bateria atualizado</string>
+
+    <!-- Célula ao vivo no rádio -->
+    <string name="radio_cell_op">Operadora</string>
+    <string name="radio_cell_net">Tipo de rede</string>
+    <string name="radio_cell_sim">Estado do SIM</string>
+
+    <!-- Reiniciar: desligar tela -->
+    <string name="reboot_screen_off">Desligar tela</string>
+    <string name="reboot_screen_off_desc">Bloqueia e apaga a tela agora</string>
+    <string name="msg_screen_off">Tela desligada</string>
+
+    <!-- Tiles de acesso rápido -->
+    <string name="tile_dns">DNS privado</string>
+    <string name="tile_dnd">Modo foco</string>
+    <string name="tile_vulkan">GPU Vulkan</string>
+
+    <!-- Térmico adaptivo: resposta ao calor -->
+    <string name="thermal_heat">Resposta ao calor: cai para 60Hz</string>
+    <string name="thermal_heat_desc">Reduz a taxa de atualização no calor, restaura ao esfriar</string>
+    <string name="thermal_heat_on">Resposta ao calor ligada</string>
+    <string name="thermal_heat_off">Resposta ao calor desligada</string>
+
+    <!-- Perfis de jogo: parar ao sair -->
+    <string name="gprof_killexit">Parar jogo ao sair</string>
+    <string name="gprof_killexit_desc">Encerra o jogo ao sair dele</string>
 </resources>

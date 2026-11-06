@@ -55,6 +55,8 @@ object Prefs {
     const val KEY_BATTERY_ALARM = "BatteryAlarm"
 
     const val KEY_AUTOMATION_TOKEN = "AutomationToken"
+    const val KEY_NETBLOCK_COUNT = "NetBlockCount"
+    const val KEY_THERMAL_HEATRESP = "ThermalHeatResp"
 
     const val KEY_GRAPHICS_RENDERER = "GraphicsRenderer"
     const val KEY_GRAPHICS_DESIRED = "GraphicsDesired"

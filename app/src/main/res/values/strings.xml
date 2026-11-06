@@ -951,4 +951,57 @@
     <string name="alarm_battery_full">Battery at %1$d%% — unplug the charger</string>
     <string name="alarm_battery_full_desc">Charge threshold reached</string>
     <string name="status_battery_alarm_fmt">Alarm %1$d%%</string>
+
+    <!-- Background data block (netpolicy) -->
+    <string name="title_netblock">Block Background Data</string>
+    <string name="desc_netblock">Block mobile background data per app — same as the system toggle, reversible. Wi-Fi is unaffected.</string>
+    <string name="dlg_netblock_title">Block background data</string>
+    <string name="dlg_netblock_msg">Toggle apps to block their background mobile data. Unverified ROMs fail safely with an error.</string>
+    <string name="netblock_saver">Mobile Data Saver</string>
+    <string name="netblock_saver_on">On — metered background data restricted</string>
+    <string name="netblock_saver_off">Off — follow per-app rules</string>
+    <string name="netblock_hint">Only background mobile data is blocked — foreground use and Wi-Fi still work.</string>
+    <string name="netblock_blocked_suffix"> · blocked</string>
+    <string name="status_netblock_fmt">Status: %1$d apps blocked</string>
+    <string name="msg_netblock_on">Background data blocked for %1$s</string>
+    <string name="msg_netblock_off">Background data allowed for %1$s</string>
+    <string name="msg_netblock_reset">Background data restored for %1$d apps</string>
+
+    <!-- Battery health -->
+    <string name="title_batthealth">Battery Health</string>
+    <string name="desc_batthealth">Live battery health, voltage, temperature and charge cycles.</string>
+    <string name="batthealth_health">Health</string>
+    <string name="batthealth_voltage">Voltage</string>
+    <string name="batthealth_temp">Temperature</string>
+    <string name="batthealth_cycles">Charge cycles</string>
+    <string name="batthealth_tech">Technology</string>
+    <string name="batthealth_row_fmt">%1$s: %2$s</string>
+    <string name="status_batthealth_fmt">Status: %1$s</string>
+    <string name="toast_batthealth_fail">Couldn\'t read battery info on this ROM</string>
+    <string name="toast_batthealth_refresh">Battery status refreshed</string>
+
+    <!-- Radio live cell info -->
+    <string name="radio_cell_op">Operator</string>
+    <string name="radio_cell_net">Network type</string>
+    <string name="radio_cell_sim">SIM state</string>
+
+    <!-- Reboot: screen off -->
+    <string name="reboot_screen_off">Turn screen off</string>
+    <string name="reboot_screen_off_desc">Lock the device and turn the display off now</string>
+    <string name="msg_screen_off">Screen off</string>
+
+    <!-- Quick Settings tiles -->
+    <string name="tile_dns">Private DNS</string>
+    <string name="tile_dnd">Focus Mode</string>
+    <string name="tile_vulkan">Vulkan GPU</string>
+
+    <!-- Adaptive thermal: heat response -->
+    <string name="thermal_heat">Heat response: drop to 60Hz</string>
+    <string name="thermal_heat_desc">Auto-lower refresh rate while hot, restore when cool</string>
+    <string name="thermal_heat_on">Heat response on</string>
+    <string name="thermal_heat_off">Heat response off</string>
+
+    <!-- Game Profiles: stop on exit -->
+    <string name="gprof_killexit">Stop game on exit</string>
+    <string name="gprof_killexit_desc">Force-stop this game when you leave it</string>
 </resources>

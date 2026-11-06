@@ -1,5 +1,6 @@
 package com.muimex11.official
 
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
@@ -13,15 +14,36 @@ import kotlinx.coroutines.withContext
  */
 internal fun MainActivity.showRadioInfoSheet() {
     if (!hasShizukuPermission()) return
-    Sheet(this)
-        .icon(R.drawable.ic_tune)
-        .title(getString(R.string.dlg_radio_title))
-        .message(getString(R.string.dlg_radio_msg))
-        .button(getString(R.string.btn_cancel), SheetStyle.TONAL)
-        .button(getString(R.string.btn_open_phone_info), SheetStyle.PRIMARY) {
-            openRadioInfo()
+    lifecycleScope.launch(Dispatchers.IO) {
+        val cell = CellInfo.parseGetprop(
+            runAdbCommandWithResult("getprop | grep -Ei 'gsm|operator'")
+        )
+        withContext(Dispatchers.Main) {
+            if (isFinishing || isDestroyed) return@withContext
+            val list = LinearLayout(this@showRadioInfoSheet).apply {
+                orientation = LinearLayout.VERTICAL
+            }
+            fun row(label: String, value: String) {
+                list.addView(infoCard(
+                    this@showRadioInfoSheet,
+                    getString(R.string.batthealth_row_fmt, label, value)
+                ))
+            }
+            row(getString(R.string.radio_cell_op), cell.operator)
+            row(getString(R.string.radio_cell_net), cell.networkType)
+            row(getString(R.string.radio_cell_sim), cell.simState)
+            Sheet(this@showRadioInfoSheet)
+                .icon(R.drawable.ic_tune)
+                .title(getString(R.string.dlg_radio_title))
+                .message(getString(R.string.dlg_radio_msg))
+                .content(list)
+                .button(getString(R.string.btn_cancel), SheetStyle.TONAL)
+                .button(getString(R.string.btn_open_phone_info), SheetStyle.PRIMARY) {
+                    openRadioInfo()
+                }
+                .show()
         }
-        .show()
+    }
 }
 
 private fun MainActivity.openRadioInfo() {

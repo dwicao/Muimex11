@@ -762,6 +762,7 @@ class GameSpaceService : Service() {
                 try {
                     val pkg = detectForegroundPkg()
                     if (pkg != lastPkg) {
+                        val exited = lastPkg
                         lastPkg = pkg
                         lastCount = -1L
                         lastAt = 0L
@@ -770,6 +771,7 @@ class GameSpaceService : Service() {
                             resetProfileTransient()
                             applyAutoBoost(pkg)
                         }
+                        if (exited != null && pkg != exited) maybeKillOnExit(exited)
                     }
                     val safePkg = ShellSanitizer.cleanPkg(pkg)
                     // gfxinfo needs the privileged backend; UsageStats-based
@@ -834,6 +836,10 @@ class GameSpaceService : Service() {
     private var awakePrevValue: String? = null
     private var lastBlurPkg: String? = null
     private var blurPrevValue: String? = null
+
+    private var heatRespMin: String? = null
+    private var heatRespMax: String? = null
+    private var heatRespApplied = false
 
     private fun profileHasDisplay(p: GameProfile): Boolean =
         p.refresh120 || (p.refreshMin > 0 && p.refreshMax > 0) ||
@@ -934,6 +940,7 @@ class GameSpaceService : Service() {
                 adaptiveRunning = false
                 lastAdaptiveBypass = false
                 adaptiveTempC = null
+                restoreHeatResponse()
                 prefs.edit()
                     .putBoolean(Prefs.KEY_THERMAL_DISABLED, false)
                     .putBoolean(Prefs.KEY_THERMAL_ADAPTIVE, false)
@@ -998,6 +1005,7 @@ class GameSpaceService : Service() {
                             lastAdaptiveBypass = want
                             exec(if (want) "cmd thermalservice override-status 0" else "cmd thermalservice reset")
                         }
+                        applyHeatResponse(want)
                         handler.post { thermalTile()?.let { refreshThermalText(it) } }
                     }
                 } catch (_: Exception) {}
@@ -1021,8 +1029,56 @@ class GameSpaceService : Service() {
         ""
     }
 
-    private fun applyAutoBoost(pkg: String) {
-        // Scheduled battery saver pauses while gaming so perf profiles win.
+    /**
+     * Heat response: while the governor says hot, pin refresh to 60 Hz to shed
+     * GPU load; restore the exact snapshot when cool again. Only in adaptive
+     * mode, only while the backend can actually run the commands.
+     */
+    private fun applyHeatResponse(hot: Boolean) {
+        val prefs = try {
+            getSharedPreferences(Prefs.MAIN, Context.MODE_PRIVATE)
+        } catch (_: Exception) {
+            return
+        }
+        val enabled = prefs.getBoolean(Prefs.KEY_THERMAL_HEATRESP, false)
+        if (!ShizukuRunner.isReady()) return
+        if (enabled && hot && !heatRespApplied) {
+            heatRespMin = query("settings get system min_refresh_rate").trim()
+            heatRespMax = query("settings get system peak_refresh_rate").trim()
+            exec(HeatResponse.buildDrop())
+            heatRespApplied = true
+        } else if ((!enabled || !hot) && heatRespApplied) {
+            restoreHeatResponse()
+        }
+    }
+
+    private fun restoreHeatResponse() {
+        if (!heatRespApplied) {
+            heatRespMin = null
+            heatRespMax = null
+            return
+        }
+        heatRespApplied = false
+        val mn = heatRespMin
+        val mx = heatRespMax
+        heatRespMin = null
+        heatRespMax = null
+        ioScope.launch {
+            try { exec(HeatResponse.buildRestore(mn, mx)) } catch (_: Exception) {}
+        }
+    }
+
+    /** Force-stop a game the user left, when its profile asks for it. */
+    private fun maybeKillOnExit(pkg: String) {
+        val safePkg = ShellSanitizer.cleanPkg(pkg) ?: return
+        val p = GameProfileStore.get(this, safePkg) ?: return
+        if (!p.killOnExit || !ShizukuRunner.isReady()) return
+        ioScope.launch {
+            try { exec("am force-stop $safePkg") } catch (_: Exception) {}
+        }
+    }
+
+    private fun applyAutoBoost(pkg: String) {        // Scheduled battery saver pauses while gaming so perf profiles win.
         try {
             BatterySchedule.pauseForGame(this)
         } catch (_: Exception) {}
@@ -1177,6 +1233,7 @@ class GameSpaceService : Service() {
             adaptiveRunning = false
             lastAdaptiveBypass = mode == 1
             adaptiveTempC = null
+            restoreHeatResponse()
             handler.post {
                 thermalTile()?.let {
                     setRow(it, mode != 0)

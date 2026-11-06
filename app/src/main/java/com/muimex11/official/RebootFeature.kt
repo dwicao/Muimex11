@@ -51,6 +51,14 @@ internal fun MainActivity.showRebootSheet() {
         sheet.dismiss()
         runRebootAction(RebootCmd.SYSTEM_UI)
     })
+    list.addView(optionRow(
+        this,
+        getString(R.string.reboot_screen_off),
+        getString(R.string.reboot_screen_off_desc)
+    ) {
+        sheet.dismiss()
+        runRebootAction(RebootCmd.SCREEN_OFF)
+    })
     sheet.content(list).button(getString(R.string.btn_cancel), SheetStyle.TONAL).show()
 }
 
@@ -77,6 +85,10 @@ private fun MainActivity.runRebootAction(mode: Int) {
     if (!hasShizukuPermission()) return
     if (mode == RebootCmd.SYSTEM_UI) {
         runAdbCommand(cmd, getString(R.string.msg_systemui_restarted)) { fetchSystemStatuses() }
+        return
+    }
+    if (mode == RebootCmd.SCREEN_OFF) {
+        runAdbCommand(cmd, getString(R.string.msg_screen_off)) {}
         return
     }
     lifecycleScope.launch(Dispatchers.IO) {

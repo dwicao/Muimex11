@@ -26,7 +26,9 @@ data class GameProfile(
     /** Keep the screen awake while this game is foreground. */
     val keepAwake: Boolean = false,
     /** Disable window blurs while this game is foreground. */
-    val blurOff: Boolean = false
+    val blurOff: Boolean = false,
+    /** Force-stop the game when it leaves the foreground. */
+    val killOnExit: Boolean = false
 )
 
 object GameProfileStore {
@@ -34,7 +36,7 @@ object GameProfileStore {
     private const val KEY_PROFILES = "profiles_json"
     private const val KEY_AUTO_BOOST = "auto_boost"
     private const val KEY_SCHEMA = "schema_v"
-    private const val SCHEMA = 5
+    private const val SCHEMA = 6
     private const val MAX_PROFILES = 200
 
     private fun prefs(ctx: Context): SharedPreferences =
@@ -62,7 +64,8 @@ object GameProfileStore {
                     orientation = v.optInt("orientation", 0)
                         .coerceIn(OrientationMode.AUTO, OrientationMode.REVERSE_LANDSCAPE),
                     keepAwake = v.optBoolean("keepAwake", false),
-                    blurOff = v.optBoolean("blurOff", false)
+                    blurOff = v.optBoolean("blurOff", false),
+                    killOnExit = v.optBoolean("killOnExit", false)
                 )
             }
             out
@@ -113,6 +116,7 @@ object GameProfileStore {
                 put("orientation", v.orientation)
                 put("keepAwake", v.keepAwake)
                 put("blurOff", v.blurOff)
+                put("killOnExit", v.killOnExit)
             })
         }
         prefs(ctx).edit().putString(KEY_PROFILES, o.toString())

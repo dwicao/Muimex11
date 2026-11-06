@@ -78,6 +78,22 @@ internal fun MainActivity.showThermalSheet(prefs: SharedPreferences) {
         sheet.dismiss()
         showThermalThresholdSheet(prefs)
     })
+    val heatOn = prefs.getBoolean(Prefs.KEY_THERMAL_HEATRESP, false)
+    list.addView(optionRow(
+        this,
+        getString(R.string.thermal_heat),
+        getString(R.string.thermal_heat_desc),
+        selected = heatOn
+    ) {
+        sheet.dismiss()
+        prefs.edit().putBoolean(Prefs.KEY_THERMAL_HEATRESP, !heatOn).apply()
+        UiToast.success(
+            this,
+            getString(if (!heatOn) R.string.thermal_heat_on else R.string.thermal_heat_off),
+            Toast.LENGTH_SHORT
+        ).show()
+        fetchSystemStatuses()
+    })
     list.addView(infoCard(this, getString(R.string.thermal_adaptive_note)))
     sheet.content(list).button(getString(R.string.btn_cancel), SheetStyle.TONAL).show()
 }

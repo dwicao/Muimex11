@@ -38,7 +38,9 @@ private class SystemStatuses(
     val reboot: String,
     val appLocale: String,
     val radio: String,
-    val shizukuRecovery: String
+    val shizukuRecovery: String,
+    val netBlock: String,
+    val battHealth: String
 )
 
 internal fun MainActivity.fetchSystemStatuses() {
@@ -66,14 +68,16 @@ private data class NetStatus(
     val network: String,
     val touch: String,
     val dns: String,
-    val dnd: String
+    val dnd: String,
+    val netBlock: String
 )
 
 private data class SysStatus(
     val anim: String,
     val blurs: String,
     val devOpts: String,
-    val srec: String
+    val srec: String,
+    val battHealth: String
 )
 
 /**
@@ -194,7 +198,8 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
                 } else {
                     getString(R.string.status_default)
                 },
-                dnd = if (headsUpOpt == "0") getString(R.string.status_dnd_blocked) else getString(R.string.status_default)
+                dnd = if (headsUpOpt == "0") getString(R.string.status_dnd_blocked) else getString(R.string.status_default),
+                netBlock = netBlockStatusText()
             )
         }
     }
@@ -208,14 +213,15 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
                 anim = if (animScale == "0.5") getString(R.string.status_anim_fast) else getString(R.string.status_default),
                 blurs = if (blursOpt == "1") getString(R.string.status_blurs_off) else getString(R.string.status_default),
                 devOpts = if (devOpt == "1") getString(R.string.status_devopt_on) else getString(R.string.status_devopt_off),
-                srec = shizukuRecoveryStatusText()
+                srec = shizukuRecoveryStatusText(),
+                battHealth = battHealthStatusText()
             )
         }
     }
 
     val display = displayJob.await() ?: DisplayStatus(fbUnknown, fbUnknown, fbUnknown, fbUnknown)
-    val net = netJob.await() ?: NetStatus(fbUnknown, fbUnknown, fbUnknown, fbUnknown)
-    val sys = sysJob.await() ?: SysStatus(fbUnknown, fbUnknown, fbUnknown, fbUnknown)
+    val net = netJob.await() ?: NetStatus(fbUnknown, fbUnknown, fbUnknown, fbUnknown, fbUnknown)
+    val sys = sysJob.await() ?: SysStatus(fbUnknown, fbUnknown, fbUnknown, fbUnknown, fbUnknown)
 
     return@coroutineScope SystemStatuses(
         fixedPerf = fixedPerfStatus,
@@ -244,7 +250,9 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
         reboot = rebootStatus,
         appLocale = appLocaleStatus,
         radio = radioStatus,
-        shizukuRecovery = sys.srec
+        shizukuRecovery = sys.srec,
+        netBlock = net.netBlock,
+        battHealth = sys.battHealth
     )
 }
 
@@ -276,6 +284,8 @@ private fun MainActivity.renderSystemStatuses(s: SystemStatuses) {
     findViewById<TextView>(R.id.tvStatusAppLocale).text = s.appLocale
     findViewById<TextView>(R.id.tvStatusRadio).text = s.radio
     findViewById<TextView>(R.id.tvStatusShizukuRecovery).text = s.shizukuRecovery
+    findViewById<TextView>(R.id.tvStatusNetBlock).text = s.netBlock
+    findViewById<TextView>(R.id.tvStatusBattHealth).text = s.battHealth
 }
 
 private fun MainActivity.renderOverlayStatuses(prefs: SharedPreferences) {

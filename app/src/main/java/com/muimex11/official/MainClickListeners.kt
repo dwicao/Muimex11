@@ -81,6 +81,12 @@ private fun MainActivity.setupTweakCardListeners(prefs: SharedPreferences) {
     }
 
     findViewById<CardView>(R.id.cardRadioInfo).setOnClickListener { showRadioInfoSheet() }
+    findViewById<CardView>(R.id.cardNetBlock).setOnClickListener { showNetBlockSheet() }
+
+    findViewById<TextView>(R.id.btnResetNetBlock).setOnClickListener {
+        if (!hasShizukuPermission()) return@setOnClickListener
+        resetNetBlock()
+    }
 
     findViewById<CardView>(R.id.cardImproveTouch).setOnClickListener { improveTouchLatency() }
 
@@ -188,6 +194,13 @@ private fun MainActivity.setupToolsCardListeners(prefs: SharedPreferences) {
     findViewById<TextView>(R.id.btnResetBatterySaver).setOnClickListener {
         if (!hasShizukuPermission()) return@setOnClickListener
         resetBatterySaver(prefs)
+    }
+
+    findViewById<CardView>(R.id.cardBatteryHealth).setOnClickListener { showBatteryHealthSheet() }
+
+    findViewById<TextView>(R.id.btnResetBattHealth).setOnClickListener {
+        fetchSystemStatuses()
+        UiToast.info(this, getString(R.string.toast_batthealth_refresh), Toast.LENGTH_SHORT).show()
     }
 
     findViewById<CardView>(R.id.cardAppOps).setOnClickListener { showAppOpsSheet(prefs) }
@@ -413,6 +426,7 @@ internal fun MainActivity.resetAllFunctions(prefs: android.content.SharedPrefere
                 .putBoolean(Prefs.KEY_FIXED_PERF_AGGRESSIVE, false)
                 .putBoolean(Prefs.KEY_THERMAL_DISABLED, false)
                 .putBoolean(Prefs.KEY_THERMAL_ADAPTIVE, false)
+                .putBoolean(Prefs.KEY_THERMAL_HEATRESP, false)
                 .putString(Prefs.KEY_LAST_GAME_MODE, "")
                 .putString(Prefs.KEY_GRAPHICS_RENDERER, GraphicsApi.OPENGL)
                 .putString(Prefs.KEY_GRAPHICS_DESIRED, GraphicsApi.OPENGL)
@@ -424,6 +438,7 @@ internal fun MainActivity.resetAllFunctions(prefs: android.content.SharedPrefere
             clearAudioPrefs(prefs)
             clearSensorsPrefs(prefs)
             clearBgRestrictPrefs(prefs)
+            resetNetBlock()
 
 
             if (isMonitorEnabled) {

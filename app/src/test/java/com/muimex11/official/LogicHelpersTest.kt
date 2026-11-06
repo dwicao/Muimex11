@@ -419,6 +419,7 @@ class RebootCmdTest {
         assertEquals("svc power reboot recovery", RebootCmd.build(RebootCmd.RECOVERY))
         assertEquals("svc power reboot bootloader", RebootCmd.build(RebootCmd.BOOTLOADER))
         assertEquals("am force-stop com.android.systemui", RebootCmd.build(RebootCmd.SYSTEM_UI))
+        assertEquals("input keyevent 223", RebootCmd.build(RebootCmd.SCREEN_OFF))
         assertNull(RebootCmd.build(99))
     }
 }
@@ -712,5 +713,119 @@ class PingProbeTest {
         assertEquals(0.0, PingProbe.jitterMs(23.7, 23.7)!!, 0.001)
         assertEquals(5.0, PingProbe.jitterMs(20.0, 25.0)!!, 0.001)
         assertNull(PingProbe.jitterMs(null, 25.0))
+    }
+}
+
+class NetPolicyTest {
+    @Test
+    fun buildCommands() {
+        assertEquals(
+            "cmd netpolicy add restrict-background-blacklist 10123",
+            NetPolicy.buildAdd(10123)
+        )
+        assertEquals(
+            "cmd netpolicy remove restrict-background-blacklist 10123",
+            NetPolicy.buildRemove(10123)
+        )
+        assertEquals("cmd netpolicy set restrict-background true", NetPolicy.buildSetSaver(true))
+        assertEquals("cmd netpolicy set restrict-background false", NetPolicy.buildSetSaver(false))
+        assertNull(NetPolicy.buildAdd(0))
+        assertNull(NetPolicy.buildAdd(-5))
+    }
+
+    @Test
+    fun parseList() {
+        assertEquals(
+            setOf(10123, 10145),
+            NetPolicy.parseList("Restrict background blacklisted UIDs: 10123 10145 \n")
+        )
+        assertTrue(NetPolicy.parseList("Restrict background blacklisted UIDs: none\n").isEmpty())
+        assertTrue(NetPolicy.parseList("").isEmpty())
+        assertTrue(NetPolicy.parseList(null).isEmpty())
+        assertTrue(NetPolicy.parseList("Error: unknown command\n").isEmpty())
+    }
+
+    @Test
+    fun saverState() {
+        assertTrue(NetPolicy.isSaverOn("Restricted mode status: enabled\n"))
+        assertFalse(NetPolicy.isSaverOn("Restricted mode status: disabled\n"))
+        assertFalse(NetPolicy.isSaverOn(""))
+    }
+}
+
+class HeatResponseTest {
+    @Test
+    fun buildCommands() {
+        assertEquals(
+            "settings put system min_refresh_rate 60 && settings put system peak_refresh_rate 60",
+            HeatResponse.buildDrop()
+        )
+        assertEquals(
+            "settings put system min_refresh_rate 90 && settings put system peak_refresh_rate 120",
+            HeatResponse.buildRestore("90", "120")
+        )
+        assertEquals(
+            "settings delete system min_refresh_rate && settings delete system peak_refresh_rate",
+            HeatResponse.buildRestore("null", "")
+        )
+    }
+}
+
+class CellInfoTest {
+    @Test
+    fun parsesGetprop() {
+        val dump = "[gsm.operator.alpha]: [Smartfren]\n" +
+            "[gsm.network.type]: [LTE]\n" +
+            "[gsm.sim.state]: [LOADED]\n" +
+            "[gsm.version.ril-impl]: [xxx]\n"
+        val s = CellInfo.parseGetprop(dump)
+        assertEquals("Smartfren", s.operator)
+        assertEquals("LTE", s.networkType)
+        assertEquals("LOADED", s.simState)
+    }
+
+    @Test
+    fun missingIsDash() {
+        val s = CellInfo.parseGetprop("unrelated: [x]\n")
+        assertEquals("—", s.operator)
+        assertEquals("—", s.networkType)
+        assertEquals("—", s.simState)
+    }
+}
+
+class BatteryHealthTest {
+    @Test
+    fun parsesDumpsys() {
+        val dump = """
+            Current Battery Service state:
+              AC powered: false
+              level: 85
+              health: 2
+              present: true
+              voltage: 4187
+              temperature: 312
+              technology: Li-ion
+              mBatteryCycleCount: 214
+        """.trimIndent()
+        val i = BatteryHealth.parse(dump)!!
+        assertEquals(85, i.level)
+        assertEquals("Good", i.health)
+        assertEquals(4.187, i.voltageV!!, 0.001)
+        assertEquals(31.2, i.tempC!!, 0.001)
+        assertEquals("Li-ion", i.tech)
+        assertEquals(214, i.cycles)
+    }
+
+    @Test
+    fun missingCycleIsNull() {
+        val dump = "level: 50\nhealth: 3\nvoltage: 4000\ntemperature: 400\ntechnology: Li-poly\n"
+        val i = BatteryHealth.parse(dump)!!
+        assertEquals("Overheat", i.health)
+        assertNull(i.cycles)
+    }
+
+    @Test
+    fun noLevelIsNull() {
+        assertNull(BatteryHealth.parse("garbage\n"))
     }
 }

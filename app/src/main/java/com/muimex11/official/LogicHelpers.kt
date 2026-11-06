@@ -492,12 +492,14 @@ object RebootCmd {
     const val RECOVERY = 1
     const val BOOTLOADER = 2
     const val SYSTEM_UI = 3
+    const val SCREEN_OFF = 4
 
     fun build(mode: Int): String? = when (mode) {
         SYSTEM -> "svc power reboot"
         RECOVERY -> "svc power reboot recovery"
         BOOTLOADER -> "svc power reboot bootloader"
         SYSTEM_UI -> "am force-stop com.android.systemui"
+        SCREEN_OFF -> "input keyevent 223"
         else -> null
     }
 }
@@ -792,4 +794,110 @@ object PingProbe {
     /** Jitter proxy: absolute delta vs the previous sample. */
     fun jitterMs(prevMs: Double?, curMs: Double): Double? =
         if (prevMs == null) null else kotlin.math.abs(curMs - prevMs)
+}
+
+/**
+ * Per-app background-data block over `cmd netpolicy` (verified against AOSP
+ * NetworkPolicyManagerShellCommand: add/remove/list restrict-background-blacklist,
+ * get/set restrict-background). POLICY_REJECT_METERED_BACKGROUND == the stock
+ * Settings "Background data: off" toggle: enforced on metered networks, no
+ * Data Saver needed, no root. Every mutation must be verified with [parseList].
+ */
+object NetPolicy {
+    fun buildAdd(uid: Int): String? =
+        if (uid > 0) "cmd netpolicy add restrict-background-blacklist $uid" else null
+
+    fun buildRemove(uid: Int): String? =
+        if (uid > 0) "cmd netpolicy remove restrict-background-blacklist $uid" else null
+
+    const val CMD_LIST = "cmd netpolicy list restrict-background-blacklist"
+    const val CMD_GET_SAVER = "cmd netpolicy get restrict-background"
+
+    fun buildSetSaver(on: Boolean): String =
+        "cmd netpolicy set restrict-background ${if (on) "true" else "false"}"
+
+    /** `Restrict background blacklisted UIDs: 10123 10145` (or `: none`). */
+    fun parseList(raw: String?): Set<Int> {
+        if (raw.isNullOrBlank() || raw.startsWith("Error", ignoreCase = true)) return emptySet()
+        return Regex("\\b\\d+\\b").findAll(raw).mapNotNull { it.value.toIntOrNull() }.toSet()
+    }
+
+    /** `Restricted mode status: enabled|disabled` (Data Saver master). */
+    fun isSaverOn(raw: String?): Boolean = raw?.contains("enabled", ignoreCase = true) == true
+}
+
+/** Heat response: drop to 60 Hz while hot, restore the snapshot when cool. */
+object HeatResponse {
+    const val COOL_HZ = 60
+
+    fun buildDrop(): String =
+        "settings put system min_refresh_rate $COOL_HZ && settings put system peak_refresh_rate $COOL_HZ"
+
+    fun buildRestore(prevMin: String?, prevMax: String?): String {
+        fun one(key: String, v: String?): String {
+            val p = (v ?: "").trim()
+            return if (p.isEmpty() || p == "null") "settings delete system $key"
+            else "settings put system $key $p"
+        }
+        return one("min_refresh_rate", prevMin) + " && " + one("peak_refresh_rate", prevMax)
+    }
+}
+
+/** Live cell snapshot from `getprop` gsm.* keys — pure parsing. */
+object CellInfo {
+    data class Snapshot(val operator: String, val networkType: String, val simState: String)
+
+    fun parseGetprop(dump: String): Snapshot {
+        fun prop(key: String): String =
+            Regex("^\\[?$key\\]?:?\\s*\\[([^\\]]*)\\]", RegexOption.MULTILINE)
+                .find(dump)?.groupValues?.getOrNull(1).orEmpty().trim()
+        // getprop prints `[key]: [value]`; dumpsys-style `key=value` also accepted.
+        fun alt(key: String): String =
+            Regex("(?m)^$key=(.+)$").find(dump)?.groupValues?.getOrNull(1).orEmpty().trim()
+        val op = prop("gsm.operator.alpha").ifEmpty { alt("gsm.operator.alpha") }
+        val net = prop("gsm.network.type").ifEmpty { alt("gsm.network.type") }
+        val sim = prop("gsm.sim.state").ifEmpty { alt("gsm.sim.state") }
+        return Snapshot(
+            operator = op.ifEmpty { "—" },
+            networkType = net.ifEmpty { "—" },
+            simState = sim.ifEmpty { "—" }
+        )
+    }
+}
+
+/** Battery health from `dumpsys battery` — pure, defensive parsing. */
+object BatteryHealth {
+    data class Info(
+        val level: Int,
+        val health: String,
+        val voltageV: Double?,
+        val tempC: Double?,
+        val tech: String,
+        val cycles: Int?
+    )
+
+    private val healthNames = mapOf(
+        1 to "Unknown", 2 to "Good", 3 to "Overheat", 4 to "Dead",
+        5 to "Over voltage", 6 to "Failure", 7 to "Cold"
+    )
+
+    private fun kv(dump: String, key: String): String? =
+        Regex("(?m)^\\s*$key\\s*[:=]\\s*(.+?)\\s*$").find(dump)?.groupValues?.getOrNull(1)
+
+    fun parse(dump: String): Info? {
+        val level = kv(dump, "level")?.trim()?.toIntOrNull() ?: return null
+        val healthInt = kv(dump, "health")?.trim()?.toIntOrNull()
+        val voltageMv = kv(dump, "voltage")?.trim()?.toIntOrNull()
+        val tempTenth = kv(dump, "temperature")?.trim()?.toIntOrNull()
+        val cycleKeys = listOf("mBatteryCycleCount", "cycle_count", "cyclecount", "battery_cycle_count")
+        val cycles = cycleKeys.firstNotNullOfOrNull { k -> kv(dump, k)?.trim()?.toIntOrNull() }
+        return Info(
+            level = level,
+            health = healthNames[healthInt] ?: "Unknown",
+            voltageV = voltageMv?.let { it / 1000.0 },
+            tempC = tempTenth?.let { it / 10.0 },
+            tech = kv(dump, "technology")?.trim().orEmpty().ifEmpty { "—" },
+            cycles = cycles
+        )
+    }
 }

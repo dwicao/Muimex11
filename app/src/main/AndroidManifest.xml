@@ -108,6 +108,42 @@
             android:exported="false"
             android:foregroundServiceType="health" />
 
+        <service
+            android:name=".DnsTileService"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@drawable/ic_dns"
+            android:label="@string/tile_dns"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".DndTileService"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@drawable/ic_bell_off"
+            android:label="@string/tile_dnd"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".VulkanTileService"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@drawable/ic_gamepad"
+            android:label="@string/tile_vulkan"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
         <receiver
             android:name=".GraphicsBootReceiver"
             android:enabled="true"
