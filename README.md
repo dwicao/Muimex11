@@ -64,6 +64,42 @@ Switch the GPU rendering API without root, over Shizuku. Adapted from [GAMA](htt
 ## Performance & system tools
 RAM booster · cache cleaner · app freezer · fstrim · fixed-performance modes · Game Mode selector · thermal override · blur disable · fast animations · refresh rate control (up to 240Hz) · resolution + DPI control · graphics API switcher (Vulkan/OpenGL) · private/custom DNS · touch and network tuners · gyro fix · crosshair overlay · auto clicker · gaming DND · APK/OBB installer · Shizuku shell terminal · device info · English and Brazilian Portuguese.
 
+## What's new in this fork
+
+This fork is 75+ commits ahead of upstream. Highlights, newest first:
+
+### Automation & control
+- **Tasker / MacroDroid API (v4.18)** — token-guarded broadcast receiver (`com.muimex11.official.TASKER_RUN`): switch Vulkan/OpenGL or trigger a RAM boost from automation apps. The token lives in Shell Execute → Automation.
+- **Quick Settings tiles (v4.19)** — one-tap Private DNS, Focus-DND and Vulkan toggles.
+- **Shizuku recovery helper (v4.11)** — one-tap wireless-debugging re-enable that opens whichever Shizuku manager is installed (official or forks like Shevery).
+
+### Gaming
+- **Game Profiles v2 (v4.5–v4.19)** — per-game auto-apply on launch with restore on exit: Game Mode, fixed performance, 120Hz/refresh cap, resolution scale, orientation lock, keep-awake, no-blur, Focus DND, and force-stop on exit.
+- **Graphics API switcher (v4.9)** — Vulkan/OpenGL via `setprop debug.hwui.renderer`, verified read-back and re-applied after reboot (adapted from [GAMA](https://github.com/palincat/gama), MIT).
+- **In-game HW monitor extras (v4.18)** — live ping + jitter readout in the overlay.
+- **Copyable command errors (v4.15)** — every failed tweak shows the full shell output in a copyable sheet instead of a truncated toast.
+
+### System & privacy tools
+- **Per-app language (v4.11)** — force a locale per app on Android 13+, verified read-back.
+- **Per-app background-data block (v4.19)** — same mechanism as the system toggle, over `cmd netpolicy`, reversible.
+- **App privacy+ (v4.5, v4.17)** — per-app AppOps (camera, mic, location + clipboard + notifications), one-tap batch block, and an access timeline showing which app used what last.
+- **App uninstall with factory restore (v4.10)** — `pm uninstall -k --user 0` + `install-existing` restore; APK backup to Download/ (v4.10) incl. file-based settings backup/restore (v4.18).
+- **Reboot menu (v4.10–v4.19)** — system / recovery / bootloader / SystemUI restart / turn screen off.
+- **Battery suite (v4.4–v4.19)** — saver modes + Doze tuning + screen-off schedule, charge alarm, battery-health card (voltage/temp/cycles).
+- **Thermal suite (v4.6–v4.19)** — adaptive governor with hysteresis + thresholds, heat-response auto drop to 60 Hz, manual bypass.
+- **Radio info (v4.11, v4.19)** — `*#*#4636#*#*` launcher plus live operator/network/SIM readout.
+- **Orientation lock card (v4.10)** + per-app forced rotation.
+
+### Reliability engineering
+- **Crash reporter (v4.13)** — uncaught exceptions are logged to `Download/Muimex11/` and shown in a copyable dialog on next launch (covers startup crashes).
+- **Verified shell ops** — every set is read back; ROM rejections (e.g. Realme blocking `pointer_speed`, with highest-working-value probing since v4.16) degrade gracefully to partial states instead of silent lies.
+- **Boot-safe state** — synchronous commit-based persistence with post-boot re-apply for Vulkan.
+- **Danger scan (v4.17)** — shell scripts are scanned for destructive patterns before executing with Shizuku privileges.
+
+### UI
+- **View modes (v4.12–v4.14)** — list / 2-column grid / compact grid (no descriptions).
+- **Search, colors, auto-hide header (v4.20–v4.25)** — live search across tweaks, per-category accent colors, status text without the redundant "Status:" prefix, icon reset buttons, search+chips that hide on scroll and slide back with enterAlways physics, one-time onboarding.
+
 ## Self-updating
 The app checks this repository's `version.json`, prompts when a newer release is published, and installs it over itself. Updates are verified against the repo's `signature.txt` fingerprint.
 
@@ -102,6 +138,7 @@ O Muimex11 é um otimizador de jogos Android gratuito — sem anúncios e sem pr
 - **Painel Samsung**: Max Boost em um toque, desativar o GOS (com restauração), RAM Plus off, congelar daemons de log, Device Security e bloat da Samsung, além de restaurar tudo.
 - **Monitor de hardware** flutuante em tempo real (CPU, RAM, bateria, rede).
 - **API de gráficos (Vulkan/OpenGL)**: alterna a renderização da GPU sem root via Shizuku (adaptado do [GAMA](https://github.com/palincat/gama), licença MIT) — Vulkan para mais frio/economia de bateria em aparelhos suportados, OpenGL como padrão seguro; reaplicado sozinho após reiniciar.
+- **Novidades deste fork** (75+ commits à frente do upstream): perfis de jogo com auto-aplicação (modo jogo, 120Hz, resolução, orientação, DND, kill ao sair), Vulkan/OpenGL, idioma por app, bloqueio de dados em 2º plano por app, privacidade AppOps (lote + linha do tempo), desinstalar com restauração de fábrica, backup de APKs, menu reboot, bateria (economia, Doze, alarme de carga, saúde), térmico adaptivo, API de automação p/ Tasker, tiles de acesso rápido, ping/jitter no monitor, modos de exibição lista/grade/compacto com busca, e relato de crash com log em `Download/Muimex11`.
 - Ferramentas de desempenho, display, rede, APK/OBB e terminal Shizuku — tudo em **PT-BR e inglês**.
 
 Baixe em [Releases](https://github.com/Inkflow-Gab/Muimex11/releases/latest), inicie o Shizuku e autorize no app. O Muimex11 atualiza sozinho quando sai uma versão nova aqui no GitHub.
