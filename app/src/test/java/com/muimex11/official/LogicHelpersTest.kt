@@ -912,3 +912,136 @@ class SysTweaksTest {
         }
     }
 }
+
+class ComfortTweaksTest {
+    @Test
+    fun buildSetAndDelete() {
+        assertEquals("settings put system screen_off_timeout 30000", ComfortTweaks.buildSet("system", "screen_off_timeout", "30000"))
+        assertEquals("settings delete system screen_off_timeout", ComfortTweaks.buildDelete("system", "screen_off_timeout"))
+    }
+
+    @Test
+    fun timeoutPresets() {
+        assertTrue(ComfortTweaks.TIMEOUT_PRESETS.contains(30_000))
+        assertEquals(Int.MAX_VALUE, ComfortTweaks.TIMEOUT_NEVER)
+    }
+
+    @Test
+    fun uimodeMapping() {
+        assertEquals(mapOf("auto" to "0", "no" to "1", "yes" to "2"), ComfortTweaks.UIMODE_EXPECT)
+        assertEquals("cmd uimode night yes", ComfortTweaks.buildUimode("yes"))
+    }
+
+    @Test
+    fun grayBuild() {
+        assertTrue(ComfortTweaks.buildGray(true).contains("accessibility_display_daltonizer_enabled 1"))
+        assertTrue(ComfortTweaks.buildGray(true).contains("accessibility_display_daltonizer 0"))
+        assertEquals("settings put secure accessibility_display_daltonizer_enabled 0", ComfortTweaks.buildGray(false))
+    }
+
+    @Test
+    fun fontClampRange() {
+        // Documented safe range; wider values break layouts.
+        assertTrue(ComfortTweaks.FONT_PRESETS.all { it.toDouble() in 0.85..1.3 })
+    }
+
+    @Test
+    fun lockNotifBuild() {
+        assertEquals(
+            "settings put secure lock_screen_show_notifications 1 && settings put secure lock_screen_allow_private_notifications 0",
+            ComfortTweaks.buildLockNotif("1", "0")
+        )
+    }
+
+    @Test
+    fun buildResetCoversAll() {
+        val reset = ComfortTweaks.buildReset()
+        listOf("screen_off_timeout", "night_display_activated", "night_display_color_temperature",
+            "night_display_auto_mode", "font_scale", "screen_brightness_mode", "master_mono",
+            "notification_bubbles", "doze_tap_gesture", "ui_night_mode", "reduce_bright_colors_activated",
+            "accessibility_display_daltonizer", "debug.hwui.force_dark", "lock_screen_lock_after_timeout",
+            "lock_screen_show_notifications", "lock_screen_allow_private_notifications",
+            "doze_enabled", "wake_gesture_enabled", "doze_pulse_on_pick_up",
+            "camera_double_tap_power_gesture_disabled", "set-ignore-orientation-request").forEach { key ->
+            assertTrue("reset missing $key", reset.contains(key))
+        }
+    }
+}
+
+class NetRadioTest {
+    @Test
+    fun captiveValues() {
+        assertEquals("settings put global captive_portal_mode 0", NetRadio.buildSet("global", "captive_portal_mode", "0"))
+    }
+
+    @Test
+    fun airplaneCmd() {
+        assertEquals("cmd connectivity airplane-mode enable", NetRadio.buildAirplane(true))
+        assertEquals("cmd connectivity airplane-mode disable", NetRadio.buildAirplane(false))
+    }
+
+    @Test
+    fun ratProbe() {
+        assertTrue(NetRadio.ratSupported("... set-allowed-network-types-for-users ..."))
+        assertFalse(NetRadio.ratSupported("Can't find service: phone"))
+        assertFalse(NetRadio.ratSupported(""))
+    }
+
+    @Test
+    fun buildResetCoversAll() {
+        val reset = NetRadio.buildReset()
+        listOf("captive_portal_mode", "airplane-mode", "data_roaming", "svc nfc",
+            "set-location-enabled", "allowed-network-types").forEach { key ->
+            assertTrue("reset missing $key", reset.contains(key))
+        }
+    }
+}
+
+class MemTweaksTest {
+    @Test
+    fun maxCachedClamp() {
+        assertTrue(MemTweaks.buildMaxCached(4).contains("max_cached_processes=8"))
+        assertTrue(MemTweaks.buildMaxCached(999).contains("max_cached_processes=64"))
+        assertTrue(MemTweaks.buildMaxCached(24).contains("max_cached_processes=24"))
+    }
+
+    @Test
+    fun parseMaxCached() {
+        assertEquals(24, MemTweaks.parseMaxCached("max_cached_processes=24"))
+        assertEquals(48, MemTweaks.parseMaxCached("gc_timeout=5000,max_cached_processes=48"))
+        assertNull(MemTweaks.parseMaxCached("null"))
+        assertNull(MemTweaks.parseMaxCached(""))
+        assertNull(MemTweaks.parseMaxCached(null))
+    }
+
+    @Test
+    fun buckets() {
+        assertEquals("am set-standby-bucket com.x restricted", MemTweaks.buildBucket("com.x", "restricted"))
+        assertEquals("am get-standby-bucket com.x", MemTweaks.buildBucketGet("com.x"))
+        assertTrue(MemTweaks.BUCKETS.containsAll(listOf("active", "working_set", "frequent", "rare", "restricted")))
+        assertFalse(MemTweaks.safePkg("com.x; rm -rf"))
+        assertTrue(MemTweaks.safePkg("com.example.game"))
+    }
+}
+
+class GameTuningTest {
+    @Test
+    fun buildMode() {
+        assertEquals("cmd game mode performance com.x", GameTuning.buildMode("com.x", "performance"))
+        assertEquals("cmd game reset com.x", GameTuning.buildReset("com.x"))
+    }
+
+    @Test
+    fun buildCustom() {
+        assertEquals("cmd game set --downscale 0.7 --fps 60 com.x", GameTuning.buildCustom("com.x", "0.7", "60"))
+        assertEquals("cmd game set com.x", GameTuning.buildCustom("com.x", "disable", "disable"))
+        assertEquals("cmd game set --fps 90 com.x", GameTuning.buildCustom("com.x", null, "90"))
+    }
+
+    @Test
+    fun safePkg() {
+        assertTrue(GameTuning.safePkg("com.example.game"))
+        assertFalse(GameTuning.safePkg("com.x && reboot"))
+        assertFalse(GameTuning.safePkg(""))
+    }
+}

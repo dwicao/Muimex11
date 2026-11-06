@@ -1053,4 +1053,172 @@
     <string name="ob_s2d">Open Muimex11 and allow Shizuku access when asked. The top pill turns green when connected.</string>
     <string name="ob_s3">3 · Pick a tweak</string>
     <string name="ob_s3d">Browse the cards below, use search or the category chips. Every change is reversible with its reset button.</string>
+
+    <!-- Batch A: comfort & display extras -->
+    <string name="title_comfort">Comfort &amp; Display Extras</string>
+    <string name="desc_comfort">Screen timeout, Night Light, font size, dark mode, extra dim, grayscale, lockscreen privacy, ambient gestures and more.</string>
+    <string name="comfort_status_fmt">%1$d of %2$d on</string>
+    <string name="msg_comfort_reset">Comfort tweaks restored to defaults</string>
+    <string name="comfort_not_set">Not set (system default)</string>
+    <string name="comfort_off">Off</string>
+    <string name="comfort_secs_fmt">%1$d sec</string>
+    <string name="comfort_mins_fmt">%1$d min</string>
+    <string name="comfort_timeout">Screen timeout</string>
+    <string name="comfort_timeout_msg">How long until the screen sleeps. Never uses the maximum value.</string>
+    <string name="comfort_timeout_never">Never</string>
+    <string name="comfort_reset_default">Restore default</string>
+    <string name="comfort_reset_default_desc">Delete the override and let the ROM decide</string>
+    <string name="comfort_night">Night Light</string>
+    <string name="comfort_night_desc">Warm GPU-pipeline filter for night sessions</string>
+    <string name="comfort_night_temp">Night Light temperature</string>
+    <string name="comfort_night_temp_msg">Warmer = lower Kelvin. The device clamps out-of-range values.</string>
+    <string name="comfort_night_temp_fmt">%1$s K</string>
+    <string name="comfort_kelvin_fmt">%1$d K</string>
+    <string name="comfort_night_auto">Night Light schedule</string>
+    <string name="comfort_night_auto_msg">Automatic sunset-to-sunrise, or fully manual.</string>
+    <string name="comfort_night_auto_twilight">Sunset to sunrise</string>
+    <string name="comfort_night_auto_custom">Custom time</string>
+    <string name="comfort_font">Font size</string>
+    <string name="comfort_font_msg">System font scale. Applies instantly, no reboot.</string>
+    <string name="comfort_font_fmt">%1$s×</string>
+    <string name="comfort_font_note">Above 1.3× can break some layouts — the range here stays safe.</string>
+    <string name="comfort_bright">Manual brightness</string>
+    <string name="comfort_bright_desc">Turn off adaptive brightness (fixed manual level)</string>
+    <string name="comfort_mono">Mono audio</string>
+    <string name="comfort_mono_desc">Merge stereo into one channel</string>
+    <string name="comfort_bubbles">Chat bubbles</string>
+    <string name="comfort_bubbles_desc">Turn off floating conversation bubbles</string>
+    <string name="comfort_tapwake">Tap to wake</string>
+    <string name="comfort_tapwake_desc">Turn off double-tap-to-wake (needs hardware support)</string>
+    <string name="comfort_uimode">Dark mode</string>
+    <string name="comfort_uimode_msg">System night mode via the official service command.</string>
+    <string name="comfort_uimode_auto">Automatic</string>
+    <string name="comfort_uimode_light">Light</string>
+    <string name="comfort_uimode_dark">Dark</string>
+    <string name="comfort_extradim">Extra dim</string>
+    <string name="comfort_extradim_desc">Dim the screen below the minimum brightness</string>
+    <string name="comfort_gray">Grayscale</string>
+    <string name="comfort_gray_desc">Monochrome screen for focus sessions</string>
+    <string name="comfort_forcedark">Force dark</string>
+    <string name="comfort_forcedark_desc">Force dark theme on apps that lack one (restart apps after)</string>
+    <string name="comfort_lockafter">Lock after sleep</string>
+    <string name="comfort_lockafter_msg">Delay before a PIN is required after the screen sleeps.</string>
+    <string name="comfort_lockafter_now">Immediately</string>
+    <string name="comfort_locknotif">Lockscreen notifications</string>
+    <string name="comfort_locknotif_msg">What notification content shows on the lock screen.</string>
+    <string name="comfort_locknotif_all">Show all content</string>
+    <string name="comfort_locknotif_hidden">Hide sensitive content</string>
+    <string name="comfort_locknotif_none">Hide all notifications</string>
+    <string name="comfort_doze">Ambient display</string>
+    <string name="comfort_doze_desc">Master switch for always-on/ambient display</string>
+    <string name="comfort_lift">Lift to wake</string>
+    <string name="comfort_lift_desc">Wake the ambient screen when picking up the phone</string>
+    <string name="comfort_pickup">Double-tap ambient</string>
+    <string name="comfort_pickup_desc">Pulse ambient display on double tap (hardware-dependent)</string>
+    <string name="comfort_camdouble">Double-press power for camera</string>
+    <string name="comfort_camdouble_desc">Launch the camera with two power presses</string>
+    <string name="comfort_ignoreorient">Ignore rotation requests</string>
+    <string name="comfort_ignoreorient_desc">Force rotation-locked apps to obey the system orientation</string>
+
+    <!-- Batch B: network & radio -->
+    <string name="title_netradio">Network &amp; Radio</string>
+    <string name="desc_netradio">Captive portal, airplane mode, roaming, NFC, location master and experimental radio lock.</string>
+    <string name="netradio_status_fmt">%1$d of %2$d changed</string>
+    <string name="msg_netradio_reset">Network &amp; radio restored to defaults</string>
+    <string name="netradio_captive">Captive portal detection</string>
+    <string name="netradio_captive_msg">Checking for login pages on every Wi-Fi join causes stalls — off is safe on home networks.</string>
+    <string name="netradio_captive_off">Off (ignore)</string>
+    <string name="netradio_captive_prompt">Prompt (default)</string>
+    <string name="netradio_captive_avoid">Avoid restricted networks</string>
+    <string name="netradio_airplane">Airplane mode</string>
+    <string name="netradio_airplane_desc">All radios off — tournament-mode base (add Wi-Fi back manually)</string>
+    <string name="netradio_roaming">Data roaming</string>
+    <string name="netradio_roaming_desc">Mobile data outside your carrier (watch charges abroad)</string>
+    <string name="netradio_nfc">NFC</string>
+    <string name="netradio_nfc_desc">Contactless toggle without opening Settings</string>
+    <string name="netradio_location">Location master switch</string>
+    <string name="netradio_location_desc">One-tap GPS/provider kill switch</string>
+    <string name="netradio_rat">Radio mode lock (experimental)</string>
+    <string name="netradio_rat_desc">Pin 4G-only for stable ping, or 5G where it pays</string>
+    <string name="netradio_rat_msg">Only offered when this ROM exposes the phone shell command. Dual-SIM applies to the default slot.</string>
+    <string name="netradio_rat_unsupported">This ROM does not expose the radio-mode shell command — nothing to apply.</string>
+    <string name="netradio_rat_current">Current mask: %1$s</string>
+    <string name="netradio_rat_auto">Automatic (default)</string>
+    <string name="netradio_rat_4g">4G only (stable ping)</string>
+    <string name="netradio_rat_5g">5G preferred</string>
+
+    <!-- Batch C: memory & background -->
+    <string name="title_mem">Memory &amp; Background</string>
+    <string name="desc_mem">Background process limit, per-app standby buckets, dexopt booster and wakeup report.</string>
+    <string name="mem_status_fmt">%1$d set</string>
+    <string name="msg_mem_reset">Memory tweaks restored to defaults</string>
+    <string name="mem_maxcached">Background process limit</string>
+    <string name="mem_maxcached_msg">How many cached apps Android keeps. Lower saves RAM, too low hurts multitasking.</string>
+    <string name="mem_maxcached_fmt">Max %1$d processes</string>
+    <string name="mem_processes_fmt">%1$d apps</string>
+    <string name="mem_maxcached_light">Light saver</string>
+    <string name="mem_maxcached_balanced">Balanced</string>
+    <string name="mem_maxcached_high">Heavy multitasker</string>
+    <string name="mem_maxcached_default_desc">Delete the override (ROM decides)</string>
+    <string name="mem_maxcached_note">Values are clamped to 8–64. Restore with the card reset button.</string>
+    <string name="mem_standby">Per-app standby bucket</string>
+    <string name="mem_standby_desc">Force sleepy apps into Restricted, spare the ones you need</string>
+    <string name="mem_standby_msg">Restricted buckets pause background work, sync and jobs until you open the app.</string>
+    <string name="mem_standby_fmt">%1$d apps restricted</string>
+    <string name="mem_standby_hint">active = least restricted, restricted = most. Active removes the entry.</string>
+    <string name="mem_dexopt">Dexopt booster</string>
+    <string name="mem_dexopt_desc">Re-optimize installed apps in the background</string>
+    <string name="mem_dexopt_warn">Runs the background dex optimizer for all apps. Takes many minutes and heats the phone — best while charging.</string>
+    <string name="mem_dexopt_go">Start</string>
+    <string name="mem_dexopt_running">Optimizing apps in the background…</string>
+    <string name="mem_dexopt_done">Background optimization finished</string>
+    <string name="mem_alarm">Wakeup report</string>
+    <string name="mem_alarm_desc">See what woke the phone (dumpsys alarm)</string>
+    <string name="mem_alarm_hint">Last 160 alarm lines. Copy it for bug reports.</string>
+    <string name="mem_alarm_empty">(no alarm output)</string>
+
+    <!-- Batch C: per-game tuning -->
+    <string name="title_gametuning">Per-Game Tuning</string>
+    <string name="desc_gametuning">Game-mode, downscale and FPS cap per game via cmd game (custom mode).</string>
+    <string name="gametuning_status_fmt">%1$d games tuned</string>
+    <string name="msg_gametuning_reset">Game tuning reset</string>
+    <string name="gametuning_standard">Standard</string>
+    <string name="gametuning_standard_desc">Stock behavior, no intervention</string>
+    <string name="gametuning_perf">Performance</string>
+    <string name="gametuning_perf_desc">Maximum frame rate the game allows</string>
+    <string name="gametuning_battery">Battery</string>
+    <string name="gametuning_battery_desc">Power-saving mode (only if the game supports it)</string>
+    <string name="gametuning_custom">Custom (downscale + FPS)</string>
+    <string name="gametuning_custom_desc">Resolution ratio and frame cap of your choice</string>
+    <string name="gametuning_no_cfg">No live config reported for this package — it may not be a recognized game.</string>
+    <string name="gametuning_reset_pkg">Reset this game</string>
+    <string name="gametuning_reset_pkg_desc">Back to stock behavior</string>
+    <string name="gametuning_downscale_title">Resolution ratio</string>
+    <string name="gametuning_fps_title">FPS cap (now: %1$s)</string>
+    <string name="gametuning_custom_msg">Pick a downscale ratio and an FPS cap, then apply.</string>
+    <string name="gametuning_custom_note">Selected: %1$s × %2$s fps</string>
+    <string name="gametuning_apply">Apply custom</string>
+
+    <!-- Batch C: Samsung extras -->
+    <string name="samsung_cpuresp">Enhanced CPU responsiveness</string>
+    <string name="samsung_lowheat">Light performance mode</string>
+    <string name="samsung_sem_on">%1$s enabled</string>
+    <string name="samsung_sem_off">%1$s disabled</string>
+
+    <!-- Batch C: AppOps extras -->
+    <string name="appops_boot">Autostart (boot)</string>
+    <string name="appops_runbg">Run in background</string>
+    <string name="appops_runanybg">Run any in background</string>
+    <string name="appops_playaudio">Play audio</string>
+    <string name="appops_takefocus">Take audio focus</string>
+
+    <!-- Batch C: battery trigger + thermal headroom -->
+    <string name="bat_trigger">Auto saver at level</string>
+    <string name="bat_trigger_desc">Turn battery saver on automatically below a charge level</string>
+    <string name="bat_trigger_msg">0%% means never — the saver stays fully manual.</string>
+    <string name="bat_trigger_off">Off (manual only)</string>
+    <string name="bat_trigger_fmt">Below %1$s%%</string>
+    <string name="thermal_headroom">Thermal headroom</string>
+    <string name="thermal_headroom_desc">10-second thermal forecast (read-only)</string>
+    <string name="thermal_headroom_empty">(no headroom data — HAL not ready)</string>
 </resources>

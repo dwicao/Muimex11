@@ -29,7 +29,7 @@ internal data class SamsungRow(
 )
 
 internal enum class SamsungAction {
-    GOS, RAMPLUS, LOGGING, DEVICE_SECURITY, BLOAT;
+    GOS, RAMPLUS, LOGGING, DEVICE_SECURITY, BLOAT, CPURESP, LOWHEAT;
 
     fun title(): Int = when (this) {
         GOS -> R.string.samsung_gos
@@ -37,6 +37,8 @@ internal enum class SamsungAction {
         LOGGING -> R.string.samsung_log
         DEVICE_SECURITY -> R.string.samsung_sec
         BLOAT -> R.string.samsung_bloat
+        CPURESP -> R.string.samsung_cpuresp
+        LOWHEAT -> R.string.samsung_lowheat
     }
 }
 
@@ -216,6 +218,8 @@ private fun MainActivity.samsungActionState(action: SamsungAction): Boolean = wh
     SamsungAction.LOGGING -> SamsungPkgs.LOGGING.any { isInstalled(it) && isFrozen(it) }
     SamsungAction.DEVICE_SECURITY -> isInstalled(SamsungPkgs.DEVICE_SECURITY) && isFrozen(SamsungPkgs.DEVICE_SECURITY)
     SamsungAction.BLOAT -> SamsungPkgs.BLOAT.any { isInstalled(it) && isFrozen(it) }
+    SamsungAction.CPURESP -> semKeyOn("sem_enhanced_cpu_responsiveness")
+    SamsungAction.LOWHEAT -> semKeyOn("sem_low_heat_mode")
 }
 
 private fun MainActivity.refreshSamsungStates(rows: Map<SamsungAction, SamsungRow>) {
@@ -299,6 +303,28 @@ internal fun MainActivity.toggleSamsungAction(action: SamsungAction, onDone: () 
                 onDone()
             }
         }
+        SamsungAction.CPURESP -> {
+            toggleSemKey("sem_enhanced_cpu_responsiveness", boosted) { onDone() }
+        }
+        SamsungAction.LOWHEAT -> {
+            toggleSemKey("sem_low_heat_mode", boosted) { onDone() }
+        }
+    }
+}
+
+/** Verified OneUI shell toggles (multi-source). Graceful on non-Samsung ROMs. */
+private fun MainActivity.semKeyOn(key: String): Boolean =
+    runShell("settings get global $key").out.trim() == "1"
+
+private fun MainActivity.toggleSemKey(key: String, boosted: Boolean, done: () -> Unit) {
+    val cmd = if (boosted) "settings put global $key 0" else "settings put global $key 1"
+    runSamsung(cmd) { ok ->
+        if (ok) UiToast.success(
+            this,
+            getString(if (boosted) R.string.samsung_sem_off else R.string.samsung_sem_on, key),
+            Toast.LENGTH_SHORT
+        ).show()
+        done()
     }
 }
 
@@ -330,6 +356,8 @@ internal fun MainActivity.restoreAllSamsung(onDone: (() -> Unit)? = null) {
             add("pm enable --user $userId ${SamsungPkgs.DEVICE_SECURITY}")
             SamsungPkgs.BLOAT.forEach { add("pm enable --user $userId $it") }
             add("settings delete global ram_expand_size_list")
+            add("settings put global sem_enhanced_cpu_responsiveness 0")
+            add("settings put global sem_low_heat_mode 0")
         }.joinToString(" ; ")
         runSamsung(restore) { _ ->
             lifecycleScope.launch(Dispatchers.Main) {

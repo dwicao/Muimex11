@@ -203,6 +203,19 @@ object AppOpsParser {
         "READ_CLIPBOARD", "POST_NOTIFICATION"
     )
 
+    /**
+     * Extended ops (Batch-C audit): autostart + background + audio control.
+     * Kept out of [AppOpsBatch] — the one-tap privacy batch stays camera/mic/
+     * location/clipboard/notifications only.
+     */
+    val OPS_EXTRA = listOf(
+        "BOOT_COMPLETED", "RUN_IN_BACKGROUND", "RUN_ANY_IN_BACKGROUND",
+        "PLAY_AUDIO", "TAKE_AUDIO_FOCUS"
+    )
+
+    /** Every op the editor, reset and reset-all understand. */
+    val ALL_OPS: List<String> get() = OPS + OPS_EXTRA
+
     private val lineRe = Regex("^\\s*([A-Z_]+)\\s*:\\s*(\\w+)", RegexOption.MULTILINE)
 
     /** Parse `cmd appops get <pkg>` output into op -> mode. */

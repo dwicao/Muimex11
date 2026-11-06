@@ -25,6 +25,10 @@ private class SystemStatuses(
     val dnd: String,
     val devOptions: String,
     val sysTweaks: String,
+    val comfort: String,
+    val netRadio: String,
+    val mem: String,
+    val gameTuning: String,
     val battery: String,
     val appOps: String,
     val gameProfiles: String,
@@ -228,10 +232,25 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
         sectionOrNull { sysTweaksStatusText() }
     }
 
+    val comfortJob = async {
+        sectionOrNull { comfortStatusText() }
+    }
+
+    val netRadioJob = async {
+        sectionOrNull { netRadioStatusText() }
+    }
+
+    val memJob = async {
+        sectionOrNull { memStatusText(prefs) }
+    }
+
     val display = displayJob.await() ?: DisplayStatus(fbUnknown, fbUnknown, fbUnknown, fbUnknown)
     val net = netJob.await() ?: NetStatus(fbUnknown, fbUnknown, fbUnknown, fbUnknown, fbUnknown)
     val sys = sysJob.await() ?: SysStatus(fbUnknown, fbUnknown, fbUnknown, fbUnknown, fbUnknown)
     val tweaks = tweaksJob.await() ?: fbUnknown
+    val comfort = comfortJob.await() ?: fbUnknown
+    val netRadio = netRadioJob.await() ?: fbUnknown
+    val mem = memJob.await() ?: fbUnknown
 
     return@coroutineScope SystemStatuses(
         fixedPerf = fixedPerfStatus,
@@ -247,6 +266,10 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
         dnd = net.dnd,
         devOptions = sys.devOpts,
         sysTweaks = tweaks,
+        comfort = comfort,
+        netRadio = netRadio,
+        mem = mem,
+        gameTuning = gameTuningStatusText(prefs),
         battery = batteryStatus,
         appOps = appOpsStatus,
         gameProfiles = gameProfilesStatus,
@@ -281,6 +304,10 @@ private fun MainActivity.renderSystemStatuses(s: SystemStatuses) {
     findViewById<TextView>(R.id.tvStatusDnd).text = s.dnd
     findViewById<TextView>(R.id.tvStatusDevOptions).text = s.devOptions
     findViewById<TextView>(R.id.tvStatusSysTweaks).text = s.sysTweaks
+    findViewById<TextView>(R.id.tvStatusComfort).text = s.comfort
+    findViewById<TextView>(R.id.tvStatusNetRadio).text = s.netRadio
+    findViewById<TextView>(R.id.tvStatusMem).text = s.mem
+    findViewById<TextView>(R.id.tvStatusGameTuning).text = s.gameTuning
     findViewById<TextView>(R.id.tvStatusBatterySaver).text = s.battery
     findViewById<TextView>(R.id.tvStatusAppOps).text = s.appOps
     findViewById<TextView>(R.id.tvStatusGameProfiles).text = s.gameProfiles

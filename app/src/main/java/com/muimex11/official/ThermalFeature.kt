@@ -8,6 +8,10 @@ import android.provider.Settings
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /** 0 = off, 1 = manual bypass, 2 = adaptive. */
 internal fun thermalModeOf(prefs: SharedPreferences): Int = when {
@@ -95,6 +99,14 @@ internal fun MainActivity.showThermalSheet(prefs: SharedPreferences) {
         fetchSystemStatuses()
     })
     list.addView(infoCard(this, getString(R.string.thermal_adaptive_note)))
+    list.addView(optionRow(
+        this,
+        getString(R.string.thermal_headroom),
+        getString(R.string.thermal_headroom_desc)
+    ) {
+        sheet.dismiss()
+        showThermalHeadroom()
+    })
     sheet.content(list).button(getString(R.string.btn_cancel), SheetStyle.TONAL).show()
 }
 
@@ -205,4 +217,33 @@ internal fun MainActivity.thermalStatusText(prefs: SharedPreferences): String {
     }
     return if (prefs.getBoolean(Prefs.KEY_THERMAL_DISABLED, false)) getString(R.string.status_throttling_disabled)
     else getString(R.string.status_default)
+}
+
+/** Read-only thermal-headroom forecast (`cmd thermalservice headroom`). */
+private fun MainActivity.showThermalHeadroom() {
+    if (!hasShizukuPermission()) return
+    val loading = ProgressSheet(this)
+        .icon(R.drawable.ic_warning)
+        .title(getString(R.string.thermal_headroom))
+        .message(getString(R.string.txt_please_wait))
+    loading.show(indeterminate = true)
+    lifecycleScope.launch(Dispatchers.IO) {
+        val res = ShizukuRunner.exec("cmd thermalservice headroom 10", 30_000L)
+        withContext(Dispatchers.Main) {
+            loading.dismiss()
+            if (res.ok) {
+                Sheet(this@showThermalHeadroom)
+                    .icon(R.drawable.ic_warning)
+                    .title(getString(R.string.thermal_headroom))
+                    .message(res.merged.trim().take(1500).ifEmpty { getString(R.string.thermal_headroom_empty) })
+                    .button(getString(R.string.btn_close), SheetStyle.PRIMARY)
+                    .show()
+            } else {
+                showCommandErrorSheet(
+                    getString(R.string.dlg_cmd_failed_title),
+                    "cmd thermalservice headroom 10", res
+                ) { showThermalHeadroom() }
+            }
+        }
+    }
 }

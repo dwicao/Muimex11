@@ -19,7 +19,7 @@ private fun readAppOpsRules(prefs: SharedPreferences): Map<String, Map<String, S
         o.keys().forEach { pkg ->
             val v = o.optJSONObject(pkg) ?: return@forEach
             val m = LinkedHashMap<String, String>()
-            AppOpsParser.OPS.forEach { op ->
+            AppOpsParser.ALL_OPS.forEach { op ->
                 if (v.has(op)) m[op] = v.optString(op)
             }
             if (m.isNotEmpty()) out[pkg] = m
@@ -211,7 +211,7 @@ private fun MainActivity.showAppOpsEditor(prefs: SharedPreferences, pkg: String,
             val list = LinearLayout(this@showAppOpsEditor).apply {
                 orientation = LinearLayout.VERTICAL
             }
-            AppOpsParser.OPS.forEach { op ->
+            AppOpsParser.ALL_OPS.forEach { op ->
                 val cur = modes[op] ?: AppOpsParser.MODE_DEFAULT
                 list.addView(optionRow(
                     this@showAppOpsEditor,
@@ -244,6 +244,11 @@ private fun MainActivity.opName(op: String): String = when (op) {
     "ACCESS_COARSE_LOCATION" -> getString(R.string.appops_coarse_loc)
     "READ_CLIPBOARD" -> getString(R.string.appops_clipboard)
     "POST_NOTIFICATION" -> getString(R.string.appops_notif)
+    "BOOT_COMPLETED" -> getString(R.string.appops_boot)
+    "RUN_IN_BACKGROUND" -> getString(R.string.appops_runbg)
+    "RUN_ANY_IN_BACKGROUND" -> getString(R.string.appops_runanybg)
+    "PLAY_AUDIO" -> getString(R.string.appops_playaudio)
+    "TAKE_AUDIO_FOCUS" -> getString(R.string.appops_takefocus)
     else -> op
 }
 
@@ -267,7 +272,7 @@ private fun MainActivity.cycleAppOps(
 }
 
 private fun MainActivity.resetAppOpsPkg(prefs: SharedPreferences, pkg: String, label: String) {
-    val cmd = AppOpsParser.OPS.joinToString(" && ") { AppOpsParser.buildReset(pkg, it) }
+    val cmd = AppOpsParser.ALL_OPS.joinToString(" && ") { AppOpsParser.buildReset(pkg, it) }
     runAdbCommand(cmd, getString(R.string.appops_reset_done)) {
         try {
             val raw = prefs.getString(Prefs.KEY_APPOPS_RULES, null)
@@ -289,7 +294,7 @@ internal fun appOpsResetCmdForAll(prefs: SharedPreferences): String? {
     rules.forEach { (pkg, m) ->
         if (!AppOpsParser.safePkg(pkg)) return@forEach
         m.keys.forEach { op ->
-            if (op in AppOpsParser.OPS) parts += AppOpsParser.buildReset(pkg, op)
+            if (op in AppOpsParser.ALL_OPS) parts += AppOpsParser.buildReset(pkg, op)
         }
     }
     if (parts.isEmpty()) return null

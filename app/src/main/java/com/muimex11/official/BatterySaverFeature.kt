@@ -64,6 +64,10 @@ internal fun MainActivity.showBatterySaverSheet(prefs: SharedPreferences) {
         sheet.dismiss()
         applyBatterySaver(prefs, BatterySaver.MODE_EXTREME)
     })
+    list.addView(optionRow(this, getString(R.string.bat_trigger), getString(R.string.bat_trigger_desc)) {
+        sheet.dismiss()
+        showBatteryTriggerSheet()
+    })
     list.addView(optionRow(this, getString(R.string.bat_doze), getString(R.string.bat_doze_desc)) {
         sheet.dismiss()
         showDozeSheet(prefs)
@@ -151,10 +155,58 @@ private fun BatterySaverLabelToast(mode: String): Int = when (mode) {
     else -> R.string.bat_done_balanced
 }
 
+internal fun MainActivity.showBatteryTriggerSheet() {
+    if (!hasShizukuPermission()) return
+    val loading = ProgressSheet(this)
+        .icon(R.drawable.ic_battery)
+        .title(getString(R.string.bat_trigger))
+        .message(getString(R.string.txt_please_wait))
+    loading.show(indeterminate = true)
+    lifecycleScope.launch(Dispatchers.IO) {
+        val cur = runAdbCommandWithResult("settings get global low_power_trigger_level").trim()
+            .takeIf { it != "null" && it.isNotEmpty() } ?: "0"
+        withContext(Dispatchers.Main) {
+            loading.dismiss()
+            val list = LinearLayout(this@showBatteryTriggerSheet).apply { orientation = LinearLayout.VERTICAL }
+            val sheet = Sheet(this@showBatteryTriggerSheet)
+                .icon(R.drawable.ic_battery)
+                .title(getString(R.string.bat_trigger))
+                .message(getString(R.string.bat_trigger_msg))
+            listOf("0", "5", "10", "15", "20", "25").forEach { v ->
+                list.addView(optionRow(
+                    this@showBatteryTriggerSheet,
+                    if (v == "0") getString(R.string.bat_trigger_off)
+                    else getString(R.string.bat_trigger_fmt, v),
+                    null, selected = cur == v
+                ) {
+                    sheet.dismiss()
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        val cmd = "settings put global low_power_trigger_level $v"
+                        val res = ShizukuRunner.exec(cmd)
+                        val back = runAdbCommandWithResult("settings get global low_power_trigger_level").trim()
+                        withContext(Dispatchers.Main) {
+                            if (res.ok && back == v) {
+                                UiToast.success(this@showBatteryTriggerSheet, getString(R.string.msg_systweak_applied), Toast.LENGTH_SHORT).show()
+                            } else {
+                                showCommandErrorSheet(
+                                    getString(R.string.dlg_cmd_failed_title), cmd,
+                                    if (res.ok) ShellResult(res.code, "$cmd\nread-back: '$back'") else res
+                                ) { showBatteryTriggerSheet() }
+                            }
+                            fetchSystemStatuses()
+                        }
+                    }
+                })
+            }
+            sheet.content(list).button(getString(R.string.btn_close), SheetStyle.TONAL).show()
+        }
+    }
+}
+
 internal fun MainActivity.resetBatterySaver(prefs: SharedPreferences) {
     if (!hasShizukuPermission()) return
     val prev = readBatteryPrev(prefs)
-    val cmd = BatterySaver.buildResetCmd(prev)
+    val cmd = BatterySaver.buildResetCmd(prev) + " && settings put global low_power_trigger_level 0"
     runAdbCommand(cmd, getString(R.string.bat_reset_done)) {
         prefs.edit()
             .putString(Prefs.KEY_BATTERY_MODE, BatterySaver.MODE_OFF)

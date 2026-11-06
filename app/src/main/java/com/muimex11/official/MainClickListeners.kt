@@ -126,6 +126,10 @@ private fun MainActivity.setupTweakCardListeners(prefs: SharedPreferences) {
     findViewById<CardView>(R.id.cardGraphicsApi).setOnClickListener { showGraphicsApiSheet(prefs) }
 
     findViewById<CardView>(R.id.cardSysTweaks).setOnClickListener { showSysTweaksSheet() }
+    findViewById<CardView>(R.id.cardComfortTweaks).setOnClickListener { showComfortTweaksSheet() }
+    findViewById<CardView>(R.id.cardNetRadio).setOnClickListener { showNetRadioSheet() }
+    findViewById<CardView>(R.id.cardMemTweaks).setOnClickListener { showMemTweaksSheet() }
+    findViewById<CardView>(R.id.cardGameTuning).setOnClickListener { showGameTuningSheet() }
 
     findViewById<CardView>(R.id.cardOrientation).setOnClickListener { showOrientationSheet(prefs) }
 
@@ -140,6 +144,22 @@ private fun MainActivity.setupTweakCardListeners(prefs: SharedPreferences) {
     findViewById<android.view.View>(R.id.btnResetSysTweaks).setOnClickListener {
         if (!hasShizukuPermission()) return@setOnClickListener
         resetSysTweaks()
+    }
+    findViewById<android.view.View>(R.id.btnResetComfort).setOnClickListener {
+        if (!hasShizukuPermission()) return@setOnClickListener
+        resetComfortTweaks()
+    }
+    findViewById<android.view.View>(R.id.btnResetNetRadio).setOnClickListener {
+        if (!hasShizukuPermission()) return@setOnClickListener
+        resetNetRadio()
+    }
+    findViewById<android.view.View>(R.id.btnResetMem).setOnClickListener {
+        if (!hasShizukuPermission()) return@setOnClickListener
+        resetMemTweaks()
+    }
+    findViewById<android.view.View>(R.id.btnResetGameTuning).setOnClickListener {
+        if (!hasShizukuPermission()) return@setOnClickListener
+        resetGameTuning()
     }
     findViewById<CardView>(R.id.cardGameMode).setOnClickListener {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
@@ -404,11 +424,15 @@ internal fun MainActivity.resetAllFunctions(prefs: android.content.SharedPrefere
         val sensorsPart = if (sensorsReset != null) "$sensorsReset && " else ""
         val bgReset = bgRestrictResetCmdForAll(prefs)
         val bgPart = if (bgReset != null) "$bgReset && " else ""
+        val memReset = memResetCmdForAll(prefs)
+        val memPart = if (memReset != null) "$memReset && " else ""
+        val gameReset = gameTuningResetCmdForAll(prefs)
+        val gamePart = if (gameReset != null) "$gameReset && " else ""
 
         val resetCmd = """
             cmd power set-fixed-performance-mode-enabled false
             cmd thermalservice reset
-            $gameModeReset$aggressiveReset$batteryReset && $dozePart$appOpsPart$audioReset && $sensorsPart$bgPart
+            $gameModeReset$aggressiveReset$batteryReset && $dozePart$appOpsPart$audioReset && $sensorsPart$bgPart$memPart$gamePart
             settings delete system min_refresh_rate
             settings delete system peak_refresh_rate
             wm size reset
@@ -431,6 +455,9 @@ internal fun MainActivity.resetAllFunctions(prefs: android.content.SharedPrefere
             settings put global force_resizable_activities 0
             settings put global stay_on_while_plugged_in 0
             settings delete secure icon_blacklist
+            settings delete global low_power_trigger_level
+            ${ComfortTweaks.buildReset()}
+            ${NetRadio.buildReset()}
         """.trimIndent().replace("\n", " && ").replace("&&  &&", "&&")
 
         runAdbCommand(resetCmd, getString(R.string.msg_all_reset)) {
@@ -444,7 +471,10 @@ internal fun MainActivity.resetAllFunctions(prefs: android.content.SharedPrefere
                 .putString(Prefs.KEY_GRAPHICS_RENDERER, GraphicsApi.OPENGL)
                 .putString(Prefs.KEY_GRAPHICS_DESIRED, GraphicsApi.OPENGL)
                 .remove(Prefs.KEY_APPOPS_RULES)
+                .remove(ComfortTweaks.PREF_IGNORE_ORIENT)
                 .apply()
+            clearMemPrefs(prefs)
+            clearGameTuningPrefs(prefs)
             syncThermalService(0)
             clearBatteryPrefs(prefs)
             clearDozePrefs(prefs)
