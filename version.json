@@ -1,8 +1,8 @@
 {
-  "versionCode": 55,
-  "versionName": "4.25",
-  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.25/Muimex11-4.25.apk",
-  "releaseNotes": "Header search+chips pindah ke dalam scroll content; show/hide murni translasi GPU dari offset scroll asli. Menghilangkan flicker/jump dari pendekatan fade+collapse.",
+  "versionCode": 56,
+  "versionName": "4.26",
+  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.26/Muimex11-4.26.apk",
+  "releaseNotes": "Preset dari DisplayManager, bukan hardcoded. Setiap apply diverifikasi; bila ROM revert (mis. peak 30 tidak ada modenya), tampil dialog penjelasan + sekali ketuk ke rate terdekat.",
   "mandatory": false,
-  "sha256": "5195ef39b4b5977bd5a1461d522b30db090c77d92f36fa0f64b8d6452cc88784"
+  "sha256": "52ea21027fda7be1bf7a53fc3a768c564ec96edd80dd959f1033fe165858b399"
 }
