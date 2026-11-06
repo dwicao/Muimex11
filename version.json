@@ -1,8 +1,8 @@
 {
-  "versionCode": 45,
-  "versionName": "4.15",
-  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.15/Muimex11-4.15.apk",
-  "releaseNotes": "Touch latency dipecah per key dengan read-back verify (parsial jujur bila ROM memblokir pointer_speed). Semua kegagalan runAdbCommand kini sheet copyable berisi command + exit code + output penuh. Status touch 3-state + unit test.",
+  "versionCode": 46,
+  "versionName": "4.16",
+  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.16/Muimex11-4.16.apk",
+  "releaseNotes": "Realme/ColorOS menolak 7 (IllegalArgumentException dari SettingsProvider). Probe 7..1, pakai nilai pertama yang lolos read-back; status pointer dihitung applied bila positif.",
   "mandatory": false,
-  "sha256": "bd4ebb213f96004ea989d51401189a6fc32d2b63d982f161579263f279f3d3fb"
+  "sha256": "f2dfce8e0970f296bdf8a75a4488b427bb3dd8635928f8800bf0e848bb4069d0"
 }
