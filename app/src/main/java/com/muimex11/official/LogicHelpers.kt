@@ -537,18 +537,25 @@ object OrientationMode {
 object TouchTweak {
     const val POINTER_KEY = "pointer_speed"
     const val LONG_PRESS_KEY = "long_press_timeout"
-    const val POINTER_VALUE = "7"
     const val LONG_PRESS_VALUE = "250"
     const val LONG_PRESS_RESET = "400"
 
-    fun buildPointer(): String = "settings put system $POINTER_KEY $POINTER_VALUE"
+    /** Highest-first: the ROM keeps the first value its validator accepts. */
+    val POINTER_PROBE = listOf("7", "6", "5", "4", "3", "2", "1")
+
+    fun buildPointer(value: String): String = "settings put system $POINTER_KEY $value"
 
     fun buildLongPress(): String = "settings put secure $LONG_PRESS_KEY $LONG_PRESS_VALUE"
 
     fun buildReset(): String =
         "settings delete system $POINTER_KEY && settings put secure $LONG_PRESS_KEY $LONG_PRESS_RESET"
 
-    fun isPointerApplied(raw: String?): Boolean = raw?.trim() == POINTER_VALUE
+    /** Any positive level counts: the device really is above the 0 default. */
+    fun parsePointerLevel(raw: String?): Int? =
+        raw?.trim()?.toIntOrNull()?.takeIf { it != 0 }
+
+    fun isPointerApplied(raw: String?): Boolean =
+        (parsePointerLevel(raw) ?: 0) > 0
 
     fun isLongPressApplied(raw: String?): Boolean = raw?.trim() == LONG_PRESS_VALUE
 

@@ -561,7 +561,7 @@ class ViewModeTest {
 class TouchTweakTest {
     @Test
     fun buildCommands() {
-        assertEquals("settings put system pointer_speed 7", TouchTweak.buildPointer())
+        assertEquals("settings put system pointer_speed 7", TouchTweak.buildPointer("7"))
         assertEquals("settings put secure long_press_timeout 250", TouchTweak.buildLongPress())
         assertEquals(
             "settings delete system pointer_speed && settings put secure long_press_timeout 400",
@@ -571,10 +571,16 @@ class TouchTweakTest {
 
     @Test
     fun appliedLevels() {
+        // Any positive level counts — ROM validators cap the max (Realme).
         assertTrue(TouchTweak.isPointerApplied("7\n"))
-        assertFalse(TouchTweak.isPointerApplied("3"))
+        assertTrue(TouchTweak.isPointerApplied("5"))
+        assertFalse(TouchTweak.isPointerApplied("0"))
+        assertFalse(TouchTweak.isPointerApplied("-2"))
         assertFalse(TouchTweak.isPointerApplied("null"))
         assertFalse(TouchTweak.isPointerApplied(null))
+        assertEquals(3, TouchTweak.parsePointerLevel(" 3 "))
+        assertNull(TouchTweak.parsePointerLevel("0"))
+        assertNull(TouchTweak.parsePointerLevel("abc"))
         assertTrue(TouchTweak.isLongPressApplied("250"))
         assertFalse(TouchTweak.isLongPressApplied("400"))
         assertEquals(2, TouchTweak.appliedCount(true, true))
