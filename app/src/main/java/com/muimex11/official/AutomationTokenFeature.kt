@@ -39,7 +39,7 @@ internal fun MainActivity.showAutomationTokenSheet() {
     list.addView(infoCard(this, getString(R.string.automation_token_hint)))
     list.addView(infoCard(this, getString(R.string.automation_howto)))
     Sheet(this)
-        .icon(R.drawable.ic_terminal, C_GOLD)
+        .icon(R.drawable.ic_terminal, 0xFFE0A800.toInt())
         .title(getString(R.string.automation_title))
         .message(getString(R.string.automation_msg, TaskerReceiver.ACTION_RUN))
         .content(list)
