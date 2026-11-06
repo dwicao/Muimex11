@@ -16,8 +16,8 @@ android {
         applicationId = "com.muimex11.official"
         minSdk = 24
         targetSdk = 37
-        versionCode = 53
-        versionName = "4.23"
+        versionCode = 54
+        versionName = "4.24"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
