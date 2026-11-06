@@ -1,8 +1,8 @@
 {
-  "versionCode": 56,
-  "versionName": "4.26",
-  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.26/Muimex11-4.26.apk",
-  "releaseNotes": "Preset dari DisplayManager, bukan hardcoded. Setiap apply diverifikasi; bila ROM revert (mis. peak 30 tidak ada modenya), tampil dialog penjelasan + sekali ketuk ke rate terdekat.",
+  "versionCode": 57,
+  "versionName": "4.27",
+  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.27/Muimex11-4.27.apk",
+  "releaseNotes": "- New Display card System Tweaks: Force 4x MSAA, show touches, AOD toggle, safe-volume warning off, force resizable, stay-awake-while-charging, status-bar icon_blacklist picker, animations 0.0x. All verified read-back, reversible, with per-card reset + reset-all coverage.\n- Animations status now distinguishes 0.0x (Off).\n- APK installer: optional Allow downgrade via Shizuku shell pm install -r -d for single APKs (LookBack-style).",
   "mandatory": false,
-  "sha256": "52ea21027fda7be1bf7a53fc3a768c564ec96edd80dd959f1033fe165858b399"
+  "sha256": "8b49fdfb502385c4efc73fb7ec0c58b349fb5e208de9b74a0572c06c77dee265"
 }
