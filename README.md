@@ -62,11 +62,26 @@ Switch the GPU rendering API without root, over Shizuku. Adapted from [GAMA](htt
 - Renderer support varies by device and app: some apps ignore Vulkan and fall back on their own, which is normal. If the screen glitches after switching, hold Power + Volume Down to force-restart, then switch back to OpenGL.
 
 ## Performance & system tools
-RAM booster · cache cleaner · app freezer · fstrim · fixed-performance modes · Game Mode selector · thermal override · blur disable · fast animations · refresh rate control (up to 240Hz) · resolution + DPI control · graphics API switcher (Vulkan/OpenGL) · private/custom DNS · touch and network tuners · gyro fix · crosshair overlay · auto clicker · gaming DND · APK/OBB installer · Shizuku shell terminal · device info · English and Brazilian Portuguese.
+RAM booster · cache cleaner · app freezer · fstrim · fixed-performance modes · Game Mode selector · per-game downscale/FPS tuning · thermal override + headroom forecast · blur disable · fast animations · refresh rate control (OS-aware presets) · resolution + DPI + font scale · graphics API switcher (Vulkan/OpenGL) + Force 4x MSAA · private/custom DNS · captive-portal control · airplane/NFC/location toggles · touch and network tuners · standby buckets · dexopt booster · gyro fix · crosshair overlay · auto clicker · gaming DND · APK/OBB installer (with downgrade) · Shizuku shell terminal · device info · English and Brazilian Portuguese.
 
 ## What's new in this fork
 
-This fork is 75+ commits ahead of upstream. Highlights, newest first:
+This fork is 80+ commits ahead of upstream. Highlights, newest first:
+
+### Display & comfort (v4.28)
+- **Comfort & Display Extras card** — 20 verified tweaks: screen timeout, full Night Light (on/off + Kelvin + sunset schedule), font scale, adaptive brightness, mono audio, chat bubbles, tap-to-wake, dark mode via `cmd uimode`, extra dim, grayscale, force-dark, lock-after-timeout, lockscreen visibility, ambient gestures, camera double-press, ignore-orientation.
+- **System Tweaks card (v4.27)** — Force 4x MSAA, show touches, AOD toggle, safe-volume warning off, force resizable, stay-awake-on-charge, status-bar `icon_blacklist` picker, animations 0.0x. All verified read-back, reversible, with per-card + reset-all coverage.
+- **OS-aware refresh presets (v4.26)** — presets come from `DisplayManager`, unsupported rates are never offered; a revert dialog suggests the nearest supported rate when the ROM refuses a value.
+
+### Network & radio (v4.28)
+- **Net & Radio card** — captive-portal control, airplane via `cmd connectivity`, data roaming, NFC via `svc`, location master switch, and a probe-gated experimental radio-mode lock (4G-only for stable ping).
+- **APK downgrade (v4.27)** — `pm install -r -d` via Shizuku shell for single APKs.
+
+### Memory, battery & per-game (v4.28)
+- **Memory & Background card** — background-process limit, per-app standby buckets, one-shot dexopt booster, `dumpsys alarm` wakeup report.
+- **Per-Game Tuning card** — `cmd game` standard/performance/battery/custom with downscale + FPS cap per game, live config readout, per-game + full reset.
+- **App privacy+ extended** — autostart (`BOOT_COMPLETED`), background-run and per-app audio-mute ops alongside the existing camera/mic/location/clipboard/notification controls.
+- **Battery trigger level + thermal headroom** — auto-saver at a charge level; read-only 10-second thermal forecast in the thermal panel.
 
 ### Automation & control
 - **Tasker / MacroDroid API (v4.18)** — token-guarded broadcast receiver (`com.muimex11.official.TASKER_RUN`): switch Vulkan/OpenGL or trigger a RAM boost from automation apps. The token lives in Shell Execute → Automation.
@@ -138,7 +153,7 @@ O Muimex11 é um otimizador de jogos Android gratuito — sem anúncios e sem pr
 - **Painel Samsung**: Max Boost em um toque, desativar o GOS (com restauração), RAM Plus off, congelar daemons de log, Device Security e bloat da Samsung, além de restaurar tudo.
 - **Monitor de hardware** flutuante em tempo real (CPU, RAM, bateria, rede).
 - **API de gráficos (Vulkan/OpenGL)**: alterna a renderização da GPU sem root via Shizuku (adaptado do [GAMA](https://github.com/palincat/gama), licença MIT) — Vulkan para mais frio/economia de bateria em aparelhos suportados, OpenGL como padrão seguro; reaplicado sozinho após reiniciar.
-- **Novidades deste fork** (75+ commits à frente do upstream): perfis de jogo com auto-aplicação (modo jogo, 120Hz, resolução, orientação, DND, kill ao sair), Vulkan/OpenGL, idioma por app, bloqueio de dados em 2º plano por app, privacidade AppOps (lote + linha do tempo), desinstalar com restauração de fábrica, backup de APKs, menu reboot, bateria (economia, Doze, alarme de carga, saúde), térmico adaptivo, API de automação p/ Tasker, tiles de acesso rápido, ping/jitter no monitor, modos de exibição lista/grade/compacto com busca, e relato de crash com log em `Download/Muimex11`.
+- **Novidades deste fork** (80+ commits à frente do upstream): perfis de jogo com auto-aplicação (modo jogo, 120Hz, resolução, orientação, DND, kill ao sair), ajuste por jogo (modo/downscale/FPS via cmd game), Vulkan/OpenGL + MSAA 4x, presets de refresh da tela real, conforto e tela (timeout, Night Light, fonte, modo escuro, grayscale), rede e rádio (portal cativo, avião, NFC, localização, trava 4G), memória (limite de 2º plano, standby por app, dexopt), idioma por app, bloqueio de dados em 2º plano por app, privacidade AppOps (lote + linha do tempo + autostart + áudio), desinstalar com restauração de fábrica, backup de APKs, downgrade de APK, menu reboot, bateria (economia, Doze, alarme, saúde, nível automático), térmico adaptivo + previsão, API de automação p/ Tasker, tiles de acesso rápido, ping/jitter no monitor, modos de exibição lista/grade/compacto com busca, e relato de crash com log em `Download/Muimex11`.
 - Ferramentas de desempenho, display, rede, APK/OBB e terminal Shizuku — tudo em **PT-BR e inglês**.
 
 Baixe em [Releases](https://github.com/Inkflow-Gab/Muimex11/releases/latest), inicie o Shizuku e autorize no app. O Muimex11 atualiza sozinho quando sai uma versão nova aqui no GitHub.
