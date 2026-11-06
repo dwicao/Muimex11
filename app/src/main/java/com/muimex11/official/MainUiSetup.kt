@@ -116,6 +116,11 @@ internal fun MainActivity.setupStatusStyling() {
             id == R.id.tvStatusThermal -> TweakState.WARN
             id == R.id.tvStatusGraphics -> if (t.contains(en(R.string.w_vulkan))) TweakState.ACTIVE else TweakState.NEUTRAL
             id == R.id.tvStatusOrientation -> if (t.contains(en(R.string.orient_auto))) TweakState.NEUTRAL else TweakState.ACTIVE
+            id == R.id.tvStatusTouch -> when {
+                t.startsWith(en(R.string.w_improved)) -> TweakState.ACTIVE
+                t.contains(en(R.string.w_partial)) -> TweakState.WARN
+                else -> TweakState.NEUTRAL
+            }
             id == R.id.tvStatusShizukuRecovery -> if (t.startsWith(en(R.string.w_ready))) TweakState.NEUTRAL else TweakState.WARN
             id == R.id.tvStatusBlurs -> if (t.startsWith(en(R.string.w_disabled))) TweakState.ACTIVE else TweakState.NEUTRAL
             t.startsWith(en(R.string.w_disabled)) -> TweakState.NEUTRAL

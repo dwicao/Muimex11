@@ -531,6 +531,32 @@ object OrientationMode {
     fun isValid(mode: Int): Boolean = mode in AUTO..REVERSE_LANDSCAPE
 }
 
+/** Touch latency — pure builders/validators. Split per key so a ROM that
+ * blocks one key (e.g. Realme/ColorOS blocking pointer_speed) still gets
+ * the other, with an honest partial status instead of a silent all-or-nothing. */
+object TouchTweak {
+    const val POINTER_KEY = "pointer_speed"
+    const val LONG_PRESS_KEY = "long_press_timeout"
+    const val POINTER_VALUE = "7"
+    const val LONG_PRESS_VALUE = "250"
+    const val LONG_PRESS_RESET = "400"
+
+    fun buildPointer(): String = "settings put system $POINTER_KEY $POINTER_VALUE"
+
+    fun buildLongPress(): String = "settings put secure $LONG_PRESS_KEY $LONG_PRESS_VALUE"
+
+    fun buildReset(): String =
+        "settings delete system $POINTER_KEY && settings put secure $LONG_PRESS_KEY $LONG_PRESS_RESET"
+
+    fun isPointerApplied(raw: String?): Boolean = raw?.trim() == POINTER_VALUE
+
+    fun isLongPressApplied(raw: String?): Boolean = raw?.trim() == LONG_PRESS_VALUE
+
+    /** 0 = none, 1 = partial, 2 = full. */
+    fun appliedCount(pointer: Boolean, longPress: Boolean): Int =
+        (if (pointer) 1 else 0) + (if (longPress) 1 else 0)
+}
+
 /** List/grid/compact view-mode cycle — pure so the order is unit-tested. */
 object ViewMode {
     const val LIST = "list"

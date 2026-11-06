@@ -86,13 +86,14 @@ internal fun MainActivity.runAdbCommand(command: String, successMessage: String,
     lifecycleScope.launch(Dispatchers.IO) {
         val res = ShizukuRunner.exec(command)
         withContext(Dispatchers.Main) {
+            if (isFinishing || isDestroyed) return@withContext
             if (res.ok) {
                 UiToast.success(this@runAdbCommand, successMessage, Toast.LENGTH_SHORT).show()
                 onSuccess()
             } else {
-                val msg = if (res.err.isNotBlank()) "${res.code}: ${res.err.take(120)}"
-                else getString(R.string.toast_cmd_failed, res.code)
-                UiToast.error(this@runAdbCommand, msg, Toast.LENGTH_SHORT).show()
+                // Full copyable output — truncated toasts hid ROM-specific
+                // failures (e.g. Realme blocking pointer_speed).
+                showCommandErrorSheet(getString(R.string.dlg_cmd_failed_title), command, res)
             }
         }
     }

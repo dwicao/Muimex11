@@ -85,7 +85,17 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
     val netStatus = if (networkOpt == "0") getString(R.string.status_optimized) else getString(R.string.status_default)
 
     val touchOpt = runAdbCommandWithResult("settings get system pointer_speed")
-    val touchStatus = if (touchOpt == "7") getString(R.string.status_improved) else getString(R.string.status_default)
+    val touchLpOpt = runAdbCommandWithResult("settings get secure long_press_timeout")
+    val touchStatus = when (
+        TouchTweak.appliedCount(
+            TouchTweak.isPointerApplied(touchOpt),
+            TouchTweak.isLongPressApplied(touchLpOpt)
+        )
+    ) {
+        2 -> getString(R.string.status_improved)
+        1 -> getString(R.string.status_touch_partial)
+        else -> getString(R.string.status_default)
+    }
 
     val dnsMode = runAdbCommandWithResult("settings get global private_dns_mode")
     val dnsSpecifier = runAdbCommandWithResult("settings get global private_dns_specifier")

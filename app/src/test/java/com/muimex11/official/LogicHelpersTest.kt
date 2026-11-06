@@ -557,3 +557,29 @@ class ViewModeTest {
         assertTrue(ViewMode.isGridLike(ViewMode.COMPACT))
     }
 }
+
+class TouchTweakTest {
+    @Test
+    fun buildCommands() {
+        assertEquals("settings put system pointer_speed 7", TouchTweak.buildPointer())
+        assertEquals("settings put secure long_press_timeout 250", TouchTweak.buildLongPress())
+        assertEquals(
+            "settings delete system pointer_speed && settings put secure long_press_timeout 400",
+            TouchTweak.buildReset()
+        )
+    }
+
+    @Test
+    fun appliedLevels() {
+        assertTrue(TouchTweak.isPointerApplied("7\n"))
+        assertFalse(TouchTweak.isPointerApplied("3"))
+        assertFalse(TouchTweak.isPointerApplied("null"))
+        assertFalse(TouchTweak.isPointerApplied(null))
+        assertTrue(TouchTweak.isLongPressApplied("250"))
+        assertFalse(TouchTweak.isLongPressApplied("400"))
+        assertEquals(2, TouchTweak.appliedCount(true, true))
+        assertEquals(1, TouchTweak.appliedCount(true, false))
+        assertEquals(1, TouchTweak.appliedCount(false, true))
+        assertEquals(0, TouchTweak.appliedCount(false, false))
+    }
+}

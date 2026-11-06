@@ -560,6 +560,20 @@
     <string name="cd_view_list">Ver em lista</string>
     <string name="cd_view_compact">Visão compacta</string>
 
+    <!-- Erros de comando copiáveis -->
+    <string name="dlg_cmd_failed_title">Comando falhou</string>
+    <string name="dlg_cmd_failed_msg">O comando abaixo falhou. Copie a saída completa ao relatar o bug.</string>
+    <string name="cmd_failed_command">Comando:</string>
+    <string name="cmd_failed_exit">Código de saída: %1$d</string>
+    <string name="cmd_failed_output">Saída:</string>
+
+    <!-- Latência de toque (por chave) -->
+    <string name="status_touch_partial">Status: Parcialmente melhorado</string>
+    <string name="w_partial">Parcialmente</string>
+    <string name="msg_touch_partial">Toque parcialmente melhorado — bloqueado: %1$s</string>
+    <string name="dlg_touch_partial_title">Toque aplicado parcialmente</string>
+    <string name="touch_both_cmds">pointer_speed + long_press_timeout</string>
+
     <!-- Relato de crash -->
     <string name="crash_title">Algo quebrou</string>
     <string name="crash_msg">O app encontrou um erro e precisou fechar. O log completo está abaixo — copie ao relatar o bug.</string>

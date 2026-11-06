@@ -82,12 +82,7 @@ private fun MainActivity.setupTweakCardListeners(prefs: SharedPreferences) {
 
     findViewById<CardView>(R.id.cardRadioInfo).setOnClickListener { showRadioInfoSheet() }
 
-    findViewById<CardView>(R.id.cardImproveTouch).setOnClickListener {
-        runTweakOnce(
-            R.id.tvStatusTouch, { en(R.string.w_improved) }, R.string.toast_already_improved,
-            "settings put system pointer_speed 7 && settings put secure long_press_timeout 250", R.string.msg_touch_improved
-        )
-    }
+    findViewById<CardView>(R.id.cardImproveTouch).setOnClickListener { improveTouchLatency() }
 
     findViewById<CardView>(R.id.cardFastAnimations).setOnClickListener {
         runTweakOnce(
@@ -334,7 +329,7 @@ private fun MainActivity.setupTweakResetListeners(prefs: SharedPreferences) {
     bindCommandReset(R.id.btnResetNetwork, "settings delete global tether_dun_required", R.string.msg_net_reset)
     bindCommandReset(
         R.id.btnResetTouch,
-        "settings delete system pointer_speed && settings put secure long_press_timeout 400",
+        TouchTweak.buildReset(),
         R.string.msg_touch_reset
     )
     bindCommandReset(R.id.btnResetResolution, "wm size reset && wm density reset", R.string.msg_res_reset)

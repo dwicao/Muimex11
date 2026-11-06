@@ -570,6 +570,20 @@
     <string name="cd_view_list">List view</string>
     <string name="cd_view_compact">Compact view</string>
 
+    <!-- Copyable command errors -->
+    <string name="dlg_cmd_failed_title">Command failed</string>
+    <string name="dlg_cmd_failed_msg">The command below failed. Copy the full output when reporting the bug.</string>
+    <string name="cmd_failed_command">Command:</string>
+    <string name="cmd_failed_exit">Exit code: %1$d</string>
+    <string name="cmd_failed_output">Output:</string>
+
+    <!-- Touch latency (per-key) -->
+    <string name="status_touch_partial">Status: Partially improved</string>
+    <string name="w_partial">Partially</string>
+    <string name="msg_touch_partial">Touch partially improved — blocked: %1$s</string>
+    <string name="dlg_touch_partial_title">Touch partially applied</string>
+    <string name="touch_both_cmds">pointer_speed + long_press_timeout</string>
+
     <!-- Crash reporter -->
     <string name="crash_title">Something crashed</string>
     <string name="crash_msg">The app hit an error and had to close. The full log is below — copy it when reporting the bug.</string>
