@@ -1,8 +1,8 @@
 {
-  "versionCode": 47,
-  "versionName": "4.17",
-  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.17/Muimex11-4.17.apk",
-  "releaseNotes": "Status paralel dengan timeout+fallback per seksi. Backoff loop saat backend mati + baca thermal sysfs langsung. Update check setelah frame pertama. AppOps clipboard/notif + timeline akses. Danger-scan script. Audit input bersih. Token auth untuk API otomasi.",
+  "versionCode": 48,
+  "versionName": "4.18",
+  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.18/Muimex11-4.18.apk",
+  "releaseNotes": "Muimex11 4.18",
   "mandatory": false,
-  "sha256": "1755a9bfdea9d62e8e7c9e5e455d011bb6bab26a584bb7f9dc675125e9418612"
+  "sha256": "67e1db9f9f7377e97694cd9b8ed1e4d404f4c0722977d5bb1f83ca50e5fbb150"
 }
