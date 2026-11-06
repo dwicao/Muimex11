@@ -2,7 +2,7 @@
   "versionCode": 49,
   "versionName": "4.19",
   "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.19/Muimex11-4.19.apk",
-  "releaseNotes": "Muimex11 4.19",
+  "releaseNotes": "NetBlock per app, QS tiles DNS/DND/Vulkan, battery health, radio live, screen off, heat response, kill-on-exit.",
   "mandatory": false,
   "sha256": "180e464432630df76b4ef2bdb83e529144eb241297563014eff41dd417cc9a64"
 }
