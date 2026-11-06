@@ -271,7 +271,51 @@ internal fun MainActivity.setupStatusStyling() {
 internal fun MainActivity.setupBottomBarScrollBehavior() {
     val scrollView = findViewById<NestedScrollView>(R.id.mainScrollView)
     val bottomBar = findViewById<View>(R.id.floatingBottomBar)
+    val header = findViewById<View>(R.id.headerControls)
     var isBottomBarVisible = true
+    var isHeaderVisible = true
+    var headerFullHeight = 0
+    var headerAnim: android.animation.ValueAnimator? = null
+
+    fun setHeaderVisible(visible: Boolean) {
+        if (visible == isHeaderVisible) return
+        if (headerFullHeight == 0) headerFullHeight = header.height
+        if (headerFullHeight == 0) {
+            isHeaderVisible = visible
+            return
+        }
+        isHeaderVisible = visible
+        headerAnim?.cancel()
+        val from = header.height
+        val to = if (visible) headerFullHeight else 0
+        if (from == to) return
+        val anim = android.animation.ValueAnimator.ofInt(from, to)
+        anim.duration = 220
+        anim.addUpdateListener { a ->
+            val h = a.animatedValue as Int
+            val lp = header.layoutParams
+            if (lp.height != h) {
+                lp.height = h
+                header.layoutParams = lp
+            }
+        }
+        anim.addListener(object : android.animation.AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: android.animation.Animator) {
+                if (isHeaderVisible) {
+                    val lp = header.layoutParams
+                    lp.height = ViewGroup.LayoutParams.WRAP_CONTENT
+                    header.layoutParams = lp
+                }
+                if (headerAnim === animation) headerAnim = null
+            }
+
+            override fun onAnimationCancel(animation: android.animation.Animator) {
+                if (headerAnim === animation) headerAnim = null
+            }
+        })
+        headerAnim = anim
+        anim.start()
+    }
 
     scrollView.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
         if (scrollY > oldScrollY && isBottomBarVisible) {
@@ -287,6 +331,13 @@ internal fun MainActivity.setupBottomBarScrollBehavior() {
                 .translationY(0f)
                 .setDuration(250)
                 .start()
+        }
+
+        val dy = scrollY - oldScrollY
+        if (dy > 8 && scrollY > 100 && isHeaderVisible) {
+            setHeaderVisible(false)
+        } else if ((dy < -8 || scrollY <= 100) && !isHeaderVisible) {
+            setHeaderVisible(true)
         }
     }
 }

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Muimex11</string>
-    <string name="tagline">Tweaks powered by Shizuku</string>
     <string name="chip_all">All</string>
     <string name="chip_performance">Performance</string>
     <string name="chip_display">Display</string>

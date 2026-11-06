@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="tagline">Ajustes com Shizuku</string>
     <string name="chip_all">Todos</string>
     <string name="chip_performance">Desempenho</string>
     <string name="chip_display">Tela</string>

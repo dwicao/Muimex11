@@ -57,23 +57,19 @@
         app:layout_constraintTop_toTopOf="parent"
         app:tint="?android:attr/textColorPrimary" />
 
-    <TextView
-        android:id="@+id/tvSubtitle"
+    <LinearLayout
+        android:id="@+id/headerControls"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/tagline"
-        android:textColor="?android:attr/textColorSecondary"
-        android:textSize="14sp"
+        android:clipChildren="true"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle">
 
     <EditText
         android:id="@+id/etSearchTweaks"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
@@ -86,10 +82,7 @@
         android:paddingHorizontal="16dp"
         android:textColor="?android:attr/textColorPrimary"
         android:textColorHint="?android:attr/textColorSecondary"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvSubtitle" />
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/tvNoMatch"
@@ -105,7 +98,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chipScrollView" />
+        app:layout_constraintTop_toBottomOf="@+id/headerControls" />
 
     <HorizontalScrollView
         android:id="@+id/chipScrollView"
@@ -114,10 +107,7 @@
         android:layout_marginTop="12dp"
         android:clipToPadding="false"
         android:paddingHorizontal="16dp"
-        android:scrollbars="none"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etSearchTweaks">
+        android:scrollbars="none">
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/chipGroupCategories"
@@ -188,6 +178,7 @@
                 android:text="@string/chip_tools" />
         </com.google.android.material.chip.ChipGroup>
     </HorizontalScrollView>
+    </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/mainScrollView"
@@ -201,7 +192,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chipScrollView">
+        app:layout_constraintTop_toBottomOf="@+id/headerControls">
 
         <LinearLayout
             android:id="@+id/cardsContainer"
