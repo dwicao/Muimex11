@@ -1,8 +1,8 @@
 {
-  "versionCode": 46,
-  "versionName": "4.16",
-  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.16/Muimex11-4.16.apk",
-  "releaseNotes": "Realme/ColorOS menolak 7 (IllegalArgumentException dari SettingsProvider). Probe 7..1, pakai nilai pertama yang lolos read-back; status pointer dihitung applied bila positif.",
+  "versionCode": 47,
+  "versionName": "4.17",
+  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.17/Muimex11-4.17.apk",
+  "releaseNotes": "Status paralel dengan timeout+fallback per seksi. Backoff loop saat backend mati + baca thermal sysfs langsung. Update check setelah frame pertama. AppOps clipboard/notif + timeline akses. Danger-scan script. Audit input bersih. Token auth untuk API otomasi.",
   "mandatory": false,
-  "sha256": "f2dfce8e0970f296bdf8a75a4488b427bb3dd8635928f8800bf0e848bb4069d0"
+  "sha256": "1755a9bfdea9d62e8e7c9e5e455d011bb6bab26a584bb7f9dc675125e9418612"
 }
