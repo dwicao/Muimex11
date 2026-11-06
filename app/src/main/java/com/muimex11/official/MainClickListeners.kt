@@ -46,7 +46,7 @@ private fun MainActivity.bindCommandReset(buttonId: Int, command: String, messag
 }
 
 private fun MainActivity.bindStatusReset(buttonId: Int, statusId: Int) {
-    findViewById<TextView>(buttonId).setOnClickListener {
+    findViewById<android.view.View>(buttonId).setOnClickListener {
         findViewById<TextView>(statusId).text = getString(R.string.status_ready)
         UiToast.success(this, getString(R.string.toast_status_reset), Toast.LENGTH_SHORT).show()
     }
@@ -83,7 +83,7 @@ private fun MainActivity.setupTweakCardListeners(prefs: SharedPreferences) {
     findViewById<CardView>(R.id.cardRadioInfo).setOnClickListener { showRadioInfoSheet() }
     findViewById<CardView>(R.id.cardNetBlock).setOnClickListener { showNetBlockSheet() }
 
-    findViewById<TextView>(R.id.btnResetNetBlock).setOnClickListener {
+    findViewById<android.view.View>(R.id.btnResetNetBlock).setOnClickListener {
         if (!hasShizukuPermission()) return@setOnClickListener
         resetNetBlock()
     }
@@ -127,11 +127,11 @@ private fun MainActivity.setupTweakCardListeners(prefs: SharedPreferences) {
 
     findViewById<CardView>(R.id.cardOrientation).setOnClickListener { showOrientationSheet(prefs) }
 
-    findViewById<TextView>(R.id.btnResetOrientation).setOnClickListener {
+    findViewById<android.view.View>(R.id.btnResetOrientation).setOnClickListener {
         if (!hasShizukuPermission()) return@setOnClickListener
         resetOrientationMode(prefs)
     }
-    findViewById<TextView>(R.id.btnResetGraphics).setOnClickListener {
+    findViewById<android.view.View>(R.id.btnResetGraphics).setOnClickListener {
         if (!hasShizukuPermission()) return@setOnClickListener
         resetGraphicsRenderer(prefs)
     }
@@ -151,7 +151,7 @@ private fun MainActivity.setupTweakCardListeners(prefs: SharedPreferences) {
         showSamsungBoostSheet()
     }
 
-    findViewById<TextView>(R.id.btnResetSamsungBoost).setOnClickListener {
+    findViewById<android.view.View>(R.id.btnResetSamsungBoost).setOnClickListener {
         if (!hasShizukuPermission()) return@setOnClickListener
         restoreAllSamsung()
     }
@@ -191,14 +191,14 @@ private fun MainActivity.setupToolsCardListeners(prefs: SharedPreferences) {
         showBatterySaverSheet(prefs)
     }
 
-    findViewById<TextView>(R.id.btnResetBatterySaver).setOnClickListener {
+    findViewById<android.view.View>(R.id.btnResetBatterySaver).setOnClickListener {
         if (!hasShizukuPermission()) return@setOnClickListener
         resetBatterySaver(prefs)
     }
 
     findViewById<CardView>(R.id.cardBatteryHealth).setOnClickListener { showBatteryHealthSheet() }
 
-    findViewById<TextView>(R.id.btnResetBattHealth).setOnClickListener {
+    findViewById<android.view.View>(R.id.btnResetBattHealth).setOnClickListener {
         fetchSystemStatuses()
         UiToast.info(this, getString(R.string.toast_batthealth_refresh), Toast.LENGTH_SHORT).show()
     }
@@ -218,7 +218,7 @@ private fun MainActivity.setupToolsCardListeners(prefs: SharedPreferences) {
 
     findViewById<CardView>(R.id.cardBenchmark).setOnClickListener { showBenchmarkSheet(prefs) }
 
-    findViewById<TextView>(R.id.btnResetAppOps).setOnClickListener {
+    findViewById<android.view.View>(R.id.btnResetAppOps).setOnClickListener {
         if (!hasShizukuPermission()) return@setOnClickListener
         val cmd = appOpsResetCmdForAll(prefs)
         if (cmd == null) {
@@ -230,17 +230,17 @@ private fun MainActivity.setupToolsCardListeners(prefs: SharedPreferences) {
             fetchSystemStatuses()
         }
     }
-    findViewById<TextView>(R.id.btnResetGameProfiles).setOnClickListener {
+    findViewById<android.view.View>(R.id.btnResetGameProfiles).setOnClickListener {
         GameProfileStore.setAutoBoost(this, false)
         findViewById<TextView>(R.id.tvStatusGameProfiles).text = gameProfilesStatusText(this)
         UiToast.success(this, getString(R.string.toast_status_reset), Toast.LENGTH_SHORT).show()
     }
-    findViewById<TextView>(R.id.btnResetDebloat).setOnClickListener { restoreAllFrozen() }
-    findViewById<TextView>(R.id.btnResetAudio).setOnClickListener {
+    findViewById<android.view.View>(R.id.btnResetDebloat).setOnClickListener { restoreAllFrozen() }
+    findViewById<android.view.View>(R.id.btnResetAudio).setOnClickListener {
         if (!hasShizukuPermission()) return@setOnClickListener
         resetAudioPreset(prefs)
     }
-    findViewById<TextView>(R.id.btnResetSensors).setOnClickListener {
+    findViewById<android.view.View>(R.id.btnResetSensors).setOnClickListener {
         if (!hasShizukuPermission()) return@setOnClickListener
         val cmd = sensorsResetCmd(prefs)
         if (cmd == null) {
@@ -254,7 +254,7 @@ private fun MainActivity.setupToolsCardListeners(prefs: SharedPreferences) {
         }
     }
 
-    findViewById<TextView>(R.id.btnResetBgRestrict).setOnClickListener {
+    findViewById<android.view.View>(R.id.btnResetBgRestrict).setOnClickListener {
         if (!hasShizukuPermission()) return@setOnClickListener
         val cmd = bgRestrictResetCmdForAll(prefs)
         if (cmd == null) {
@@ -267,42 +267,42 @@ private fun MainActivity.setupToolsCardListeners(prefs: SharedPreferences) {
             fetchSystemStatuses()
         }
     }
-    findViewById<TextView>(R.id.btnResetBenchmark).setOnClickListener {
+    findViewById<android.view.View>(R.id.btnResetBenchmark).setOnClickListener {
         UiToast.info(this, getString(R.string.toast_bench_kept), Toast.LENGTH_SHORT).show()
     }
 }
 
 private fun MainActivity.setupOverlayResetListeners() {
-    findViewById<TextView>(R.id.btnResetAutoClick).setOnClickListener {
+    findViewById<android.view.View>(R.id.btnResetAutoClick).setOnClickListener {
         if (isAutoClickEnabled) stopAutoClickService()
     }
-    findViewById<TextView>(R.id.btnResetCrosshair).setOnClickListener {
+    findViewById<android.view.View>(R.id.btnResetCrosshair).setOnClickListener {
         if (isCrosshairEnabled) stopCrosshairService()
     }
-    findViewById<TextView>(R.id.btnResetMonitor).setOnClickListener {
+    findViewById<android.view.View>(R.id.btnResetMonitor).setOnClickListener {
         if (isMonitorEnabled) toggleRealtimeMonitor()
     }
-    findViewById<TextView>(R.id.btnResetGameSpace).setOnClickListener {
+    findViewById<android.view.View>(R.id.btnResetGameSpace).setOnClickListener {
         if (isGameSpaceEnabled) toggleGameSpace()
     }
 }
 
 private fun MainActivity.setupTweakResetListeners(prefs: SharedPreferences) {
-    findViewById<TextView>(R.id.btnResetFreeze).setOnClickListener {
+    findViewById<android.view.View>(R.id.btnResetFreeze).setOnClickListener {
         restoreAllFrozen()
         restoreAllUninstalled(silentEmpty = true)
     }
 
-    findViewById<TextView>(R.id.btnResetFixedPerf).setOnClickListener {
+    findViewById<android.view.View>(R.id.btnResetFixedPerf).setOnClickListener {
         runAdbCommand(fixedPerfResetCmd(prefs), getString(R.string.fp_reset_done)) {
             prefs.edit().putBoolean(Prefs.KEY_FIXED_PERF, false).putBoolean(Prefs.KEY_FIXED_PERF_AGGRESSIVE, false).apply()
             findViewById<TextView>(R.id.tvStatusFixedPerf).text = getString(R.string.status_default)
         }
     }
-    findViewById<TextView>(R.id.btnResetThermal).setOnClickListener {
+    findViewById<android.view.View>(R.id.btnResetThermal).setOnClickListener {
         resetThermal(prefs)
     }
-    findViewById<TextView>(R.id.btnResetGameMode).setOnClickListener {
+    findViewById<android.view.View>(R.id.btnResetGameMode).setOnClickListener {
         val lastGame = prefs.getString(Prefs.KEY_LAST_GAME_MODE, "")
         val safe = ShellSanitizer.cleanPkg(lastGame)
         if (!safe.isNullOrEmpty()) {
@@ -325,7 +325,7 @@ private fun MainActivity.setupTweakResetListeners(prefs: SharedPreferences) {
     bindStatusReset(R.id.btnResetAppLocale, R.id.tvStatusAppLocale)
     bindStatusReset(R.id.btnResetRadio, R.id.tvStatusRadio)
     bindStatusReset(R.id.btnResetShizukuRecovery, R.id.tvStatusShizukuRecovery)
-    findViewById<TextView>(R.id.btnResetApkBackup).setOnClickListener {
+    findViewById<android.view.View>(R.id.btnResetApkBackup).setOnClickListener {
         prefs.edit()
             .remove(Prefs.KEY_APKBACKUP_COUNT)
             .remove(Prefs.KEY_APKBACKUP_TIME)

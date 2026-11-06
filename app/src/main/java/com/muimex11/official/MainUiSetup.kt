@@ -5,11 +5,13 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.widget.NestedScrollView
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 
@@ -22,6 +24,84 @@ private val toolsCardIds = listOf(R.id.cardShellExecute, R.id.cardApkInstall, R.
 
 internal fun tweakCardIds(): List<Int> =
     performanceCardIds + displayCardIds + networkCardIds + gamingCardIds + toolsCardIds
+
+/** Card title for search matching. */
+private val tweakTitles: Map<Int, Int> = mapOf(
+    R.id.cardFixedPerformance to R.string.title_fixed_perf,
+    R.id.cardOptimizeSystem to R.string.title_optimize,
+    R.id.cardSamsungBoost to R.string.title_samsung_boost,
+    R.id.cardAdjustRefreshRate to R.string.title_refresh,
+    R.id.cardImproveNetwork to R.string.title_network,
+    R.id.cardRadioInfo to R.string.title_radio,
+    R.id.cardNetBlock to R.string.title_netblock,
+    R.id.cardImproveTouch to R.string.title_touch,
+    R.id.cardFixGyro to R.string.title_gyro,
+    R.id.cardFastAnimations to R.string.title_anim,
+    R.id.cardDisableBlurs to R.string.title_blurs,
+    R.id.cardGamingDnd to R.string.title_focus,
+    R.id.cardDisableDevOptions to R.string.title_devopts,
+    R.id.cardApkInstall to R.string.title_apk_install,
+    R.id.cardApkBackup to R.string.title_apkbackup,
+    R.id.cardChangeResolution to R.string.title_resolution,
+    R.id.cardGraphicsApi to R.string.title_graphics,
+    R.id.cardOrientation to R.string.title_orientation,
+    R.id.cardCustomDns to R.string.title_dns,
+    R.id.cardCrosshair to R.string.title_crosshair,
+    R.id.cardRealtimeMonitor to R.string.title_monitor,
+    R.id.cardAutoClick to R.string.title_autoclick,
+    R.id.cardGameMode to R.string.title_gamemode,
+    R.id.cardGameSpace to R.string.title_gamespace,
+    R.id.cardThermalThrottling to R.string.title_thermal,
+    R.id.cardBatterySaver to R.string.title_battery,
+    R.id.cardBatteryHealth to R.string.title_batthealth,
+    R.id.cardFstrim to R.string.title_fstrim,
+    R.id.cardRamBooster to R.string.title_ram,
+    R.id.cardClearCache to R.string.title_cache,
+    R.id.cardFreezeApps to R.string.title_freeze,
+    R.id.cardAppOps to R.string.title_appops,
+    R.id.cardAppLocale to R.string.title_applocale,
+    R.id.cardGameProfiles to R.string.title_gameprofiles,
+    R.id.cardDebloat to R.string.title_debloat,
+    R.id.cardAudioLatency to R.string.title_audio,
+    R.id.cardSensorsToggle to R.string.title_sensors,
+    R.id.cardBgRestrict to R.string.title_bgrestrict,
+    R.id.cardBenchmark to R.string.title_bench,
+    R.id.cardShellExecute to R.string.title_shell,
+    R.id.cardReboot to R.string.title_reboot,
+    R.id.cardShizukuRecovery to R.string.title_srec
+)
+
+internal fun MainActivity.cardTitle(id: Int): String? {
+    val res = tweakTitles[id] ?: return null
+    return try {
+        getString(res)
+    } catch (_: Exception) {
+        null
+    }
+}
+
+/** Tint each category with its own accent so the wall of cards scans faster. */
+internal fun MainActivity.syncTweakCardColors() {
+    val groups = listOf(
+        performanceCardIds to "#2E9E5B",
+        displayCardIds to "#2563EB",
+        networkCardIds to "#E0A800",
+        gamingCardIds to "#7C3AED",
+        toolsCardIds to "#8A8F98"
+    )
+    groups.forEach { (ids, hex) ->
+        val color = try {
+            Color.parseColor(hex)
+        } catch (_: Exception) {
+            return@forEach
+        }
+        ids.forEach { id ->
+            try {
+                (findViewById<View>(id) as? MaterialCardView)?.strokeColor = color
+            } catch (_: Exception) {}
+        }
+    }
+}
 
 internal fun MainActivity.fontify(view: View) {
     ResourcesCompat.getFont(this, R.font.lexendregular)?.let { applyAppFont(view, it) }
@@ -66,23 +146,50 @@ internal fun MainActivity.setupFilterChips() {
     }
 
     val allCards = tweakCardIds()
+    var checkedId = chipGroup.checkedChipId
+    if (checkedId == View.NO_ID) checkedId = R.id.chipAll
+    var query = ""
 
-    chipGroup.setOnCheckedChangeListener { _, checkedId ->
-        allCards.forEach { findViewById<View>(it)?.visibility = View.GONE }
-
-        val visibleIds = when (checkedId) {
-            R.id.chipPerformance -> performanceCardIds
-            R.id.chipDisplay -> displayCardIds
-            R.id.chipNetwork -> networkCardIds
-            R.id.chipGaming -> gamingCardIds
-            R.id.chipTools -> toolsCardIds
-            else -> allCards
-        }
-
-        visibleIds.forEach { id ->
-            findViewById<View>(id)?.visibility = View.VISIBLE
-        }
+    fun groupIds(): List<Int> = when (checkedId) {
+        R.id.chipPerformance -> performanceCardIds
+        R.id.chipDisplay -> displayCardIds
+        R.id.chipNetwork -> networkCardIds
+        R.id.chipGaming -> gamingCardIds
+        R.id.chipTools -> toolsCardIds
+        else -> allCards
     }
+
+    fun refresh() {
+        val group = groupIds().toSet()
+        val q = query.trim()
+        var shown = 0
+        allCards.forEach { id ->
+            val matchesGroup = id in group
+            val matchesQuery = q.isEmpty() ||
+                cardTitle(id)?.contains(q, ignoreCase = true) == true
+            val visible = matchesGroup && matchesQuery
+            if (visible) shown++
+            findViewById<View>(id)?.visibility = if (visible) View.VISIBLE else View.GONE
+        }
+        findViewById<View>(R.id.tvNoMatch)?.visibility =
+            if (shown == 0) View.VISIBLE else View.GONE
+    }
+
+    chipGroup.setOnCheckedChangeListener { _, id ->
+        checkedId = id
+        refresh()
+    }
+
+    findViewById<EditText>(R.id.etSearchTweaks)?.addTextChangedListener(object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, st: Int, c: Int, a: Int) {}
+        override fun onTextChanged(s: CharSequence?, st: Int, b: Int, c: Int) {}
+        override fun afterTextChanged(s: Editable?) {
+            query = s?.toString() ?: ""
+            refresh()
+        }
+    })
+
+    refresh()
 }
 
 internal enum class TweakState { ACTIVE, NEUTRAL, WARN }

@@ -46,6 +46,7 @@ object Prefs {
     const val KEY_BENCH_RUNS = "BenchRuns"
 
     const val KEY_VIEW_MODE = "ViewMode"
+    const val KEY_ONBOARDED = "Onboarded"
 
     const val KEY_UNINSTALLED_APPS = "UninstalledApps"
     const val KEY_APKBACKUP_COUNT = "ApkBackupCount"

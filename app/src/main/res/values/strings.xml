@@ -69,23 +69,23 @@
     <string name="hint_height">Height</string>
     <string name="btn_reset_mixed">Reset</string>
     <string name="btn_apply">Apply</string>
-    <string name="status_unknown">Status: Unknown</string>
-    <string name="status_ready">Status: Ready</string>
-    <string name="status_checking">Status: Checking...</string>
-    <string name="status_disabled">Status: Disabled</string>
-    <string name="status_default">Status: Default</string>
-    <string name="status_enabled">Status: Enabled</string>
-    <string name="status_enabled_aggr">Status: Enabled (Aggressive)</string>
-    <string name="status_throttling_disabled">Status: Throttling Disabled</string>
-    <string name="status_optimized">Status: Optimized</string>
-    <string name="status_improved">Status: Improved</string>
-    <string name="status_recently">Status: Recently Optimized</string>
-    <string name="status_anim_fast">Status: 0.5x (Fast)</string>
-    <string name="status_blurs_off">Status: Disabled (Optimized)</string>
-    <string name="status_dnd_blocked">Status: Blocked (Focus Mode)</string>
-    <string name="status_devopt_on">Status: Enabled (Unsafe for Banks)</string>
-    <string name="status_devopt_off">Status: Disabled (Safe)</string>
-    <string name="status_already_clean">Status: Already clean</string>
+    <string name="status_unknown">Unknown</string>
+    <string name="status_ready">Ready</string>
+    <string name="status_checking">Checking...</string>
+    <string name="status_disabled">Disabled</string>
+    <string name="status_default">Default</string>
+    <string name="status_enabled">Enabled</string>
+    <string name="status_enabled_aggr">Enabled (Aggressive)</string>
+    <string name="status_throttling_disabled">Throttling Disabled</string>
+    <string name="status_optimized">Optimized</string>
+    <string name="status_improved">Improved</string>
+    <string name="status_recently">Recently Optimized</string>
+    <string name="status_anim_fast">0.5x (Fast)</string>
+    <string name="status_blurs_off">Disabled (Optimized)</string>
+    <string name="status_dnd_blocked">Blocked (Focus Mode)</string>
+    <string name="status_devopt_on">Enabled (Unsafe for Banks)</string>
+    <string name="status_devopt_off">Disabled (Safe)</string>
+    <string name="status_already_clean">Already clean</string>
     <string name="w_default">Default</string>
     <string name="w_enabled">Enabled</string>
     <string name="w_disabled">Disabled</string>
@@ -287,12 +287,12 @@
     <string name="dl_downloaded">%1$s downloaded</string>
     <string name="toast_dl_failed">Download failed: %1$s</string>
     <string name="err_http">Server returned HTTP %1$s</string>
-    <string name="status_active">Status: Active (%1$s)</string>
-    <string name="status_value">Status: %1$s</string>
-    <string name="status_crosshair">Status: %1$s (%2$s, %3$s)</string>
-    <string name="status_autoclick">Status: %1$s (%2$s s)</string>
-    <string name="status_freed_mb">Status: Freed about %1$s MB</string>
-    <string name="status_freed">Status: Freed %1$s</string>
+    <string name="status_active">Active (%1$s)</string>
+    <string name="status_value">%1$s</string>
+    <string name="status_crosshair">%1$s (%2$s, %3$s)</string>
+    <string name="status_autoclick">%1$s (%2$s s)</string>
+    <string name="status_freed_mb">Freed about %1$s MB</string>
+    <string name="status_freed">Freed %1$s</string>
     <string name="toast_freed_cache">Freed %1$s of cache</string>
     <string name="ram_summary">%1$s selected  ·  up to about %2$s MB in use. Free RAM now: %3$s MB.</string>
     <string name="btn_boost_n">Boost (%1$s)</string>
@@ -364,12 +364,12 @@
         <item quantity="other">Stopped %1$s apps</item>
     </plurals>
     <plurals name="status_stopped_apps">
-        <item quantity="one">Status: Stopped %1$s app</item>
-        <item quantity="other">Status: Stopped %1$s apps</item>
+        <item quantity="one">Stopped %1$s app</item>
+        <item quantity="other">Stopped %1$s apps</item>
     </plurals>
     <plurals name="status_frozen_apps">
-        <item quantity="one">Status: %1$s app frozen</item>
-        <item quantity="other">Status: %1$s apps frozen</item>
+        <item quantity="one">%1$s app frozen</item>
+        <item quantity="other">%1$s apps frozen</item>
     </plurals>
     <plurals name="sys_selected">
         <item quantity="one">You selected %1$s system app:\n\n</item>
@@ -400,7 +400,7 @@
     <string name="gyro_result_good">Your gyroscope updates at %1$d Hz (before the fix: %2$d Hz). The sensor itself is fast enough, so if aiming still feels delayed, the cause is in the game: lower its gyro smoothing and raise its FPS.</string>
     <string name="gyro_result_low">Your gyroscope updates at only %1$d Hz (before the fix: %2$d Hz). Close background apps, keep Battery Saver off and restart your phone if the delay continues.</string>
     <string name="gyro_not_found">This device has no gyroscope, so there is nothing to fix.</string>
-    <string name="status_gyro">Status: Gyro %1$d Hz</string>
+    <string name="status_gyro">Gyro %1$d Hz</string>
 
     <!-- Tools category -->
     <string name="chip_tools">Tools</string>
@@ -437,8 +437,8 @@
     <string name="shell_trimmed">… earlier output trimmed …</string>
     <string name="shell_elapsed">%1$s s</string>
     <string name="shell_stage_fail">Couldn\'t prepare the script on the device</string>
-    <string name="status_shell_last">Status: Last run · exit code %1$d</string>
-    <string name="status_shell_stopped">Status: Last run stopped</string>
+    <string name="status_shell_last">Last run · exit code %1$d</string>
+    <string name="status_shell_stopped">Last run stopped</string>
 
     <!-- Automatic language -->
     <string name="lang_setup_title">Setting up your language</string>
@@ -545,8 +545,8 @@
     <string name="samsung_row_on">Frozen / boosted</string>
     <string name="samsung_row_off">Default</string>
     <string name="samsung_row_unknown">Not found</string>
-    <string name="samsung_state_label">Status: %1$s</string>
-    <string name="samsung_status_count">Status: %1$s Samsung actions active</string>
+    <string name="samsung_state_label">%1$s</string>
+    <string name="samsung_status_count">%1$s Samsung actions active</string>
     <string name="samsung_gos_warning_title">Disable GOS?</string>
     <string name="samsung_gos_warning_msg">The Game Optimizing Service (GOS) decides how much power games are allowed to use. Disabling it can raise FPS but Samsung\'s in-game safeguards stop working (more heat / battery drain). You can restore GOS any time from this same panel.</string>
     <string name="samsung_gos_confirm_disable">Disable it</string>
@@ -592,7 +592,7 @@
     <string name="cmd_failed_output">Output:</string>
 
     <!-- Touch latency (per-key) -->
-    <string name="status_touch_partial">Status: Partially improved</string>
+    <string name="status_touch_partial">Partially improved</string>
     <string name="w_partial">Partially</string>
     <string name="msg_touch_partial">Touch partially improved — blocked: %1$s</string>
     <string name="dlg_touch_partial_title">Touch partially applied</string>
@@ -620,9 +620,9 @@
     <string name="bat_done_saver">Battery Saver on</string>
     <string name="bat_done_extreme">Extreme battery mode on</string>
     <string name="bat_reset_done">Battery settings restored</string>
-    <string name="status_battery_saver">Status: Battery Saver</string>
-    <string name="status_battery_extreme">Status: Battery Extreme</string>
-    <string name="status_battery_balanced">Status: Battery Balanced</string>
+    <string name="status_battery_saver">Battery Saver</string>
+    <string name="status_battery_extreme">Battery Extreme</string>
+    <string name="status_battery_balanced">Battery Balanced</string>
     <string name="toast_battery_already">Battery mode already active — reset first to change</string>
     <string name="doze_title">Doze tuning</string>
     <string name="doze_message">Doze sleeps background apps when the screen is off. Apps on the whitelist stay awake.</string>
@@ -685,7 +685,7 @@
     <string name="gprof_usage_title">Faster app detection (no root)</string>
     <string name="gprof_usage_desc">Grant Usage Access so Game Space detects games without shell polling — saves battery</string>
     <string name="gprof_usage_open">Grant Usage Access</string>
-    <string name="status_gprof_fmt">Status: %1$d profiles · auto %2$s</string>
+    <string name="status_gprof_fmt">%1$d profiles · auto %2$s</string>
 
     <string name="title_debloat">Debloat Presets</string>
     <string name="desc_debloat">One-tap disable of Meta, MIUI and Samsung telemetry/bloat. Only installed, non-critical apps. Reversible via freeze list.</string>
@@ -716,7 +716,7 @@
     <string name="audio_hint">Bluetooth absolute volume lets the phone (not the headset) control volume steps — fewer resyncs, steadier latency.</string>
     <string name="audio_done">Low-latency audio on</string>
     <string name="audio_reset_done">Audio settings restored</string>
-    <string name="status_audio_lowlat">Status: Low latency</string>
+    <string name="status_audio_lowlat">Low latency</string>
     <string name="toast_audio_already">Audio preset already active — reset first</string>
 
     <string name="title_sensors">Sensors Toggle</string>
@@ -730,9 +730,9 @@
     <string name="sensors_hint">Uses the system sensor-privacy switch — same as the quick-settings tile. Banking and camera apps will see no input while blocked.</string>
     <string name="sensors_blocked_fmt">%1$s blocked</string>
     <string name="sensors_allowed_fmt">%1$s allowed</string>
-    <string name="status_sensors_both">Status: Camera + mic blocked</string>
-    <string name="status_sensors_cam">Status: Camera blocked</string>
-    <string name="status_sensors_mic">Status: Mic blocked</string>
+    <string name="status_sensors_both">Camera + mic blocked</string>
+    <string name="status_sensors_cam">Camera blocked</string>
+    <string name="status_sensors_mic">Mic blocked</string>
     <string name="sensors_reset_done">Sensors restored</string>
 
     <string name="gs_adaptive_fmt">Adaptive %1$s · %2$s</string>
@@ -773,7 +773,7 @@
     <string name="bench_result_fmt">Launch %1$dms · FPS %2$s</string>
     <string name="bench_delta_fmt">vs before: launch %1$sms · FPS %2$s</string>
     <string name="bench_done">Benchmark done</string>
-    <string name="status_bench_fmt">Status: %1$s %2$dms · %3$s FPS</string>
+    <string name="status_bench_fmt">%1$s %2$dms · %3$s FPS</string>
     <string name="toast_bench_kept">History kept — benchmark data is never wiped</string>
 
     <string name="thermal_off">Off</string>
@@ -791,7 +791,7 @@
     <string name="thermal_preset_aggressive">Aggressive</string>
     <string name="thermal_adaptive_note">Adaptive needs the Game Space dock running — it hosts the temperature governor. Enabling it starts the dock.</string>
     <string name="thermal_adaptive_on">Adaptive thermal on (%1$d°/%2$d°)</string>
-    <string name="status_thermal_adaptive_fmt">Status: Adaptive (%1$d°/%2$d°)</string>
+    <string name="status_thermal_adaptive_fmt">Adaptive (%1$d°/%2$d°)</string>
 
     <!-- Graphics API (Vulkan/OpenGL) — core switch adapted from GAMA (MIT, palincat/gama) -->
     <string name="title_graphics">Graphics API (Vulkan/OpenGL)</string>
@@ -803,8 +803,8 @@
     <string name="graphics_opengl">OpenGL</string>
     <string name="graphics_opengl_desc">Android default · maximum compatibility</string>
     <string name="graphics_note">Android clears this setting on reboot — Muimex11 re-applies Vulkan automatically when Shizuku is ready. Some apps ignore Vulkan and fall back to OpenGL on their own; that is normal.</string>
-    <string name="status_graphics_vulkan">Status: Vulkan</string>
-    <string name="status_graphics_opengl">Status: OpenGL (Default)</string>
+    <string name="status_graphics_vulkan">Vulkan</string>
+    <string name="status_graphics_opengl">OpenGL (Default)</string>
     <string name="w_vulkan">Vulkan</string>
     <string name="w_opengl">OpenGL</string>
     <string name="msg_graphics_set">Graphics API set to %1$s</string>
@@ -825,8 +825,8 @@
         <item quantity="other">Uninstalled %1$s apps</item>
     </plurals>
     <plurals name="status_uninstalled_apps">
-        <item quantity="one">Status: %1$s app uninstalled</item>
-        <item quantity="other">Status: %1$s apps uninstalled</item>
+        <item quantity="one">%1$s app uninstalled</item>
+        <item quantity="other">%1$s apps uninstalled</item>
     </plurals>
 
     <!-- APK backup -->
@@ -838,7 +838,7 @@
     <string name="btn_backup">Backup</string>
     <string name="btn_backup_n">Backup (%1$s)</string>
     <string name="msg_apkbackup_done">Backed up %1$d apps (%2$d APKs) to Download/Muimex11</string>
-    <string name="status_apkbackup_fmt">Status: %1$d apps backed up</string>
+    <string name="status_apkbackup_fmt">%1$d apps backed up</string>
 
     <!-- Reboot menu -->
     <string name="title_reboot">Reboot Options</string>
@@ -870,7 +870,7 @@
     <string name="orient_landscape">Landscape</string>
     <string name="orient_rportrait">Reverse portrait</string>
     <string name="orient_rlandscape">Reverse landscape</string>
-    <string name="status_orient_fmt">Status: %1$s</string>
+    <string name="status_orient_fmt">%1$s</string>
     <string name="msg_orient_set">Orientation set to %1$s</string>
 
     <!-- Game Profiles: focus DND + forced orientation -->
@@ -923,9 +923,9 @@
     <string name="srec_open_only">Open manager only</string>
     <string name="srec_open_only_desc">Just open the installed Shizuku manager</string>
     <string name="toast_srec_no_manager">No Shizuku manager found — install Shizuku first</string>
-    <string name="status_srec_ready">Status: Ready — Shizuku connected</string>
-    <string name="status_srec_wifi">Status: Wireless debugging on, Shizuku off</string>
-    <string name="status_srec_off">Status: Wireless debugging off</string>
+    <string name="status_srec_ready">Ready — Shizuku connected</string>
+    <string name="status_srec_wifi">Wireless debugging on, Shizuku off</string>
+    <string name="status_srec_off">Wireless debugging off</string>
 
     <!-- Radio info -->
     <string name="title_radio">Phone Info (Bands/RAT)</string>
@@ -962,7 +962,7 @@
     <string name="netblock_saver_off">Off — follow per-app rules</string>
     <string name="netblock_hint">Only background mobile data is blocked — foreground use and Wi-Fi still work.</string>
     <string name="netblock_blocked_suffix"> · blocked</string>
-    <string name="status_netblock_fmt">Status: %1$d apps blocked</string>
+    <string name="status_netblock_fmt">%1$d apps blocked</string>
     <string name="msg_netblock_on">Background data blocked for %1$s</string>
     <string name="msg_netblock_off">Background data allowed for %1$s</string>
     <string name="msg_netblock_reset">Background data restored for %1$d apps</string>
@@ -976,7 +976,7 @@
     <string name="batthealth_cycles">Charge cycles</string>
     <string name="batthealth_tech">Technology</string>
     <string name="batthealth_row_fmt">%1$s: %2$s</string>
-    <string name="status_batthealth_fmt">Status: %1$s</string>
+    <string name="status_batthealth_fmt">%1$s</string>
     <string name="toast_batthealth_fail">Couldn\'t read battery info on this ROM</string>
     <string name="toast_batthealth_refresh">Battery status refreshed</string>
 
@@ -1004,4 +1004,17 @@
     <!-- Game Profiles: stop on exit -->
     <string name="gprof_killexit">Stop game on exit</string>
     <string name="gprof_killexit_desc">Force-stop this game when you leave it</string>
+
+    <!-- Tidy UI -->
+    <string name="desc_reset">Reset this tweak</string>
+    <string name="hint_search_tweaks">Search tweaks…</string>
+    <string name="no_match_tweaks">No tweaks match your search</string>
+    <string name="ob_title">Welcome to Muimex11</string>
+    <string name="ob_msg">Three steps and you are boosting games. This shows only once.</string>
+    <string name="ob_s1">1 · Start Shizuku</string>
+    <string name="ob_s1d">Launch the Shizuku manager and start its service (wireless debugging, no PC needed after first setup).</string>
+    <string name="ob_s2">2 · Grant permission</string>
+    <string name="ob_s2d">Open Muimex11 and allow Shizuku access when asked. The top pill turns green when connected.</string>
+    <string name="ob_s3">3 · Pick a tweak</string>
+    <string name="ob_s3d">Browse the cards below, use search or the category chips. Every change is reversible with its reset button.</string>
 </resources>

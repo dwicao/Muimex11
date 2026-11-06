@@ -92,6 +92,8 @@ class MainActivity : AppCompatActivity() {
         setupClickListeners()
         setupFilterChips()
         setupViewToggle()
+        syncTweakCardColors()
+        setupOnboardingIfNeeded()
         setupBottomBarScrollBehavior()
         setupStatusStyling()
         refreshFreezeStatus()
