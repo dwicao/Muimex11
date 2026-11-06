@@ -1,8 +1,8 @@
 {
-  "versionCode": 49,
-  "versionName": "4.19",
-  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.19/Muimex11-4.19.apk",
-  "releaseNotes": "NetBlock per app, QS tiles DNS/DND/Vulkan, battery health, radio live, screen off, heat response, kill-on-exit.",
+  "versionCode": 50,
+  "versionName": "4.20",
+  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.20/Muimex11-4.20.apk",
+  "releaseNotes": "Kolom search + filter gabungan chips. Stroke warna per kategori. Hapus prefix Status di 54+54 string. 42 tombol reset jadi icon button. Bersihkan header ikon yatim. Onboarding sekali jalan.",
   "mandatory": false,
-  "sha256": "180e464432630df76b4ef2bdb83e529144eb241297563014eff41dd417cc9a64"
+  "sha256": "765a5bcb5e5cae76c3f864825573e22f19b7681c01c1e81c2dd71dd9287622fd"
 }
