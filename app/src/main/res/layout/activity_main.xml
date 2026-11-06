@@ -57,33 +57,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:tint="?android:attr/textColorPrimary" />
 
-    <LinearLayout
-        android:id="@+id/headerControls"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:clipChildren="true"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTitle">
-
-    <EditText
-        android:id="@+id/etSearchTweaks"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/bg_reset_pill"
-        android:hint="@string/hint_search_tweaks"
-        android:imeOptions="actionDone"
-        android:importantForAutofill="no"
-        android:inputType="text"
-        android:paddingHorizontal="16dp"
-        android:textColor="?android:attr/textColorPrimary"
-        android:textColorHint="?android:attr/textColorSecondary"
-        android:textSize="14sp" />
-
     <TextView
         android:id="@+id/tvNoMatch"
         android:layout_width="0dp"
@@ -98,87 +71,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/headerControls" />
+        app:layout_constraintTop_toBottomOf="@+id/mainScrollView" />
 
-    <HorizontalScrollView
-        android:id="@+id/chipScrollView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:clipToPadding="false"
-        android:paddingHorizontal="16dp"
-        android:scrollbars="none">
-
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chipGroupCategories"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:singleSelection="true"
-            app:selectionRequired="true">
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipAll"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                app:checkedIconVisible="false"
-                app:chipCornerRadius="20dp"
-                app:chipStrokeWidth="1dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/chip_all"
-                android:checked="true" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipPerformance"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                app:checkedIconVisible="false"
-                app:chipCornerRadius="20dp"
-                app:chipStrokeWidth="1dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/chip_performance" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipDisplay"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                app:checkedIconVisible="false"
-                app:chipCornerRadius="20dp"
-                app:chipStrokeWidth="1dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/chip_display" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipNetwork"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                app:checkedIconVisible="false"
-                app:chipCornerRadius="20dp"
-                app:chipStrokeWidth="1dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/chip_network" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipGaming"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                app:checkedIconVisible="false"
-                app:chipCornerRadius="20dp"
-                app:chipStrokeWidth="1dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/chip_gaming" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipTools"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                app:checkedIconVisible="false"
-                app:chipCornerRadius="20dp"
-                app:chipStrokeWidth="1dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/chip_tools" />
-        </com.google.android.material.chip.ChipGroup>
-    </HorizontalScrollView>
-    </LinearLayout>
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/mainScrollView"
@@ -192,7 +86,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/headerControls">
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle">
 
         <LinearLayout
             android:id="@+id/cardsContainer"
@@ -203,6 +97,109 @@
             android:paddingEnd="16dp"
             android:paddingBottom="104dp"
             android:animateLayoutChanges="true">
+            <LinearLayout
+                android:id="@+id/headerControls"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="?attr/colorSurface"
+                android:clipChildren="true"
+                android:elevation="4dp"
+                android:orientation="vertical">
+                <EditText
+                    android:id="@+id/etSearchTweaks"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@drawable/bg_reset_pill"
+                    android:hint="@string/hint_search_tweaks"
+                    android:imeOptions="actionDone"
+                    android:importantForAutofill="no"
+                    android:inputType="text"
+                    android:paddingHorizontal="16dp"
+                    android:textColor="?android:attr/textColorPrimary"
+                    android:textColorHint="?android:attr/textColorSecondary"
+                    android:textSize="14sp" />
+            <HorizontalScrollView
+                android:id="@+id/chipScrollView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:clipToPadding="false"
+                android:paddingHorizontal="16dp"
+                android:scrollbars="none">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupCategories"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleSelection="true"
+                    app:selectionRequired="true">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipAll"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        app:checkedIconVisible="false"
+                        app:chipCornerRadius="20dp"
+                        app:chipStrokeWidth="1dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/chip_all"
+                        android:checked="true" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipPerformance"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        app:checkedIconVisible="false"
+                        app:chipCornerRadius="20dp"
+                        app:chipStrokeWidth="1dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/chip_performance" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipDisplay"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        app:checkedIconVisible="false"
+                        app:chipCornerRadius="20dp"
+                        app:chipStrokeWidth="1dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/chip_display" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipNetwork"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        app:checkedIconVisible="false"
+                        app:chipCornerRadius="20dp"
+                        app:chipStrokeWidth="1dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/chip_network" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipGaming"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        app:checkedIconVisible="false"
+                        app:chipCornerRadius="20dp"
+                        app:chipStrokeWidth="1dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/chip_gaming" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipTools"
+                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        app:checkedIconVisible="false"
+                        app:chipCornerRadius="20dp"
+                        app:chipStrokeWidth="1dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/chip_tools" />
+                </com.google.android.material.chip.ChipGroup>
+            </HorizontalScrollView>
+            </LinearLayout>
 
 
             <com.google.android.material.card.MaterialCardView

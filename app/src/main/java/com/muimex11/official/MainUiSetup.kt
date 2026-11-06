@@ -273,42 +273,6 @@ internal fun MainActivity.setupBottomBarScrollBehavior() {
     val bottomBar = findViewById<View>(R.id.floatingBottomBar)
     val header = findViewById<View>(R.id.headerControls)
     var isBottomBarVisible = true
-    var isHeaderVisible = true
-    var headerFullHeight = 0
-
-    fun setHeaderVisible(visible: Boolean) {
-        if (visible == isHeaderVisible) return
-        isHeaderVisible = visible
-        header.animate().cancel()
-        if (!visible) {
-            // Fade out on the GPU (cheap), then collapse in ONE layout pass.
-            // Animating layout height per-frame re-measures 40+ cards and
-            // janks hard during a fling — never do that on scroll.
-            if (header.height == 0) return
-            headerFullHeight = header.height
-            header.animate().alpha(0f).setDuration(120).withEndAction {
-                if (!isHeaderVisible) {
-                    val lp = header.layoutParams
-                    lp.height = 0
-                    header.layoutParams = lp
-                }
-            }.start()
-        } else {
-            val lp = header.layoutParams
-            lp.height = if (headerFullHeight > 0) headerFullHeight
-            else ViewGroup.LayoutParams.WRAP_CONTENT
-            header.layoutParams = lp
-            header.alpha = 0f
-            header.animate().alpha(1f).setDuration(150).withEndAction {
-                if (isHeaderVisible) {
-                    header.alpha = 1f
-                    val lp2 = header.layoutParams
-                    lp2.height = ViewGroup.LayoutParams.WRAP_CONTENT
-                    header.layoutParams = lp2
-                }
-            }.start()
-        }
-    }
 
     scrollView.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
         if (scrollY > oldScrollY && isBottomBarVisible) {
@@ -326,11 +290,19 @@ internal fun MainActivity.setupBottomBarScrollBehavior() {
                 .start()
         }
 
-        val dy = scrollY - oldScrollY
-        if (dy > 8 && scrollY > 100 && isHeaderVisible) {
-            setHeaderVisible(false)
-        } else if ((dy < -8 || scrollY <= 100) && !isHeaderVisible) {
-            setHeaderVisible(true)
+        // enterAlways-style: hide while scrolling down, slide back over the
+        // content on any upward scroll.
+        val h = header.height
+        if (h > 0) {
+            if (headerRevealed < 0) headerRevealed = h
+            val dy = scrollY - oldScrollY
+            if (dy != 0) {
+                headerRevealed = (headerRevealed - dy).coerceIn(0, h)
+                header.translationY = (scrollY - h + headerRevealed).toFloat()
+            }
         }
     }
 }
+
+/** Pixels of the enterAlways search header currently revealed [0..H]. */
+private var headerRevealed = -1

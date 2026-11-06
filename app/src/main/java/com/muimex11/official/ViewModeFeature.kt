@@ -50,7 +50,8 @@ private fun MainActivity.syncViewToggleIcon(mode: String) {
 
 internal fun MainActivity.applyViewMode(mode: String) {
     val container = findViewById<LinearLayout>(R.id.cardsContainer) ?: return
-    val header = findViewById<View>(R.id.cardDeviceInfo)
+    val deviceCard = findViewById<View>(R.id.cardDeviceInfo)
+    val searchHeader = findViewById<View>(R.id.headerControls)
     val cards = tweakCardIds().mapNotNull { findViewById<View>(it) }
     val grid = ViewMode.isGridLike(mode)
     val compact = mode == ViewMode.COMPACT
@@ -59,16 +60,14 @@ internal fun MainActivity.applyViewMode(mode: String) {
     val transition = container.layoutTransition
     container.layoutTransition = null
     try {
-        // Detach EVERYTHING first: in grid mode the cards live inside row
-        // layouts, so container.removeAllViews() alone leaves them parented
-        // and re-adding would throw IllegalStateException. This was the
-        // grid->list crash.
-        header?.let { (it.parent as? ViewGroup)?.removeView(it) }
+        // Detach cards first: in grid mode they live inside row layouts, and
+        // re-adding an attached child would throw IllegalStateException.
+        // The enterAlways search header is never removed, so its scroll
+        // translation and reveal state survive mode switches untouched.
         cards.forEach { (it.parent as? ViewGroup)?.removeView(it) }
-        container.removeAllViews()
-        header?.let {
-            setDescVisible(it, true)
-            container.addView(it, listParams(isHeader = true))
+        for (i in container.childCount - 1 downTo 0) {
+            val c = container.getChildAt(i)
+            if (c !== searchHeader && c !== deviceCard) container.removeViewAt(i)
         }
         if (!grid) {
             cards.forEach {
