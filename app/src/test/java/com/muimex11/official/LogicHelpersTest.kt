@@ -958,7 +958,7 @@ class ComfortTweaksTest {
         val reset = ComfortTweaks.buildReset()
         listOf("screen_off_timeout", "night_display_activated", "night_display_color_temperature",
             "night_display_auto_mode", "font_scale", "screen_brightness_mode", "master_mono",
-            "notification_bubbles", "doze_tap_gesture", "ui_night_mode", "reduce_bright_colors_activated",
+            "notification_bubbles", "doze_tap_gesture", "cmd uimode night auto", "reduce_bright_colors_activated",
             "accessibility_display_daltonizer", "debug.hwui.force_dark", "lock_screen_lock_after_timeout",
             "lock_screen_show_notifications", "lock_screen_allow_private_notifications",
             "doze_enabled", "wake_gesture_enabled", "doze_pulse_on_pick_up",
