@@ -1,8 +1,8 @@
 {
-  "versionCode": 59,
-  "versionName": "4.29",
-  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.29/Muimex11-4.29.apk",
-  "releaseNotes": "Muimex11 4.29",
+  "versionCode": 60,
+  "versionName": "4.30",
+  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.30/Muimex11-4.30.apk",
+  "releaseNotes": "Crash Display & Sound Extras di semua device: subtitle multi-press memformat String dengan %d. %s aman untuk Int maupun String. Audit semua %d call sites + paritas specifier EN/PT: tidak ada yang salah tipe lainnya.",
   "mandatory": false,
-  "sha256": "4aee21d0a9aac5d46814e99082a067389a16facac32a7ebcbb49e8e87037d22f"
+  "sha256": "6ade9ce03c5eadc07cd1ec7fe9aca2836861289ccc179a6953e05f685f5a1d38"
 }
