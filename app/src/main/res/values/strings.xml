@@ -1251,7 +1251,7 @@
     <string name="dx_freeform_desc">Desktop-style floating windows (needs reboot)</string>
     <string name="dx_multipress">Multi-press speed</string>
     <string name="dx_multipress_msg">Double/triple-press timeout, like long-press tuning.</string>
-    <string name="dx_ms_fmt">%1$d ms</string>
+    <string name="dx_ms_fmt">%1$s ms</string>
     <string name="dx_quiet">Silence touch sounds</string>
     <string name="dx_quiet_desc">Touch + lock + dialpad sounds, haptics, ring vibration</string>
     <string name="dx_quiet_active">%1$d of 5 silenced</string>

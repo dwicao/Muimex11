@@ -1242,7 +1242,7 @@
     <string name="dx_freeform_desc">Janelas estilo desktop (precisa reiniciar)</string>
     <string name="dx_multipress">Velocidade multi-toque</string>
     <string name="dx_multipress_msg">Tempo de toque duplo/triplo, como o long-press.</string>
-    <string name="dx_ms_fmt">%1$d ms</string>
+    <string name="dx_ms_fmt">%1$s ms</string>
     <string name="dx_quiet">Silenciar sons de toque</string>
     <string name="dx_quiet_desc">Toque + bloqueio + discagem, hápticos, vibrar ao chamar</string>
     <string name="dx_quiet_active">%1$d de 5 silenciados</string>
