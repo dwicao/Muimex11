@@ -1211,4 +1211,66 @@
     <string name="thermal_headroom">Margem térmica</string>
     <string name="thermal_headroom_desc">Previsão térmica de 10 s (só leitura)</string>
     <string name="thermal_headroom_empty">(sem dados — HAL indisponível)</string>
+
+    <!-- Tier-1 segunda onda: extras de tela e som -->
+    <string name="title_dx">Extras de tela e som</string>
+    <string name="desc_dx">Inversão, contraste, negrito, segundos no relógio, freeform, sons e mais.</string>
+    <string name="msg_dx_reset">Extras de tela restaurados</string>
+    <string name="dx_inversion">Inversão de cores</string>
+    <string name="dx_inversion_desc">Inverte as cores (ajuste puro, sem serviço)</string>
+    <string name="dx_contrast">Texto de alto contraste</string>
+    <string name="dx_contrast_desc">Contornos para leitura mais fácil</string>
+    <string name="dx_fontw">Texto em negrito</string>
+    <string name="dx_fontw_normal">Peso normal</string>
+    <string name="dx_fontw_bold">Negrito</string>
+    <string name="dx_clocksec">Segundos no relógio</string>
+    <string name="dx_clocksec_desc">Mostra segundos no relógio da barra</string>
+    <string name="dx_battpct">Porcentagem da bateria</string>
+    <string name="dx_battpct_desc">Número ao lado do ícone de bateria</string>
+    <string name="dx_colormode">Modo de cor da tela</string>
+    <string name="dx_colormode_msg">Perfil de cor. Efeito varia por painel.</string>
+    <string name="dx_colormode_natural">Natural</string>
+    <string name="dx_colormode_boosted">Realçado</string>
+    <string name="dx_colormode_vivid">Vívido</string>
+    <string name="dx_colormode_note">Algumas ROMs ignoram — o diálogo de reversão avisa.</string>
+    <string name="dx_whitebal">Tela adaptativa</string>
+    <string name="dx_whitebal_desc">Balanço de branco auto (estilo Pixel)</string>
+    <string name="dx_gesture">Largura do gesto voltar</string>
+    <string name="dx_gesture_msg">Quão longe da borda o gesto dispara.</string>
+    <string name="dx_gesture_fmt">%1$s× da borda</string>
+    <string name="dx_freeform">Janelas flutuantes</string>
+    <string name="dx_freeform_desc">Janelas estilo desktop (precisa reiniciar)</string>
+    <string name="dx_multipress">Velocidade multi-toque</string>
+    <string name="dx_multipress_msg">Tempo de toque duplo/triplo, como o long-press.</string>
+    <string name="dx_ms_fmt">%1$d ms</string>
+    <string name="dx_quiet">Silenciar sons de toque</string>
+    <string name="dx_quiet_desc">Toque + bloqueio + discagem, hápticos, vibrar ao chamar</string>
+    <string name="dx_quiet_active">%1$d de 5 silenciados</string>
+    <string name="dx_snooze">Adiar notificações</string>
+    <string name="dx_snooze_desc">Ativa o botão nativo de adiar</string>
+    <string name="dx_finish">Não manter atividades</string>
+    <string name="dx_finish_desc">Mata cada tela ao sair (economiza RAM, quebra multitarefa)</string>
+    <string name="dx_throttle">Limite de scan Wi-Fi</string>
+    <string name="dx_throttle_desc">Desliga o limite p/ scans rápidos (mais bateria)</string>
+    <string name="dx_suspend">Otimização Wi-Fi em repouso</string>
+    <string name="dx_suspend_desc">Mantém o rádio ágil dormindo (mais bateria)</string>
+    <string name="dx_avoidwifi">Evitar Wi-Fi ruim</string>
+    <string name="dx_avoidwifi_desc">Troca p/ dados móveis no Wi-Fi fraco</string>
+    <string name="dx_btabsvol">Sem volume absoluto BT</string>
+    <string name="dx_btabsvol_desc">Corrige volume em alguns Bluetooth</string>
+    <string name="dx_autotime">Hora automática</string>
+    <string name="dx_autotime_desc">Relógio pela rede</string>
+    <string name="dx_autozone">Fuso automático</string>
+    <string name="dx_autozone_desc">Fuso pela rede/localização</string>
+    <string name="dx_brightadj">Viés de brilho</string>
+    <string name="dx_brightadj_msg">Desloca o brilho auto p/ escuro (−) ou claro (+).</string>
+    <string name="dx_adj_fmt">%1$s</string>
+
+    <!-- Tier-1 segunda onda: AppOps rodada 2 -->
+    <string name="appops_install">Instalar apps desconhecidos</string>
+    <string name="appops_allfiles">Acesso a todos arquivos</string>
+    <string name="appops_overlay">Exibir sobre apps</string>
+    <string name="appops_writesettings">Alterar ajustes do sistema</string>
+    <string name="appops_autorevoke">Revogar permissões sozinho</string>
+    <string name="appops_exactalarm">Alarmes exatos</string>
 </resources>

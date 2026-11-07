@@ -127,6 +127,7 @@ private fun MainActivity.setupTweakCardListeners(prefs: SharedPreferences) {
 
     findViewById<CardView>(R.id.cardSysTweaks).setOnClickListener { showSysTweaksSheet() }
     findViewById<CardView>(R.id.cardComfortTweaks).setOnClickListener { showComfortTweaksSheet() }
+    findViewById<CardView>(R.id.cardDisplayExtras).setOnClickListener { showDisplayExtrasSheet() }
     findViewById<CardView>(R.id.cardNetRadio).setOnClickListener { showNetRadioSheet() }
     findViewById<CardView>(R.id.cardMemTweaks).setOnClickListener { showMemTweaksSheet() }
     findViewById<CardView>(R.id.cardGameTuning).setOnClickListener { showGameTuningSheet() }
@@ -148,6 +149,10 @@ private fun MainActivity.setupTweakCardListeners(prefs: SharedPreferences) {
     findViewById<android.view.View>(R.id.btnResetComfort).setOnClickListener {
         if (!hasShizukuPermission()) return@setOnClickListener
         resetComfortTweaks()
+    }
+    findViewById<android.view.View>(R.id.btnResetDx).setOnClickListener {
+        if (!hasShizukuPermission()) return@setOnClickListener
+        resetDisplayExtras()
     }
     findViewById<android.view.View>(R.id.btnResetNetRadio).setOnClickListener {
         if (!hasShizukuPermission()) return@setOnClickListener
@@ -458,6 +463,7 @@ internal fun MainActivity.resetAllFunctions(prefs: android.content.SharedPrefere
             settings delete global low_power_trigger_level
             ${ComfortTweaks.buildReset()}
             ${NetRadio.buildReset()}
+            ${DisplayExtras.buildReset()}
         """.trimIndent().replace("\n", " && ").replace("&&  &&", "&&")
 
         runAdbCommand(resetCmd, getString(R.string.msg_all_reset)) {

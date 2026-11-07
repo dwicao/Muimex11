@@ -26,6 +26,7 @@ private class SystemStatuses(
     val devOptions: String,
     val sysTweaks: String,
     val comfort: String,
+    val dx: String,
     val netRadio: String,
     val mem: String,
     val gameTuning: String,
@@ -236,6 +237,10 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
         sectionOrNull { comfortStatusText() }
     }
 
+    val dxJob = async {
+        sectionOrNull { dxStatusText() }
+    }
+
     val netRadioJob = async {
         sectionOrNull { netRadioStatusText() }
     }
@@ -249,6 +254,7 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
     val sys = sysJob.await() ?: SysStatus(fbUnknown, fbUnknown, fbUnknown, fbUnknown, fbUnknown)
     val tweaks = tweaksJob.await() ?: fbUnknown
     val comfort = comfortJob.await() ?: fbUnknown
+    val dx = dxJob.await() ?: fbUnknown
     val netRadio = netRadioJob.await() ?: fbUnknown
     val mem = memJob.await() ?: fbUnknown
 
@@ -267,6 +273,7 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
         devOptions = sys.devOpts,
         sysTweaks = tweaks,
         comfort = comfort,
+        dx = dx,
         netRadio = netRadio,
         mem = mem,
         gameTuning = gameTuningStatusText(prefs),
@@ -305,6 +312,7 @@ private fun MainActivity.renderSystemStatuses(s: SystemStatuses) {
     findViewById<TextView>(R.id.tvStatusDevOptions).text = s.devOptions
     findViewById<TextView>(R.id.tvStatusSysTweaks).text = s.sysTweaks
     findViewById<TextView>(R.id.tvStatusComfort).text = s.comfort
+    findViewById<TextView>(R.id.tvStatusDx).text = s.dx
     findViewById<TextView>(R.id.tvStatusNetRadio).text = s.netRadio
     findViewById<TextView>(R.id.tvStatusMem).text = s.mem
     findViewById<TextView>(R.id.tvStatusGameTuning).text = s.gameTuning

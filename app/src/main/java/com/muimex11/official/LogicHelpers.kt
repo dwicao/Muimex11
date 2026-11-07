@@ -207,10 +207,16 @@ object AppOpsParser {
      * Extended ops (Batch-C audit): autostart + background + audio control.
      * Kept out of [AppOpsBatch] — the one-tap privacy batch stays camera/mic/
      * location/clipboard/notifications only.
+     *
+     * Round 2 (research audit): installer, storage, overlay, settings,
+     * auto-revoke and exact-alarm control.
      */
     val OPS_EXTRA = listOf(
         "BOOT_COMPLETED", "RUN_IN_BACKGROUND", "RUN_ANY_IN_BACKGROUND",
-        "PLAY_AUDIO", "TAKE_AUDIO_FOCUS"
+        "PLAY_AUDIO", "TAKE_AUDIO_FOCUS",
+        "REQUEST_INSTALL_PACKAGES", "MANAGE_EXTERNAL_STORAGE",
+        "SYSTEM_ALERT_WINDOW", "WRITE_SETTINGS",
+        "AUTO_REVOKE_PERMISSIONS_IF_UNUSED", "SCHEDULE_EXACT_ALARM"
     )
 
     /** Every op the editor, reset and reset-all understand. */

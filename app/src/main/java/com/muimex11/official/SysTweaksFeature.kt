@@ -36,6 +36,7 @@ import kotlinx.coroutines.withContext
 object SysTweaks {
     const val MSAA_NS = "global"
     const val MSAA_KEY = "enable_msaa"
+    const val MSAA_FORCE_KEY = "force_msaa"
 
     const val TOUCHES_NS = "system"
     const val TOUCHES_KEY = "show_touches"
@@ -75,6 +76,14 @@ object SysTweaks {
     fun buildSet(ns: String, key: String, value: String): String =
         "settings put $ns $key $value"
 
+    /** MSAA toggle writes both keys: some ROMs read `force_msaa` instead. */
+    fun buildMsaa(on: Boolean): String =
+        "${buildSet(MSAA_NS, MSAA_KEY, if (on) "1" else "0")} && " +
+            buildSet(MSAA_NS, MSAA_FORCE_KEY, if (on) "1" else "0")
+
+    fun buildMsaaVerify(): String =
+        "settings get $MSAA_NS $MSAA_KEY; settings get $MSAA_NS $MSAA_FORCE_KEY"
+
     fun isOn(raw: String?): Boolean = raw?.trim() == "1"
 
     fun isSafeVolSuppressed(raw: String?): Boolean =
@@ -98,7 +107,7 @@ object SysTweaks {
             "settings put global animator_duration_scale $scale"
 
     fun buildReset(): String = listOf(
-        buildSet(MSAA_NS, MSAA_KEY, "0"),
+        buildMsaa(false),
         buildSet(TOUCHES_NS, TOUCHES_KEY, "0"),
         "settings delete $AOD_NS $AOD_KEY",
         buildSet(SAFEVOL_NS, SAFEVOL_KEY, SAFEVOL_DEFAULT),
@@ -172,8 +181,8 @@ private fun MainActivity.renderSysTweaksSheet(state: SysTweakState) {
 
     toggleRow(
         getString(R.string.systweaks_msaa), getString(R.string.systweaks_msaa_desc), state.msaa,
-        SysTweaks.buildSet(SysTweaks.MSAA_NS, SysTweaks.MSAA_KEY, if (state.msaa) "0" else "1"),
-        "settings get ${SysTweaks.MSAA_NS} ${SysTweaks.MSAA_KEY}", if (state.msaa) "0" else "1"
+        SysTweaks.buildMsaa(!state.msaa),
+        SysTweaks.buildMsaaVerify(), if (state.msaa) "0\n0" else "1\n1"
     )
     toggleRow(
         getString(R.string.systweaks_touches), getString(R.string.systweaks_touches_desc), state.touches,

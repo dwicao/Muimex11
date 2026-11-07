@@ -1213,12 +1213,73 @@
     <string name="appops_takefocus">Take audio focus</string>
 
     <!-- Batch C: battery trigger + thermal headroom -->
-    <string name="bat_trigger">Auto saver at level</string>
-    <string name="bat_trigger_desc">Turn battery saver on automatically below a charge level</string>
+    <string name="bat_trigger">Auto saver at level</string>    <string name="bat_trigger_desc">Turn battery saver on automatically below a charge level</string>
     <string name="bat_trigger_msg">0%% means never — the saver stays fully manual.</string>
     <string name="bat_trigger_off">Off (manual only)</string>
     <string name="bat_trigger_fmt">Below %1$s%%</string>
     <string name="thermal_headroom">Thermal headroom</string>
     <string name="thermal_headroom_desc">10-second thermal forecast (read-only)</string>
     <string name="thermal_headroom_empty">(no headroom data — HAL not ready)</string>
+
+    <!-- Tier-1 second wave: display & sound extras -->
+    <string name="title_dx">Display &amp; Sound Extras</string>
+    <string name="desc_dx">Inversion, contrast, bold text, clock seconds, freeform, quiet sounds and more.</string>
+    <string name="msg_dx_reset">Display extras restored to defaults</string>
+    <string name="dx_inversion">Color inversion</string>
+    <string name="dx_inversion_desc">Reverse screen colors (pure setting, no service needed)</string>
+    <string name="dx_contrast">High-contrast text</string>
+    <string name="dx_contrast_desc">Easier-to-read text outlines</string>
+    <string name="dx_fontw">Bold text</string>
+    <string name="dx_fontw_normal">Normal weight</string>
+    <string name="dx_fontw_bold">Bold</string>
+    <string name="dx_clocksec">Clock seconds</string>
+    <string name="dx_clocksec_desc">Show seconds in the status-bar clock</string>
+    <string name="dx_battpct">Battery percentage</string>
+    <string name="dx_battpct_desc">Numeric level next to the battery icon</string>
+    <string name="dx_colormode">Display color mode</string>
+    <string name="dx_colormode_msg">Screen color profile. Effect varies by panel.</string>
+    <string name="dx_colormode_natural">Natural</string>
+    <string name="dx_colormode_boosted">Boosted</string>
+    <string name="dx_colormode_vivid">Vivid</string>
+    <string name="dx_colormode_note">Some ROMs ignore this key — a revert dialog appears if it does not stick.</string>
+    <string name="dx_whitebal">Adaptive display</string>
+    <string name="dx_whitebal_desc">Auto white-balance (Pixel-style, device-gated)</string>
+    <string name="dx_gesture">Back-gesture width</string>
+    <string name="dx_gesture_msg">How far from the edge the back gesture triggers.</string>
+    <string name="dx_gesture_fmt">%1$s× edge width</string>
+    <string name="dx_freeform">Freeform windows</string>
+    <string name="dx_freeform_desc">Desktop-style floating windows (needs reboot)</string>
+    <string name="dx_multipress">Multi-press speed</string>
+    <string name="dx_multipress_msg">Double/triple-press timeout, like long-press tuning.</string>
+    <string name="dx_ms_fmt">%1$d ms</string>
+    <string name="dx_quiet">Silence touch sounds</string>
+    <string name="dx_quiet_desc">Touch + lock + dialpad sounds, haptics, ring vibration</string>
+    <string name="dx_quiet_active">%1$d of 5 silenced</string>
+    <string name="dx_snooze">Notification snooze</string>
+    <string name="dx_snooze_desc">Enable the built-in notification snooze button</string>
+    <string name="dx_finish">Don't keep activities</string>
+    <string name="dx_finish_desc">Kill every activity on exit (RAM saver, breaks multitasking)</string>
+    <string name="dx_throttle">Wi-Fi scan throttling</string>
+    <string name="dx_throttle_desc">Turn off throttling for faster scans (more battery)</string>
+    <string name="dx_suspend">Wi-Fi suspend optimizations</string>
+    <string name="dx_suspend_desc">Keep the radio responsive in sleep (more battery)</string>
+    <string name="dx_avoidwifi">Avoid bad Wi-Fi</string>
+    <string name="dx_avoidwifi_desc">Auto-switch to mobile data on poor Wi-Fi</string>
+    <string name="dx_btabsvol">Disable BT absolute volume</string>
+    <string name="dx_btabsvol_desc">Fixes volume issues with some Bluetooth devices</string>
+    <string name="dx_autotime">Automatic time</string>
+    <string name="dx_autotime_desc">Clock from the network</string>
+    <string name="dx_autozone">Automatic time zone</string>
+    <string name="dx_autozone_desc">Zone from the network/location</string>
+    <string name="dx_brightadj">Brightness bias</string>
+    <string name="dx_brightadj_msg">Shift auto-brightness darker (−) or brighter (+).</string>
+    <string name="dx_adj_fmt">%1$s</string>
+
+    <!-- Tier-1 second wave: AppOps round 2 -->
+    <string name="appops_install">Install unknown apps</string>
+    <string name="appops_allfiles">All-files access</string>
+    <string name="appops_overlay">Display over apps</string>
+    <string name="appops_writesettings">Modify system settings</string>
+    <string name="appops_autorevoke">Auto-revoke permissions</string>
+    <string name="appops_exactalarm">Exact alarms</string>
 </resources>

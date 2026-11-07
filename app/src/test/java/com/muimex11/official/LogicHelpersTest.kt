@@ -905,7 +905,7 @@ class SysTweaksTest {
     @Test
     fun buildResetCoversAllKeys() {
         val reset = SysTweaks.buildReset()
-        listOf("enable_msaa", "show_touches", "doze_always_on", "audio_safe_volume_state",
+        listOf("enable_msaa", "force_msaa", "show_touches", "doze_always_on", "audio_safe_volume_state",
             "force_resizable_activities", "stay_on_while_plugged_in", "icon_blacklist",
             "window_animation_scale").forEach { key ->
             assertTrue("reset missing $key", reset.contains(key))
@@ -1043,5 +1043,89 @@ class GameTuningTest {
         assertTrue(GameTuning.safePkg("com.example.game"))
         assertFalse(GameTuning.safePkg("com.x && reboot"))
         assertFalse(GameTuning.safePkg(""))
+    }
+}
+
+class DisplayExtrasTest {
+    @Test
+    fun buildSetAndDelete() {
+        assertEquals("settings put secure clock_seconds 1", DisplayExtras.buildSet("secure", "clock_seconds", "1"))
+        assertEquals("settings delete secure clock_seconds", DisplayExtras.buildDelete("secure", "clock_seconds"))
+    }
+
+    @Test
+    fun quietBuildTogglesAllFive() {
+        val on = DisplayExtras.buildQuiet(true)
+        DisplayExtras.QUIET_KEYS.forEach { kv ->
+            val (ns, key) = kv.split(" ")
+            assertTrue(on.contains("settings put $ns $key 0"))
+        }
+        assertEquals(5, DisplayExtras.QUIET_KEYS.size)
+        val off = DisplayExtras.buildQuiet(false)
+        assertTrue(off.contains("settings put system sound_effects_enabled 1"))
+    }
+
+    @Test
+    fun gestureBuildsBothSides() {
+        val cmd = DisplayExtras.buildGesture("0.5")
+        assertTrue(cmd.contains("back_gesture_inset_scale_left 0.5"))
+        assertTrue(cmd.contains("back_gesture_inset_scale_right 0.5"))
+    }
+
+    @Test
+    fun buildResetCoversAll() {
+        val reset = DisplayExtras.buildReset()
+        listOf("accessibility_display_inversion_enabled", "high_text_contrast_enabled",
+            "font_weight_adjustment", "clock_seconds", "status_bar_show_battery_percent",
+            "display_color_mode", "display_white_balance_enabled",
+            "back_gesture_inset_scale_left", "back_gesture_inset_scale_right",
+            "enable_freeform_support", "multi_press_timeout", "sound_effects_enabled",
+            "lockscreen_sounds_enabled", "dtmf_tone_when_dialing", "haptic_feedback_enabled",
+            "vibrate_when_ringing", "notification_snooze_options", "always_finish_activities",
+            "wifi_scan_throttle_enabled", "wifi_suspend_optimizations_enabled",
+            "network_avoid_bad_wifi", "bluetooth_disable_absolute_volume",
+            "auto_time", "auto_time_zone", "screen_auto_brightness_adj").forEach { key ->
+            assertTrue("reset missing $key", reset.contains(key))
+        }
+    }
+}
+
+class AppOpsRound2Test {
+    @Test
+    fun extraOpsResolve() {
+        listOf("REQUEST_INSTALL_PACKAGES", "MANAGE_EXTERNAL_STORAGE", "SYSTEM_ALERT_WINDOW",
+            "WRITE_SETTINGS", "AUTO_REVOKE_PERMISSIONS_IF_UNUSED", "SCHEDULE_EXACT_ALARM").forEach { op ->
+            assertTrue(AppOpsParser.ALL_OPS.contains(op))
+            assertTrue(AppOpsParser.buildSet("com.x", op, "ignore").contains(op))
+            assertTrue(AppOpsParser.safePkg("com.x"))
+        }
+    }
+
+    @Test
+    fun batchUnchanged() {
+        // One-tap batch stays the original six privacy ops.
+        assertEquals(
+            listOf("CAMERA", "RECORD_AUDIO", "ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION",
+                "READ_CLIPBOARD", "POST_NOTIFICATION"),
+            AppOpsParser.OPS
+        )
+    }
+}
+
+class SysTweaksMsaaTest {
+    @Test
+    fun dualKeyBuild() {
+        val on = SysTweaks.buildMsaa(true)
+        assertTrue(on.contains("settings put global enable_msaa 1"))
+        assertTrue(on.contains("settings put global force_msaa 1"))
+        val off = SysTweaks.buildMsaa(false)
+        assertTrue(off.contains("settings put global enable_msaa 0"))
+        assertTrue(off.contains("settings put global force_msaa 0"))
+    }
+
+    @Test
+    fun dualKeyVerify() {
+        val v = SysTweaks.buildMsaaVerify()
+        assertTrue(v.contains("enable_msaa") && v.contains("force_msaa"))
     }
 }

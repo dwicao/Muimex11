@@ -249,6 +249,12 @@ private fun MainActivity.opName(op: String): String = when (op) {
     "RUN_ANY_IN_BACKGROUND" -> getString(R.string.appops_runanybg)
     "PLAY_AUDIO" -> getString(R.string.appops_playaudio)
     "TAKE_AUDIO_FOCUS" -> getString(R.string.appops_takefocus)
+    "REQUEST_INSTALL_PACKAGES" -> getString(R.string.appops_install)
+    "MANAGE_EXTERNAL_STORAGE" -> getString(R.string.appops_allfiles)
+    "SYSTEM_ALERT_WINDOW" -> getString(R.string.appops_overlay)
+    "WRITE_SETTINGS" -> getString(R.string.appops_writesettings)
+    "AUTO_REVOKE_PERMISSIONS_IF_UNUSED" -> getString(R.string.appops_autorevoke)
+    "SCHEDULE_EXACT_ALARM" -> getString(R.string.appops_exactalarm)
     else -> op
 }
 
