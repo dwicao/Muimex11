@@ -1257,7 +1257,7 @@
     <string name="dx_quiet_active">%1$d of 5 silenced</string>
     <string name="dx_snooze">Notification snooze</string>
     <string name="dx_snooze_desc">Enable the built-in notification snooze button</string>
-    <string name="dx_finish">Don't keep activities</string>
+    <string name="dx_finish">Don\'t keep activities</string>
     <string name="dx_finish_desc">Kill every activity on exit (RAM saver, breaks multitasking)</string>
     <string name="dx_throttle">Wi-Fi scan throttling</string>
     <string name="dx_throttle_desc">Turn off throttling for faster scans (more battery)</string>
