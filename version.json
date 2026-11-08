@@ -1,8 +1,8 @@
 {
-  "versionCode": 60,
-  "versionName": "4.30",
-  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.30/Muimex11-4.30.apk",
-  "releaseNotes": "Crash Display & Sound Extras di semua device: subtitle multi-press memformat String dengan %d. %s aman untuk Int maupun String. Audit semua %d call sites + paritas specifier EN/PT: tidak ada yang salah tipe lainnya.",
+  "versionCode": 61,
+  "versionName": "4.31",
+  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.31/Muimex11-4.31.apk",
+  "releaseNotes": "- Rebalanced card groups: removed duplicate cardSamsungBoost binding, moved Disable Dev Options + Debloat into Tools; each card appears in exactly one group (no duplicates in 'All' view).\n- Reset buttons enlarged 40dp -> 48dp tap target across all cards.\n- Status lines get contentDescription for screen readers; active-summary now shows warning count.\n- Onboarding gains a 4th step explaining view modes (list/grid/compact).\n- Empty-search state copy improved.\n- EN/PT parity clean.",
   "mandatory": false,
-  "sha256": "6ade9ce03c5eadc07cd1ec7fe9aca2836861289ccc179a6953e05f685f5a1d38"
+  "sha256": "449c09ca52eac51a55e0a05e570788ba3c1be934ce40d7ef7e46f120f9b489b2"
 }
