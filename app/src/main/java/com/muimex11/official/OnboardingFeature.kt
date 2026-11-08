@@ -16,6 +16,7 @@ internal fun MainActivity.setupOnboardingIfNeeded() {
     list.addView(infoCard(this, getString(R.string.ob_s1) + "\n" + getString(R.string.ob_s1d)))
     list.addView(infoCard(this, getString(R.string.ob_s2) + "\n" + getString(R.string.ob_s2d)))
     list.addView(infoCard(this, getString(R.string.ob_s3) + "\n" + getString(R.string.ob_s3d)))
+    list.addView(infoCard(this, getString(R.string.ob_s4) + "\n" + getString(R.string.ob_s4d)))
     Sheet(this)
         .icon(R.drawable.ic_gamepad)
         .title(getString(R.string.ob_title))

@@ -210,10 +210,6 @@ private fun MainActivity.setupToolsCardListeners(prefs: SharedPreferences) {
     findViewById<CardView>(R.id.cardRealtimeMonitor).setOnClickListener { toggleRealtimeMonitor() }
     findViewById<CardView>(R.id.cardAutoClick).setOnClickListener { showAutoClickDialog() }
 
-    findViewById<CardView>(R.id.cardSamsungBoost).setOnClickListener {
-        showSamsungBoostSheet()
-    }
-
     findViewById<CardView>(R.id.cardThermalThrottling).setOnClickListener {
         showThermalSheet(prefs)
     }

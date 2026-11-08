@@ -330,6 +330,7 @@
     <string name="toast_installer_failed">Falha ao abrir o instalador: %1$s</string>
     <string name="svc_failed">Falha: %1$s</string>
     <string name="summary_active">%1$s de %2$s ativos</string>
+    <string name="summary_warn">precisam de atenção</string>
     <string name="xl_cross">Cruz</string>
     <string name="xl_dot">Ponto</string>
     <string name="xl_circle">Círculo</string>
@@ -1034,7 +1035,7 @@
     <!-- UI arrumada -->
     <string name="desc_reset">Redefinir este ajuste</string>
     <string name="hint_search_tweaks">Buscar ajustes…</string>
-    <string name="no_match_tweaks">Nenhum ajuste corresponde à busca</string>
+    <string name="no_match_tweaks">Nenhum ajuste corresponde à busca — tente outra palavra ou limpe o filtro.</string>
     <string name="ob_title">Bem-vindo ao Muimex11</string>
     <string name="ob_msg">Três passos e você já está otimizando jogos. Isso aparece uma vez só.</string>
     <string name="ob_s1">1 · Inicie o Shizuku</string>
@@ -1043,6 +1044,8 @@
     <string name="ob_s2d">Abra o Muimex11 e permita o acesso ao Shizuku quando pedir. A pílula do topo fica verde ao conectar.</string>
     <string name="ob_s3">3 · Escolha um ajuste</string>
     <string name="ob_s3d">Navegue pelos cartões abaixo, use a busca ou as categorias. Toda alteração é reversível pelo botão de redefinir.</string>
+    <string name="ob_s4">4 · Troque o modo de exibição</string>
+    <string name="ob_s4d">Use o alternador lista / grade / compacto no topo. O modo compacto oculta as descrições.</string>
 
     <!-- Batch A: comfort & display extras -->
     <string name="title_comfort">Conforto e extras de tela</string>

@@ -656,8 +656,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetFixedPerf"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -726,8 +726,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetOptimize"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -796,8 +796,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetSamsungBoost"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -866,8 +866,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetRefresh"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -936,8 +936,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetNetwork"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -1006,8 +1006,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetRadio"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -1075,8 +1075,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetNetBlock"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -1145,8 +1145,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetNetRadio"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -1215,8 +1215,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetTouch"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -1285,8 +1285,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetGyro"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -1355,8 +1355,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetAnimations"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -1425,8 +1425,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetBlurs"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -1495,8 +1495,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetDnd"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -1565,8 +1565,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetDevOptions"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -1676,8 +1676,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetApkBackup"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -1746,8 +1746,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetResolution"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -1816,8 +1816,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetGraphics"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -1886,8 +1886,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetSysTweaks"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -1956,8 +1956,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetComfort"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -2026,8 +2026,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetDx"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -2096,8 +2096,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetOrientation"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -2166,8 +2166,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetDns"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -2236,8 +2236,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetCrosshair"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -2306,8 +2306,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetMonitor"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -2377,8 +2377,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetAutoClick"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -2447,8 +2447,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetGameMode"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -2518,8 +2518,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetGameSpace"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -2588,8 +2588,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetThermal"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -2658,8 +2658,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetBatterySaver"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -2728,8 +2728,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetMem"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -2797,8 +2797,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetBattHealth"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -2867,8 +2867,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetFstrim"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -2937,8 +2937,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetRamBooster"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -3007,8 +3007,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetCache"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -3077,8 +3077,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetFreeze"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -3147,8 +3147,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetAppOps"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -3217,8 +3217,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetAppLocale"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -3287,8 +3287,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetGameProfiles"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -3357,8 +3357,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetGameTuning"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -3427,8 +3427,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetDebloat"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -3497,8 +3497,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetAudio"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -3567,8 +3567,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetSensors"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -3637,8 +3637,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetBgRestrict"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -3707,8 +3707,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetBenchmark"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -3777,8 +3777,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetShell"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -3847,8 +3847,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetReboot"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"
@@ -3917,8 +3917,8 @@
                             android:textStyle="bold" />
                         <ImageButton
                             android:id="@+id/btnResetShizukuRecovery"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
                             android:background="@drawable/bg_reset_pill"
                             android:contentDescription="@string/desc_reset"
                             android:padding="9dp"

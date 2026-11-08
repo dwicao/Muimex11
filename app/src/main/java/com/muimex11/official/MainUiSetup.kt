@@ -16,11 +16,11 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 
 /** Single source of truth for tweak card grouping (filter chips + grid mode). */
-private val performanceCardIds = listOf(R.id.cardFixedPerformance, R.id.cardOptimizeSystem, R.id.cardSamsungBoost, R.id.cardThermalThrottling, R.id.cardBatterySaver, R.id.cardMemTweaks, R.id.cardBatteryHealth, R.id.cardDebloat, R.id.cardBgRestrict, R.id.cardFstrim, R.id.cardDisableDevOptions, R.id.cardRamBooster, R.id.cardClearCache, R.id.cardFreezeApps)
+private val performanceCardIds = listOf(R.id.cardFixedPerformance, R.id.cardOptimizeSystem, R.id.cardSamsungBoost, R.id.cardThermalThrottling, R.id.cardBatterySaver, R.id.cardMemTweaks, R.id.cardBatteryHealth, R.id.cardBgRestrict, R.id.cardFstrim, R.id.cardRamBooster, R.id.cardClearCache, R.id.cardFreezeApps)
 private val displayCardIds = listOf(R.id.cardAdjustRefreshRate, R.id.cardFastAnimations, R.id.cardDisableBlurs, R.id.cardChangeResolution, R.id.cardGraphicsApi, R.id.cardSysTweaks, R.id.cardComfortTweaks, R.id.cardDisplayExtras, R.id.cardOrientation)
 private val networkCardIds = listOf(R.id.cardImproveNetwork, R.id.cardCustomDns, R.id.cardRadioInfo, R.id.cardNetBlock, R.id.cardNetRadio)
 private val gamingCardIds = listOf(R.id.cardImproveTouch, R.id.cardGamingDnd, R.id.cardCrosshair, R.id.cardRealtimeMonitor, R.id.cardAutoClick, R.id.cardGameMode, R.id.cardGameSpace, R.id.cardFixGyro, R.id.cardGameProfiles, R.id.cardGameTuning, R.id.cardAudioLatency)
-private val toolsCardIds = listOf(R.id.cardShellExecute, R.id.cardApkInstall, R.id.cardApkBackup, R.id.cardReboot, R.id.cardShizukuRecovery, R.id.cardAppOps, R.id.cardAppLocale, R.id.cardSensorsToggle, R.id.cardBenchmark)
+private val toolsCardIds = listOf(R.id.cardShellExecute, R.id.cardApkInstall, R.id.cardApkBackup, R.id.cardReboot, R.id.cardShizukuRecovery, R.id.cardAppOps, R.id.cardAppLocale, R.id.cardSensorsToggle, R.id.cardBenchmark, R.id.cardDisableDevOptions, R.id.cardDebloat)
 
 internal fun tweakCardIds(): List<Int> =
     performanceCardIds + displayCardIds + networkCardIds + gamingCardIds + toolsCardIds
@@ -245,7 +245,10 @@ internal fun MainActivity.setupStatusStyling() {
 
     fun refresh() {
         val active = states.values.count { it != TweakState.NEUTRAL }
-        findViewById<TextView>(R.id.tvActiveSummary)?.text = getString(R.string.summary_active, active, statusIds.size)
+        val warn = states.values.count { it == TweakState.WARN }
+        findViewById<TextView>(R.id.tvActiveSummary)?.text =
+            getString(R.string.summary_active, active, statusIds.size) +
+                if (warn > 0) "  ·  ${warn} ${getString(R.string.summary_warn)}" else ""
     }
 
     fun apply(tv: TextView, id: Int) {
@@ -267,11 +270,15 @@ internal fun MainActivity.setupStatusStyling() {
 
     statusIds.forEach { id ->
         val tv = findViewById<TextView>(id) ?: return@forEach
+        tv.contentDescription = tv.text
         apply(tv, id)
         tv.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, st: Int, c: Int, a: Int) {}
             override fun onTextChanged(s: CharSequence?, st: Int, b: Int, c: Int) {}
-            override fun afterTextChanged(s: Editable?) { apply(tv, id) }
+            override fun afterTextChanged(s: Editable?) {
+                tv.contentDescription = tv.text
+                apply(tv, id)
+            }
         })
     }
 }

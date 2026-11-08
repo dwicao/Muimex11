@@ -331,6 +331,7 @@
     <string name="toast_installer_failed">Failed to open installer: %1$s</string>
     <string name="svc_failed">Failed: %1$s</string>
     <string name="summary_active">%1$s of %2$s active</string>
+    <string name="summary_warn">need attention</string>
     <string name="xl_cross">Cross</string>
     <string name="xl_dot">Dot</string>
     <string name="xl_circle">Circle</string>
@@ -1044,7 +1045,7 @@
     <!-- Tidy UI -->
     <string name="desc_reset">Reset this tweak</string>
     <string name="hint_search_tweaks">Search tweaks…</string>
-    <string name="no_match_tweaks">No tweaks match your search</string>
+    <string name="no_match_tweaks">No tweaks match your search — try a different keyword or clear the filter.</string>
     <string name="ob_title">Welcome to Muimex11</string>
     <string name="ob_msg">Three steps and you are boosting games. This shows only once.</string>
     <string name="ob_s1">1 · Start Shizuku</string>
@@ -1053,6 +1054,8 @@
     <string name="ob_s2d">Open Muimex11 and allow Shizuku access when asked. The top pill turns green when connected.</string>
     <string name="ob_s3">3 · Pick a tweak</string>
     <string name="ob_s3d">Browse the cards below, use search or the category chips. Every change is reversible with its reset button.</string>
+    <string name="ob_s4">4 · Switch view mode</string>
+    <string name="ob_s4d">Use the list / grid / compact toggle at the top to fit more cards on screen. Compact hides descriptions.</string>
 
     <!-- Batch A: comfort & display extras -->
     <string name="title_comfort">Comfort &amp; Display Extras</string>
