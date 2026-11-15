@@ -445,14 +445,6 @@
     <string name="status_shell_last">Last run · exit code %1$d</string>
     <string name="status_shell_stopped">Last run stopped</string>
 
-    <!-- Automatic language -->
-    <string name="lang_setup_title">Setting up your language</string>
-    <string name="lang_setup_msg">Preparing %1$s. The language pack downloads once, then the app works offline in your language.</string>
-    <string name="lang_phase_download">Downloading language pack…</string>
-    <string name="lang_phase_translate">Translating… %1$d%%</string>
-    <string name="btn_skip">Skip</string>
-    <string name="toast_lang_failed">Couldn\'t download your language pack. The app will stay in English for now.</string>
-
     <!-- Install APKS / XAPK -->
     <string name="title_apk_install">Install APKS / XAPK</string>
     <string name="desc_apk_install">Install split app bundles (.apks, .xapk, .apkm) straight from your device. Game data (OBB) inside an XAPK can be copied too with Shizuku.</string>
@@ -566,6 +558,7 @@
     <string name="gs_fps_none">--</string>
     <string name="gs_fps_display_fmt">%1$d Hz display</string>
     <string name="dl_sha_mismatch">Update file failed integrity check</string>
+    <string name="dl_signature_mismatch">Update blocked: the APK signature does not match the official release</string>
     <string name="dl_insecure_blocked">Blocked insecure update URL</string>
     <string name="profile_saved">Profile saved for %1$s</string>
     <string name="backup_exported">Backup copied to clipboard</string>

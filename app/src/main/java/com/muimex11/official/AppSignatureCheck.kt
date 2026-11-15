@@ -3,8 +3,6 @@ package com.muimex11.official
 import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
-import java.net.HttpURLConnection
-import java.net.URL
 import java.security.MessageDigest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -13,37 +11,25 @@ import kotlinx.coroutines.withContext
 /**
  * Verifies that this APK is the official Muimex11 build.
  *
- * The check is advisory: if the signature doesn't match (for example a rebuilt
- * or developer-signed APK), a warning is shown but the app keeps working.
+ * The expected certificate hash is pinned in [AppConfig] and committed to
+ * this repository — it is never fetched from the network, so this check is
+ * meaningful even on a hostile connection. The check is advisory: if the
+ * signature doesn't match (for example a rebuilt or developer-signed APK),
+ * a warning is shown but the app keeps working.
  */
 internal fun MainActivity.verifyAppSignature() {
     lifecycleScope.launch(Dispatchers.IO) {
         try {
             val currentSignature = getCurrentAppSignature()
-            var expectedSignature = AppConfig.EXPECTED_SIGNATURE_SHA256
-
-            try {
-                val url = URL(AppConfig.SIGNATURE_URL)
-                val conn = url.openConnection() as HttpURLConnection
-                conn.connectTimeout = 3000
-                conn.readTimeout = 3000
-
-                if (conn.responseCode == 200) {
-                    val fetchedSig = conn.inputStream.bufferedReader().readText().trim()
-                    if (fetchedSig.isNotEmpty()) {
-                        expectedSignature = fetchedSig
-                    }
-                }
-            } catch (e: Exception) {}
-
             if (currentSignature.isNotEmpty() &&
-                !currentSignature.equals(expectedSignature, ignoreCase = true)
+                !currentSignature.equals(AppConfig.EXPECTED_SIGNATURE_SHA256, ignoreCase = true)
             ) {
                 withContext(Dispatchers.Main) {
                     UiToast.warning(this@verifyAppSignature, getString(R.string.toast_unofficial), Toast.LENGTH_LONG).show()
                 }
             }
         } catch (e: Exception) {
+            logQuietly("verifyAppSignature", e)
             // Never block the app on a failed verification.
         }
     }

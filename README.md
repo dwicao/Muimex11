@@ -2,11 +2,11 @@
 
 <img src="https://capsule-render.vercel.app/api?type=waving&color=0:7c3aed,50:2563eb,100:06b6d4&height=170&section=header&text=Muimex11&fontSize=58&fontColor=ffffff&fontAlignY=36&desc=Android%20game%20optimizer%20%E2%80%94%20free%2C%20no%20ads%2C%20no%20premium&descSize=20&descAlignY=58&animation=fadeIn" width="100%" />
 
-[![Build](https://github.com/Inkflow-Gab/Muimex11/actions/workflows/build.yml/badge.svg)](https://github.com/Inkflow-Gab/Muimex11/actions/workflows/build.yml)
-[![Release](https://img.shields.io/github/v/release/Inkflow-Gab/Muimex11?label=Release&color=3765D8)](https://github.com/Inkflow-Gab/Muimex11/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/Inkflow-Gab/Muimex11/total?label=Downloads&color=brightgreen)](https://github.com/Inkflow-Gab/Muimex11/releases)
-[![Stars](https://img.shields.io/github/stars/Inkflow-Gab/Muimex11?color=yellow)](https://github.com/Inkflow-Gab/Muimex11/stargazers)
-![Android](https://img.shields.io/badge/Android-8.0%2B-3DDC84)
+[![Build](https://github.com/dwicao/Muimex11/actions/workflows/build.yml/badge.svg)](https://github.com/dwicao/Muimex11/actions/workflows/build.yml)
+[![Release](https://img.shields.io/github/v/release/dwicao/Muimex11?label=Release&color=3765D8)](https://github.com/dwicao/Muimex11/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/dwicao/Muimex11/total?label=Downloads&color=brightgreen)](https://github.com/dwicao/Muimex11/releases)
+[![Stars](https://img.shields.io/github/stars/dwicao/Muimex11?color=yellow)](https://github.com/dwicao/Muimex11/stargazers)
+![Android](https://img.shields.io/badge/Android-7.0%2B-3DDC84)
 
 </div>
 
@@ -62,11 +62,18 @@ Switch the GPU rendering API without root, over Shizuku. Adapted from [GAMA](htt
 - Renderer support varies by device and app: some apps ignore Vulkan and fall back on their own, which is normal. If the screen glitches after switching, hold Power + Volume Down to force-restart, then switch back to OpenGL.
 
 ## Performance & system tools
-RAM booster · cache cleaner · app freezer · fstrim · fixed-performance modes · Game Mode selector · per-game downscale/FPS tuning · thermal override + headroom forecast · blur disable · fast animations · refresh rate control (OS-aware presets) · resolution + DPI + font scale · graphics API switcher (Vulkan/OpenGL) + Force 4x MSAA · private/custom DNS · captive-portal control · airplane/NFC/location toggles · touch and network tuners · standby buckets · dexopt booster · gyro fix · crosshair overlay · auto clicker · gaming DND · APK/OBB installer (with downgrade) · Shizuku shell terminal · device info · English and Brazilian Portuguese.
+RAM booster · cache cleaner · app freezer · fstrim · fixed-performance modes · Game Mode selector · per-game downscale/FPS tuning · thermal override + headroom forecast · blur disable · fast animations · refresh rate control (OS-aware presets) · resolution + DPI + font scale · graphics API switcher (Vulkan/OpenGL) + Force 4x MSAA · private/custom DNS · captive-portal control · airplane/NFC/location toggles · touch and network tuners · standby buckets · dexopt booster · gyro fix · crosshair overlay · auto clicker · gaming DND · APK/OBB installer (with downgrade) · Shizuku shell terminal · device info · English and Indonesian.
 
 ## What's new in this fork
 
 This fork is 80+ commits ahead of upstream. Highlights, newest first:
+
+### Security & hygiene (v4.32)
+- **Self-update hardening** — APK downloads are now verified against the pinned release certificate (SHA-256) *before* installing, in addition to the existing sha256/integrity check. The expected signature is only ever read from the build-pinned constant — never fetched from the network. GitHub/raw.githubusercontent URLs are repo-scoped (only `dwicao/Muimex11` release paths are trusted). The CI release pipeline now fails instead of just printing when the built APK's certificate doesn't match `signature.txt`.
+- **Portuguese removed, Indonesian added** — the app now ships English + Indonesian (full parity, ~1,150 strings, EN↔ID placeholder-checked). `locales_config.xml` now en/id and is wired into the manifest via `android:localeConfig`.
+- **Dead code dropped** — the old ML-Kit machine-translation scaffolding (never-used `AppTranslator`/`LanguageSetup`), boilerplate tests and the duplicate keep-rules placeholder are gone.
+- **Diagnostics** — previously-silent catch blocks now log to logcat (`Muimex11`, warning level); coroutine scopes of overlay services are properly cancelled on destroy; `MainActivity` is no longer exported; predictive back gesture enabled; dark mode now follows the system by default.
+- All command builders route package names through the shell sanitizer.
 
 ### Display & comfort (v4.28)
 - **Comfort & Display Extras card** — 20 verified tweaks: screen timeout, full Night Light (on/off + Kelvin + sunset schedule), font scale, adaptive brightness, mono audio, chat bubbles, tap-to-wake, dark mode via `cmd uimode`, extra dim, grayscale, force-dark, lock-after-timeout, lockscreen visibility, ambient gestures, camera double-press, ignore-orientation.
@@ -120,7 +127,7 @@ The app checks this repository's `version.json`, prompts when a newer release is
 
 # Install
 
-1. Get the APK from [Releases](https://github.com/Inkflow-Gab/Muimex11/releases/latest) (signed by the repo key on GitHub Actions).
+1. Get the APK from [Releases](https://github.com/dwicao/Muimex11/releases/latest) (signed by the repo key on GitHub Actions).
 2. Install [Shizuku](https://shizuku.rikka.app/) and start it (wireless debugging, root, or one-time USB from a PC).
 3. Open Muimex11, grant Shizuku permission, and enable the tools you want.
 4. Optional: allow *Display over other apps* for the Game Space dock and monitor.
@@ -129,7 +136,7 @@ Muimex11 installs alongside the old Benimaru app; you can remove Benimaru at any
 
 # Building and releases
 
-- Every push to `main` runs the [Build workflow](https://github.com/Inkflow-Gab/Muimex11/actions/workflows/build.yml) and produces a signed APK artifact.
+- Every push to `main` runs the [Build workflow](https://github.com/dwicao/Muimex11/actions/workflows/build.yml) and produces a signed APK artifact.
 - Launcher icons are regenerated at build time from `art/app-icon.jpg` (Pillow; previews attached to every run).
 - To publish an update: bump `versionCode`/`versionName` in `app/build.gradle.kts`, commit, then push a tag `v<name>` — the workflow signs the APK, creates the GitHub release, and refreshes `version.json` and `signature.txt` so installed apps pick it up.
 - Signing material lives in write-only Actions secrets (`MUIMEX_KEYSTORE_BASE64`, `MUIMEX_KEYSTORE_PASSWORD`, `MUIMEX_KEY_ALIAS`) and is never committed.
@@ -137,26 +144,26 @@ Muimex11 installs alongside the old Benimaru app; you can remove Benimaru at any
 <div align="center">
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/Inkflow-Gab/Muimex11/output/github-contribution-grid-snake-dark.svg" />
-  <img src="https://raw.githubusercontent.com/Inkflow-Gab/Muimex11/output/github-contribution-grid-snake.svg" alt="contribution snake" width="100%" />
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/dwicao/Muimex11/output/github-contribution-grid-snake-dark.svg" />
+  <img src="https://raw.githubusercontent.com/dwicao/Muimex11/output/github-contribution-grid-snake.svg" alt="contribution snake" width="100%" />
 </picture>
 
 [![Telegram](https://img.shields.io/badge/Telegram-muimex11-2CA5E0?logo=telegram&logoColor=white)](https://t.me/muimex11)
 
 </div>
 
-# Português (BR)
+# Indonesia
 
-O Muimex11 é um otimizador de jogos Android gratuito — sem anúncios e sem premium — baseado no Shizuku (sem root).
+Muimex11 adalah pengoptimal game Android gratis — tanpa iklan dan tanpa premium — yang berjalan di atas Shizuku (tanpa root).
 
-- **Game Space flutuante**: bolha arrastável sobre qualquer jogo com **nome + ícone do app aberto**, **contagem de FPS ao vivo** e grade de ações em duas colunas: boost de RAM, Game Boost no app em foco, performance fixa, bypass térmico, trava 120Hz, modo foco, sem blurs, ciclo de resolução (100/75/50%), monitor e fechar jogo.
-- **Painel Samsung**: Max Boost em um toque, desativar o GOS (com restauração), RAM Plus off, congelar daemons de log, Device Security e bloat da Samsung, além de restaurar tudo.
-- **Monitor de hardware** flutuante em tempo real (CPU, RAM, bateria, rede).
-- **API de gráficos (Vulkan/OpenGL)**: alterna a renderização da GPU sem root via Shizuku (adaptado do [GAMA](https://github.com/palincat/gama), licença MIT) — Vulkan para mais frio/economia de bateria em aparelhos suportados, OpenGL como padrão seguro; reaplicado sozinho após reiniciar.
-- **Novidades deste fork** (80+ commits à frente do upstream): perfis de jogo com auto-aplicação (modo jogo, 120Hz, resolução, orientação, DND, kill ao sair), ajuste por jogo (modo/downscale/FPS via cmd game), Vulkan/OpenGL + MSAA 4x, presets de refresh da tela real, conforto e tela (timeout, Night Light, fonte, modo escuro, grayscale), rede e rádio (portal cativo, avião, NFC, localização, trava 4G), memória (limite de 2º plano, standby por app, dexopt), idioma por app, bloqueio de dados em 2º plano por app, privacidade AppOps (lote + linha do tempo + autostart + áudio), desinstalar com restauração de fábrica, backup de APKs, downgrade de APK, menu reboot, bateria (economia, Doze, alarme, saúde, nível automático), térmico adaptivo + previsão, API de automação p/ Tasker, tiles de acesso rápido, ping/jitter no monitor, modos de exibição lista/grade/compacto com busca, e relato de crash com log em `Download/Muimex11`.
-- Ferramentas de desempenho, display, rede, APK/OBB e terminal Shizuku — tudo em **PT-BR e inglês**.
+- **Game Space mengambang**: gelembung yang bisa diseret di atas game apa pun dengan **nama + ikon aplikasi yang terbuka**, **FPS counter langsung**, dan kisi aksi dua kolom: boost RAM, Game Boost di aplikasi yang sedang dibuka, fixed performance, thermal bypass, kunci 120Hz, mode fokus, tanpa blur, rotasi resolusi (100/75/50%), monitor dan tutup game.
+- **Panel Samsung**: Max Boost sekali ketuk, matikan GOS (dengan pemulihan), RAM Plus mati, bekukan daemon log, Device Security dan bloat Samsung, plus kembalikan semua.
+- **Monitor hardware** mengambang real-time (CPU, RAM, baterai, jaringan).
+- **API grafis (Vulkan/OpenGL)**: mengganti renderer GPU tanpa root via Shizuku (diadaptasi dari [GAMA](https://github.com/palincat/gama), lisensi MIT) — Vulkan untuk suhu lebih dingin/hemat baterai di perangkat yang didukung, OpenGL sebagai bawaan yang aman; diterapkan ulang sendiri setelah restart.
+- **Yang baru di fork ini** (80+ commit di atas upstream): profil game dengan auto-apply (game mode, 120Hz, resolusi, orientasi, DND, kill saat keluar), tuning per game (mode/downscale/FPS via cmd game), Vulkan/OpenGL + MSAA 4x, preset refresh rate asli perangkat, kenyamanan & tampilan (timeout, Night Light, font, mode gelap, grayscale), jaringan & radio (captive portal, pesawat, NFC, lokasi, kunci 4G), memori (batas latar belakang, standby per app, dexopt), bahasa per app, blok data latar belakang per app, privasi AppOps (batch + timeline + autostart + audio), uninstall dengan pemulihan pabrik, cadangan APK, downgrade APK, menu reboot, baterai (hemat, Doze, alarm, kesehatan, level otomatis), termal adaptif + prakiraan, API otomasi utk Tasker, tile Quick Settings, ping/jitter di monitor, mode tampilan list/grid/compact + pencarian, dan pelaporan crash dengan log di `Download/Muimex11`.
+- Alat performa, tampilan, jaringan, APK/OBB dan terminal Shizuku — semuanya dalam **Bahasa Indonesia dan Inggris**.
 
-Baixe em [Releases](https://github.com/Inkflow-Gab/Muimex11/releases/latest), inicie o Shizuku e autorize no app. O Muimex11 atualiza sozinho quando sai uma versão nova aqui no GitHub.
+Unduh di [Releases](https://github.com/dwicao/Muimex11/releases/latest), mulai Shizuku dan izinkan di aplikasi. Muimex11 memperbarui sendiri saat versi baru rilis di GitHub.
 
 ---
 <div align="center">

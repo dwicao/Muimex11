@@ -375,7 +375,7 @@ private fun MainActivity.showAlarmReport() {
                         val cm = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                         cm.setPrimaryClip(ClipData.newPlainText("muimex11-alarms", tv.text))
                         UiToast.success(this@showAlarmReport, getString(R.string.shell_copied), Toast.LENGTH_SHORT).show()
-                    } catch (_: Exception) {}
+                    } catch (e: Exception) { logQuietly("MemTweaksFeature", e) }
                 }
                 .button(getString(R.string.btn_close), SheetStyle.PRIMARY)
                 .show()

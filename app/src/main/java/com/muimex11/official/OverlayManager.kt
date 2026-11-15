@@ -31,11 +31,11 @@ object OverlayManager {
 
     fun stop(ctx: Context, key: String, cls: Class<*>) {
         try { ctx.applicationContext.stopService(Intent(ctx.applicationContext, cls)) }
-        catch (_: Exception) {}
+        catch (e: Exception) { logQuietly("OverlayManager", e) }
         try {
             ctx.applicationContext.getSharedPreferences(Prefs.MAIN, Context.MODE_PRIVATE)
                 .edit().putBoolean(key, false).apply()
-        } catch (_: Exception) {}
+        } catch (e: Exception) { logQuietly("OverlayManager", e) }
     }
 
     fun stopAll(ctx: Context) {
@@ -47,7 +47,7 @@ object OverlayManager {
             AutoClickService::class.java,
             FloatingResolutionService::class.java,
         ).forEach { cls ->
-            try { app.stopService(Intent(app, cls)) } catch (_: Exception) {}
+            try { app.stopService(Intent(app, cls)) } catch (e: Exception) { logQuietly("OverlayManager", e) }
         }
     }
 }

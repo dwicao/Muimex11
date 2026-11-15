@@ -85,8 +85,11 @@ class GameSpaceService : Service() {
     private var fgLabel: String = ""
 
     private val handler = Handler(Looper.getMainLooper())
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
-    private val ioScope = CoroutineScope(Dispatchers.IO)
+    // Single job for every scope: cancel() in onDestroy stops all coroutines,
+    // including in-flight Shizuku calls and the thermal governor loop.
+    private val serviceJob = SupervisorJob()
+    private val scope = CoroutineScope(serviceJob + Dispatchers.Main)
+    private val ioScope = CoroutineScope(serviceJob + Dispatchers.IO)
     private val tiles = ArrayList<View>()
 
     private lateinit var bubbleParams: WindowManager.LayoutParams
@@ -143,7 +146,6 @@ class GameSpaceService : Service() {
     @SuppressLint("ClickableViewAccessibility", "InflateParams")
     private fun buildBubble() {
         bubbleRoot = LayoutInflater.from(uiContext()).inflate(R.layout.layout_game_space, null)
-        AppTranslator.translateTree(bubbleRoot!!)
         bubble = bubbleRoot!!.findViewById(R.id.gsBubble)
         bubbleFps = bubbleRoot!!.findViewById(R.id.gsBubbleFps)
 
@@ -201,7 +203,6 @@ class GameSpaceService : Service() {
     private fun buildPanel() {
         val ctx = uiContext()
         panelRoot = LayoutInflater.from(ctx).inflate(R.layout.layout_game_space_panel, null)
-        AppTranslator.translateTree(panelRoot!!)
         panel = panelRoot!!.findViewById(R.id.gsPanel)
         appIconView = panelRoot!!.findViewById(R.id.gsAppIcon)
         appNameView = panelRoot!!.findViewById(R.id.gsAppName)
@@ -269,7 +270,7 @@ class GameSpaceService : Service() {
     private fun collapse() {
         try {
             if (isExpanded()) wm.removeView(panelRoot)
-        } catch (_: Exception) {}
+        } catch (e: Exception) { logQuietly("GameSpaceService", e) }
     }
 
     private fun placePanel() {
@@ -730,7 +731,7 @@ class GameSpaceService : Service() {
                     gameBoostPkg = null
                     if (safeOld != null) {
                         ioScope.launch {
-                            try { exec("cmd game mode standard $safeOld") } catch (_: Exception) {}
+                            try { exec("cmd game mode standard $safeOld") } catch (e: Exception) { logQuietly("GameSpaceService", e) }
                         }
                     }
                 }
@@ -795,7 +796,7 @@ class GameSpaceService : Service() {
                         // hammering a dead binder every poll.
                         delayMs = if (ShizukuRunner.isReady()) 3000L else 10_000L
                     }
-                } catch (_: Exception) {}
+                } catch (e: Exception) { logQuietly("GameSpaceService", e) }
                 kotlinx.coroutines.delay(delayMs)
             }
         }
@@ -852,7 +853,7 @@ class GameSpaceService : Service() {
         ioScope.launch {
             try {
                 exec("settings delete system min_refresh_rate; settings delete system peak_refresh_rate; wm size reset; wm density reset")
-            } catch (_: Exception) {}
+            } catch (e: Exception) { logQuietly("GameSpaceService", e) }
         }
     }
 
@@ -890,7 +891,7 @@ class GameSpaceService : Service() {
                 }
                 if (awakePkg != null) exec(KeepAwake.buildRestore(awakePrev))
                 if (blurPkg != null) exec(restoreGlobalCmd("disable_window_blurs", blurPrev))
-            } catch (_: Exception) {}
+            } catch (e: Exception) { logQuietly("GameSpaceService", e) }
         }
     }
 
@@ -1008,7 +1009,7 @@ class GameSpaceService : Service() {
                         applyHeatResponse(want)
                         handler.post { thermalTile()?.let { refreshThermalText(it) } }
                     }
-                } catch (_: Exception) {}
+                } catch (e: Exception) { logQuietly("GameSpaceService", e) }
                 // Back off when the privileged backend is gone instead of
                 // hammering a dead binder every 5 s.
                 kotlinx.coroutines.delay(if (ShizukuRunner.isReady()) 5000 else 15_000)
@@ -1064,7 +1065,7 @@ class GameSpaceService : Service() {
         heatRespMin = null
         heatRespMax = null
         ioScope.launch {
-            try { exec(HeatResponse.buildRestore(mn, mx)) } catch (_: Exception) {}
+            try { exec(HeatResponse.buildRestore(mn, mx)) } catch (e: Exception) { logQuietly("GameSpaceService", e) }
         }
     }
 
@@ -1074,14 +1075,14 @@ class GameSpaceService : Service() {
         val p = GameProfileStore.get(this, safePkg) ?: return
         if (!p.killOnExit || !ShizukuRunner.isReady()) return
         ioScope.launch {
-            try { exec("am force-stop $safePkg") } catch (_: Exception) {}
+            try { exec("am force-stop $safePkg") } catch (e: Exception) { logQuietly("GameSpaceService", e) }
         }
     }
 
     private fun applyAutoBoost(pkg: String) {        // Scheduled battery saver pauses while gaming so perf profiles win.
         try {
             BatterySchedule.pauseForGame(this)
-        } catch (_: Exception) {}
+        } catch (e: Exception) { logQuietly("GameSpaceService", e) }
         if (!GameProfileStore.isAutoBoost(this)) return
         val safePkg = ShellSanitizer.cleanPkg(pkg) ?: return
         if (!GameProfileStore.shouldAutoApply(safePkg, android.os.SystemClock.elapsedRealtime())) return
@@ -1101,7 +1102,7 @@ class GameSpaceService : Service() {
                                 .putBoolean(Prefs.KEY_THERMAL_DISABLED, true)
                                 .putBoolean(Prefs.KEY_THERMAL_ADAPTIVE, false)
                                 .apply()
-                        } catch (_: Exception) {}
+                        } catch (e: Exception) { logQuietly("GameSpaceService", e) }
                     }
                 }
                 if (p.refresh120) exec("settings put system peak_refresh_rate 120 && settings put system min_refresh_rate 120")
@@ -1143,7 +1144,7 @@ class GameSpaceService : Service() {
                     OrientationMode.buildApply(p.orientation)?.let { exec(it) }
                 }
                 if (profileHasDisplay(p)) lastDisplayPkg = safePkg
-            } catch (_: Exception) {}
+            } catch (e: Exception) { logQuietly("GameSpaceService", e) }
         }
     }
 
@@ -1188,7 +1189,7 @@ class GameSpaceService : Service() {
     private fun update(v: View?, p: WindowManager.LayoutParams) {
         try {
             if (v != null) wm.updateViewLayout(v, p)
-        } catch (_: Exception) {}
+        } catch (e: Exception) { logQuietly("GameSpaceService", e) }
     }
 
     private fun dp(v: Int): Int = (v * resources.displayMetrics.density + 0.5f).toInt()
@@ -1212,7 +1213,7 @@ class GameSpaceService : Service() {
                     Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
                 }
             }
-        } catch (_: Exception) {}
+        } catch (e: Exception) { logQuietly("GameSpaceService", e) }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -1245,11 +1246,12 @@ class GameSpaceService : Service() {
 
     override fun onDestroy() {
         isRunning = false
-        try { stopForeground(STOP_FOREGROUND_REMOVE) } catch (_: Exception) {}
+        try { serviceJob.cancel() } catch (e: Exception) { logQuietly("GameSpaceService", e) }
+        try { stopForeground(STOP_FOREGROUND_REMOVE) } catch (e: Exception) { logQuietly("GameSpaceService", e) }
         try {
             getSharedPreferences(Prefs.MAIN, Context.MODE_PRIVATE)
                 .edit().putBoolean(Prefs.KEY_GAMESPACE_ENABLED, false).apply()
-        } catch (_: Exception) {}
+        } catch (e: Exception) { logQuietly("GameSpaceService", e) }
         stopFpsPolling()
         val wasAdaptive = thermalMode == 2
         thermalMode = 0
@@ -1259,15 +1261,15 @@ class GameSpaceService : Service() {
             Thread {
                 try {
                     ShizukuRunner.execOk("cmd thermalservice reset")
-                } catch (_: Exception) {}
+                } catch (e: Exception) { logQuietly("GameSpaceService", e) }
             }.start()
         }
         try {
             bubbleRoot?.let { wm.removeView(it) }
-        } catch (_: Exception) {}
+        } catch (e: Exception) { logQuietly("GameSpaceService", e) }
         try {
             if (::panel.isInitialized) wm.removeView(panelRoot)
-        } catch (_: Exception) {}
+        } catch (e: Exception) { logQuietly("GameSpaceService", e) }
         bubbleRoot = null
         panelRoot = null
         tiles.clear()

@@ -79,16 +79,16 @@ internal fun MainActivity.freezeBlocklist(): Set<String> {
         pm.queryIntentActivities(
             Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME), PackageManager.MATCH_ALL
         ).forEach { set.add(it.activityInfo.packageName) }
-    } catch (_: Exception) {}
+    } catch (e: Exception) { logQuietly("FreezeAppsFeature", e) }
     try {
         (getSystemService(Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager)
             .enabledInputMethodList.forEach { set.add(it.packageName) }
-    } catch (_: Exception) {}
-    try { android.provider.Telephony.Sms.getDefaultSmsPackage(this)?.let { set.add(it) } } catch (_: Exception) {}
+    } catch (e: Exception) { logQuietly("FreezeAppsFeature", e) }
+    try { android.provider.Telephony.Sms.getDefaultSmsPackage(this)?.let { set.add(it) } } catch (e: Exception) { logQuietly("FreezeAppsFeature", e) }
     try {
         (getSystemService(Context.TELECOM_SERVICE) as android.telecom.TelecomManager)
             .defaultDialerPackage?.let { set.add(it) }
-    } catch (_: Exception) {}
+    } catch (e: Exception) { logQuietly("FreezeAppsFeature", e) }
     return set
 }
 

@@ -119,11 +119,10 @@ class ScreenScheduleReceiver : BroadcastReceiver() {
                     Intent.ACTION_SCREEN_OFF -> BatterySchedule.onScreenOff(context.applicationContext)
                     Intent.ACTION_SCREEN_ON -> BatterySchedule.onScreenOn(context.applicationContext)
                 }
-            } catch (_: Exception) {
-            } finally {
+            } catch (e: Exception) { logQuietly("AutoSchedule", e) } finally {
                 try {
                     pending.finish()
-                } catch (_: Exception) {}
+                } catch (e: Exception) { logQuietly("AutoSchedule", e) }
             }
         }.start()
     }
@@ -145,10 +144,10 @@ internal fun MainActivity.syncScreenSchedule() {
         } else if (!want && cur != null) {
             try {
                 unregisterReceiver(cur)
-            } catch (_: Exception) {}
+            } catch (e: Exception) { logQuietly("AutoSchedule", e) }
             screenScheduleReceiver = null
         }
-    } catch (_: Exception) {}
+    } catch (e: Exception) { logQuietly("AutoSchedule", e) }
 }
 
 internal fun MainActivity.stopScreenSchedule() {
@@ -156,8 +155,8 @@ internal fun MainActivity.stopScreenSchedule() {
         screenScheduleReceiver?.let {
             try {
                 unregisterReceiver(it)
-            } catch (_: Exception) {}
+            } catch (e: Exception) { logQuietly("AutoSchedule", e) }
         }
-    } catch (_: Exception) {}
+    } catch (e: Exception) { logQuietly("AutoSchedule", e) }
     screenScheduleReceiver = null
 }

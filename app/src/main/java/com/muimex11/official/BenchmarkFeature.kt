@@ -51,7 +51,7 @@ private fun saveBenchRun(prefs: SharedPreferences, run: BenchRun) {
         })
         while (a.length() > 20) a.remove(0)
         prefs.edit().putString(Prefs.KEY_BENCH_RUNS, a.toString()).apply()
-    } catch (_: Exception) {}
+    } catch (e: Exception) { logQuietly("BenchmarkFeature", e) }
 }
 
 internal fun MainActivity.showBenchmarkSheet(prefs: SharedPreferences) {
@@ -187,7 +187,7 @@ private fun MainActivity.runBenchmark(
                 val t1 = gfxFrames(safePkg)
                 if (t1 != null) fps = BenchmarkCalc.fps(t1, t0, 15_000)
             }
-        } catch (_: Exception) {}
+        } catch (e: Exception) { logQuietly("BenchmarkFeature", e) }
 
         val run = BenchRun(safePkg, label, launchMs, fps, System.currentTimeMillis())
         saveBenchRun(prefs, run)

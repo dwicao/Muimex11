@@ -39,7 +39,7 @@ private fun saveBgRule(prefs: SharedPreferences, pkg: String, bucket: String, hi
             put("hiber", hiber)
         })
         prefs.edit().putString(Prefs.KEY_BGRESTRICT_RULES, o.toString()).apply()
-    } catch (_: Exception) {}
+    } catch (e: Exception) { logQuietly("BgRestrictFeature", e) }
 }
 
 internal fun MainActivity.showBgRestrictSheet(prefs: SharedPreferences) {
@@ -204,7 +204,7 @@ private fun MainActivity.resetBgPkg(prefs: SharedPreferences, pkg: String, label
                 o.remove(pkg)
                 prefs.edit().putString(Prefs.KEY_BGRESTRICT_RULES, o.toString()).apply()
             }
-        } catch (_: Exception) {}
+        } catch (e: Exception) { logQuietly("BgRestrictFeature", e) }
         refreshBgRestrictStatus(prefs)
         fetchSystemStatuses()
         showBgRestrictEditor(prefs, pkg, label)

@@ -21,6 +21,7 @@ import android.widget.Toast
 import com.google.android.material.materialswitch.MaterialSwitch
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.abs
@@ -31,7 +32,8 @@ class FloatingResolutionService : Service() {
 
     private lateinit var windowManager: WindowManager
     private lateinit var floatingView: View
-    private val serviceScope = CoroutineScope(Dispatchers.IO)
+    private val serviceJob = SupervisorJob()
+    private val serviceScope = CoroutineScope(serviceJob + Dispatchers.IO)
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -294,7 +296,8 @@ class FloatingResolutionService : Service() {
     }
 
     override fun onDestroy() {
-        try { stopForeground(STOP_FOREGROUND_REMOVE) } catch (_: Exception) {}
+        try { serviceJob.cancel() } catch (e: Exception) { logQuietly("FloatingResolutionService", e) }
+        try { stopForeground(STOP_FOREGROUND_REMOVE) } catch (e: Exception) { logQuietly("FloatingResolutionService", e) }
         super.onDestroy()
         if (::floatingView.isInitialized) {
             windowManager.removeView(floatingView)

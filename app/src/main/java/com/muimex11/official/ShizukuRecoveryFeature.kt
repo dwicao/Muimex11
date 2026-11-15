@@ -79,7 +79,7 @@ private fun MainActivity.enableWirelessDebuggingAndOpen() {
 private fun MainActivity.openShizukuManager() {
     try {
         ShizukuMgr.launchIntent(this)?.let { startActivity(it); return }
-    } catch (_: Exception) {}
+    } catch (e: Exception) { logQuietly("ShizukuRecoveryFeature", e) }
     UiToast.info(this, getString(R.string.toast_srec_no_manager), Toast.LENGTH_LONG).show()
 }
 

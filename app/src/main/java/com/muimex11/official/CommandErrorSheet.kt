@@ -47,7 +47,7 @@ internal fun MainActivity.showCommandErrorSheet(
                 val cm = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                 cm.setPrimaryClip(ClipData.newPlainText("muimex11-cmd-error", body))
                 UiToast.success(this, getString(R.string.shell_copied), Toast.LENGTH_SHORT).show()
-            } catch (_: Exception) {}
+            } catch (e: Exception) { logQuietly("CommandErrorSheet", e) }
         }
         .apply {
             if (onRetry != null) {

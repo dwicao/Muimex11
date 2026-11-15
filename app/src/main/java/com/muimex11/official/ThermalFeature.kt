@@ -36,7 +36,7 @@ internal fun MainActivity.syncThermalService(mode: Int) {
                 .setAction(GameSpaceService.ACTION_THERMAL)
                 .putExtra(GameSpaceService.EXTRA_THERMAL_MODE, mode)
         )
-    } catch (_: Exception) {}
+    } catch (e: Exception) { logQuietly("ThermalFeature", e) }
 }
 
 internal fun MainActivity.showThermalSheet(prefs: SharedPreferences) {

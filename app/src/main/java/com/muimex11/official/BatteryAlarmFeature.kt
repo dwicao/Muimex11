@@ -36,7 +36,7 @@ internal fun MainActivity.showBatteryAlarmSheet() {
 
 private fun MainActivity.applyBatteryAlarm(prefs: android.content.SharedPreferences, threshold: Int) {
     if (threshold == 0) {
-        try { stopService(Intent(this, BatteryAlarmService::class.java)) } catch (_: Exception) {}
+        try { stopService(Intent(this, BatteryAlarmService::class.java)) } catch (e: Exception) { logQuietly("BatteryAlarmFeature", e) }
         prefs.edit().putInt(Prefs.KEY_BATTERY_ALARM, 0).apply()
         UiToast.info(this, getString(R.string.balarm_off_done), Toast.LENGTH_SHORT).show()
         fetchSystemStatuses()

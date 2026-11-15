@@ -32,19 +32,19 @@ object GameTuning {
     val FPS_PRESETS = listOf("disable", "30", "60", "90", "120")
 
     fun buildMode(pkg: String, mode: String): String =
-        "cmd game mode $mode $pkg"
+        "cmd game mode $mode ${ShellSanitizer.requirePkg(pkg)}"
 
     fun buildCustom(pkg: String, downscale: String?, fps: String?): String {
         val parts = mutableListOf("cmd game set")
         if (!downscale.isNullOrEmpty() && downscale != "disable") parts += "--downscale $downscale"
         if (!fps.isNullOrEmpty() && fps != "disable") parts += "--fps $fps"
-        parts += pkg
+        parts += ShellSanitizer.requirePkg(pkg)
         return parts.joinToString(" ")
     }
 
-    fun buildList(pkg: String): String = "cmd game list-configs $pkg"
+    fun buildList(pkg: String): String = "cmd game list-configs ${ShellSanitizer.requirePkg(pkg)}"
 
-    fun buildReset(pkg: String): String = "cmd game reset $pkg"
+    fun buildReset(pkg: String): String = "cmd game reset ${ShellSanitizer.requirePkg(pkg)}"
 
     fun safePkg(pkg: String): Boolean =
         pkg.matches(Regex("^[A-Za-z0-9._]+$")) && pkg.length <= 256

@@ -62,7 +62,7 @@ internal fun MainActivity.isShizukuInstalled(): Boolean {
 internal fun MainActivity.launchShizukuApp() {
     try {
         ShizukuMgr.launchIntent(this)?.let { startActivity(it); finishAffinity(); return }
-    } catch (_: Exception) {}
+    } catch (e: Exception) { logQuietly("ShizukuShell", e) }
     val intent = packageManager.getLaunchIntentForPackage(AppConfig.SHIZUKU_PACKAGE)
     if (intent != null) {
         startActivity(intent)
@@ -120,7 +120,8 @@ internal fun MainActivity.downloadShizukuApk() {
         getString(R.string.dl_shizuku),
         AppConfig.SHIZUKU_APK_URL,
         "shizuku-v13.6.0.apk",
-        finishAfterInstall = true
+        finishAfterInstall = true,
+        verifyPin = false // Shizuku is signed by Rikka's key, not ours
     )
 }
 

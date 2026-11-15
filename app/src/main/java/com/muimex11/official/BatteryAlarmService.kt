@@ -57,11 +57,11 @@ class BatteryAlarmService : Service() {
                 @Suppress("UnspecifiedRegisterReceiverFlag")
                 registerReceiver(batteryReceiver, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
             }
-        } catch (_: Exception) {}
+        } catch (e: Exception) { logQuietly("BatteryAlarmService", e) }
     }
 
     override fun onDestroy() {
-        try { unregisterReceiver(batteryReceiver) } catch (_: Exception) {}
+        try { unregisterReceiver(batteryReceiver) } catch (e: Exception) { logQuietly("BatteryAlarmService", e) }
         super.onDestroy()
     }
 

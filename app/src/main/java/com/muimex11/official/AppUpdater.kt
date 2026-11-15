@@ -138,7 +138,36 @@ private suspend fun CoroutineScope.streamToPartFile(
     return downloaded to total
 }
 
-internal fun MainActivity.downloadAndInstall(title: String, url: String, fileName: String, finishAfterInstall: Boolean, expectedSha256: String = "") {
+/** True when [file] is an APK signed by the pinned release certificate. */
+internal fun MainActivity.apkSignatureMatches(file: File): Boolean {
+    return try {
+        val expected = AppConfig.EXPECTED_SIGNATURE_SHA256
+        val md = java.security.MessageDigest.getInstance("SHA-256")
+        val certBytes: ByteArray? = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
+            val info = packageManager.getPackageArchiveInfo(
+                file.absolutePath,
+                android.content.pm.PackageManager.GET_SIGNING_CERTIFICATES
+            )
+            info?.signingInfo?.apkContentsSigners?.firstOrNull()?.toByteArray()
+        } else {
+            @Suppress("DEPRECATION")
+            val info = packageManager.getPackageArchiveInfo(
+                file.absolutePath,
+                android.content.pm.PackageManager.GET_SIGNATURES
+            )
+            @Suppress("DEPRECATION")
+            info?.signatures?.firstOrNull()?.toByteArray()
+        }
+        if (certBytes == null) return false
+        md.update(certBytes)
+        md.digest().joinToString("") { "%02x".format(it) }.equals(expected, ignoreCase = true)
+    } catch (e: Exception) {
+        logQuietly("apkSignatureMatches", e)
+        false
+    }
+}
+
+internal fun MainActivity.downloadAndInstall(title: String, url: String, fileName: String, finishAfterInstall: Boolean, expectedSha256: String = "", verifyPin: Boolean = true) {
     if (!UpdateParser.isSafeApkUrl(url)) {
         UiToast.error(this, getString(R.string.dl_insecure_blocked), Toast.LENGTH_LONG).show()
         if (finishAfterInstall) showShizukuRequiredDialog()
@@ -184,6 +213,13 @@ internal fun MainActivity.downloadAndInstall(title: String, url: String, fileNam
                 if (!actual.equals(expectedSha256.lowercase(), ignoreCase = true)) {
                     throw java.io.IOException(getString(R.string.dl_sha_mismatch))
                 }
+            }
+            // Integrity is not enough — first-party APKs must carry the
+            // pinned release certificate, otherwise anyone who can swap
+            // version.json (or DNS) could push a malicious build. Fail
+            // closed. Third-party downloads (Shizuku) skip the pin.
+            if (verifyPin && !apkSignatureMatches(part)) {
+                throw java.io.IOException(getString(R.string.dl_signature_mismatch))
             }
             if (target.exists()) target.delete()
             if (!part.renameTo(target)) throw java.io.IOException(getString(R.string.err_save_file))

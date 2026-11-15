@@ -300,8 +300,8 @@ class RealtimeMonitorService : Service() {
         serviceJob.cancel()
         try {
             if (::overlayView.isInitialized) windowManager.removeView(overlayView)
-        } catch (_: Exception) {}
-        try { stopForeground(STOP_FOREGROUND_REMOVE) } catch (_: Exception) {}
+        } catch (e: Exception) { logQuietly("RealtimeMonitorService", e) }
+        try { stopForeground(STOP_FOREGROUND_REMOVE) } catch (e: Exception) { logQuietly("RealtimeMonitorService", e) }
         super.onDestroy()
     }
 

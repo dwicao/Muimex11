@@ -33,7 +33,7 @@ abstract class MuimexTile : TileService() {    protected val tileScope = Corouti
             }
             // Collapses the shade too; on a locked device the launch waits for unlock.
             startActivityAndCollapse(intent)
-        } catch (_: Exception) {}
+        } catch (e: Exception) { logQuietly("QuickTiles", e) }
     }
 
     protected fun toast(msg: String, long: Boolean = false) {
@@ -42,7 +42,7 @@ abstract class MuimexTile : TileService() {    protected val tileScope = Corouti
                 applicationContext, msg,
                 if (long) Toast.LENGTH_LONG else Toast.LENGTH_SHORT
             ).show()
-        } catch (_: Exception) {}
+        } catch (e: Exception) { logQuietly("QuickTiles", e) }
     }
 }
 

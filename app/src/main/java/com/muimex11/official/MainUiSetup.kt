@@ -104,7 +104,7 @@ internal fun MainActivity.syncTweakCardColors() {
         ids.forEach { id ->
             try {
                 (findViewById<View>(id) as? MaterialCardView)?.strokeColor = color
-            } catch (_: Exception) {}
+            } catch (e: Exception) { logQuietly("MainUiSetup", e) }
         }
     }
 }
@@ -221,9 +221,8 @@ internal fun MainActivity.setupStatusStyling() {
     val amber = Color.parseColor("#E09B00")
 
     fun stateOf(id: Int, text: String): TweakState {
-        // Compare against the English source so this works in every language.
-        fun en(res: Int) = AppTranslator.english(this, res)
-        val t = AppTranslator.toEnglish(text).removePrefix("Status:").trim()
+        fun en(res: Int) = getString(res)
+        val t = text.removePrefix("Status:").trim()
         return when {
             t.isEmpty() || t.startsWith(en(R.string.w_default)) || t.startsWith(en(R.string.w_ready)) ||
                 t.startsWith(en(R.string.w_unknown)) || t.startsWith(en(R.string.w_checking)) -> TweakState.NEUTRAL

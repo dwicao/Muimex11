@@ -48,7 +48,7 @@ internal fun MainActivity.showAutomationTokenSheet() {
                 val cm = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                 cm.setPrimaryClip(ClipData.newPlainText("muimex11-automation-token", shown))
                 UiToast.success(this, getString(R.string.shell_copied), Toast.LENGTH_SHORT).show()
-            } catch (_: Exception) {}
+            } catch (e: Exception) { logQuietly("AutomationTokenFeature", e) }
         }
         .button(getString(R.string.automation_new_token), SheetStyle.DANGER) {
             prefs.edit().putString(Prefs.KEY_AUTOMATION_TOKEN, AutomationAuth.newToken()).apply()

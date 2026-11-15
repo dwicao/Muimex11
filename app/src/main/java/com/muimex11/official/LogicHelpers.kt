@@ -53,15 +53,30 @@ object ResolutionController {
 object UpdateParser {
     data class Update(val code: Int, val name: String, val apkUrl: String, val notes: String, val mandatory: Boolean)
 
+    /** The one repository this app is allowed to talk to. */
+    const val REPO = "dwicao/Muimex11"
+
     fun isHttps(url: String): Boolean = url.startsWith("https://")
 
-    /** Only GitHub release hosts are trusted for APK downloads. */
+    /**
+     * Only GitHub release/asset hosts are trusted for APK downloads — and
+     * github.com / raw.githubusercontent.com URLs must point at [REPO]
+     * itself. The opaque CDN hosts (objects/release-assets) carry signed
+     * asset URLs with no repo path, so they are host-checked only.
+     */
     fun isTrustedApkHost(url: String): Boolean = try {
-        val h = java.net.URL(url).host.lowercase()
-        h == "github.com" || h.endsWith(".github.com") ||
-            h == "objects.githubusercontent.com" ||
-            h == "release-assets.githubusercontent.com" ||
-            h == "raw.githubusercontent.com"
+        // URI.normalize() resolves dot segments ("/repo/../evil") so path
+        // prefix matching can't be bypassed with traversal.
+        val u = java.net.URI(url).normalize()
+        val h = (u.host ?: return false).lowercase()
+        val path = u.path ?: ""
+        when {
+            h == "github.com" || h == "www.github.com" -> path.startsWith("/$REPO/")
+            h == "raw.githubusercontent.com" -> path.startsWith("/$REPO/")
+            h == "objects.githubusercontent.com" -> true
+            h == "release-assets.githubusercontent.com" -> true
+            else -> false
+        }
     } catch (_: Exception) { false }
 
     fun isSafeApkUrl(url: String): Boolean = isHttps(url) && isTrustedApkHost(url)
@@ -185,10 +200,14 @@ object DozeParser {
     }
 
     fun buildRemoveCmd(pkgs: List<String>): String =
-        pkgs.joinToString(" && ") { "dumpsys deviceidle whitelist -$it" }
+        pkgs.mapNotNull { ShellSanitizer.cleanPkg(it) }.takeIf { it.isNotEmpty() }
+            ?.joinToString(" && ") { "dumpsys deviceidle whitelist -$it" }
+            ?: "false"
 
     fun buildRestoreCmd(pkgs: List<String>): String =
-        pkgs.joinToString(" && ") { "dumpsys deviceidle whitelist +$it" }
+        pkgs.mapNotNull { ShellSanitizer.cleanPkg(it) }.takeIf { it.isNotEmpty() }
+            ?.joinToString(" && ") { "dumpsys deviceidle whitelist +$it" }
+            ?: "false"
 }
 
 /** Pure `cmd appops` helpers — unit-testable. No root needed. */
@@ -231,10 +250,10 @@ object AppOpsParser {
         }
 
     fun buildSet(pkg: String, op: String, mode: String): String =
-        "cmd appops set $pkg $op $mode"
+        "cmd appops set ${ShellSanitizer.requirePkg(pkg)} $op $mode"
 
     fun buildReset(pkg: String, op: String): String =
-        "cmd appops set $pkg $op $MODE_DEFAULT"
+        "cmd appops set ${ShellSanitizer.requirePkg(pkg)} $op $MODE_DEFAULT"
 
     fun safePkg(pkg: String): Boolean = pkg.matches(Regex("^[A-Za-z0-9._]+$")) &&
         OPS.isNotEmpty() && pkg.length <= 256
@@ -268,10 +287,14 @@ object DebloatPresets {
     val ALL = listOf(META, MIUI, SAMSUNG)
 
     fun buildDisable(pkgs: List<String>, userId: Int): String =
-        pkgs.joinToString(" && ") { "pm disable-user --user $userId $it" }
+        pkgs.mapNotNull { ShellSanitizer.cleanPkg(it) }.takeIf { it.isNotEmpty() }
+            ?.joinToString(" && ") { "pm disable-user --user $userId $it" }
+            ?: "false"
 
     fun buildEnable(pkgs: List<String>, userId: Int): String =
-        pkgs.joinToString(" && ") { "pm enable --user $userId $it" }
+        pkgs.mapNotNull { ShellSanitizer.cleanPkg(it) }.takeIf { it.isNotEmpty() }
+            ?.joinToString(" && ") { "pm enable --user $userId $it" }
+            ?: "false"
 }
 
 /** Bounded adaptive-thermal threshold presets — unit-testable.
@@ -415,10 +438,10 @@ object StandbyBuckets {
         return if (first in NAMES || first == "exempted") first else null
     }
 
-    fun buildGet(pkg: String): String = "am get-standby-bucket $pkg"
+    fun buildGet(pkg: String): String = "am get-standby-bucket ${ShellSanitizer.requirePkg(pkg)}"
 
     fun buildSet(pkg: String, bucket: String): String =
-        "am set-standby-bucket $pkg $bucket"
+        "am set-standby-bucket ${ShellSanitizer.requirePkg(pkg)} $bucket"
 }
 
 /** Pure app-hibernation helpers — unit-testable. Android 12+. */
@@ -436,10 +459,10 @@ object Hibernation {
         }
     }
 
-    fun buildGet(pkg: String): String = "cmd app_hibernation get-state $pkg"
+    fun buildGet(pkg: String): String = "cmd app_hibernation get-state ${ShellSanitizer.requirePkg(pkg)}"
 
     fun buildSet(pkg: String, hibernate: Boolean): String =
-        "cmd app_hibernation set-state $pkg $hibernate"
+        "cmd app_hibernation set-state ${ShellSanitizer.requirePkg(pkg)} $hibernate"
 }
 
 /** Pure benchmark parsers — unit-testable. */
@@ -462,11 +485,11 @@ object BenchmarkCalc {
 object UninstallCmd {
     /** Keep user data (-k) so a restore brings the app back as it was. */
     fun buildUninstall(userId: Int, pkg: String): String =
-        "pm uninstall -k --user $userId $pkg"
+        "pm uninstall -k --user $userId ${ShellSanitizer.requirePkg(pkg)}"
 
     /** Re-installs a factory (system-image) app for the user. */
     fun buildRestore(pkg: String): String =
-        "cmd package install-existing $pkg"
+        "cmd package install-existing ${ShellSanitizer.requirePkg(pkg)}"
 
     /** Mirrors the freeze flow: exit 0 with no error markers in output. */
     fun succeeded(code: Int, out: String): Boolean {
@@ -615,15 +638,15 @@ object AppLocale {
     /** AOSP default when no app-locales are set. */
     const val FOLLOW_SYSTEM = ""
 
-    fun buildGet(pkg: String): String = "cmd locale get-app-locales $pkg"
+    fun buildGet(pkg: String): String = "cmd locale get-app-locales ${ShellSanitizer.requirePkg(pkg)}"
 
     fun buildSet(pkg: String, tags: String): String? {
         if (!isValidTags(tags)) return null
-        return "cmd locale set-app-locales $pkg --app-locales $tags"
+        return "cmd locale set-app-locales ${ShellSanitizer.requirePkg(pkg)} --app-locales $tags"
     }
 
     fun buildClear(pkg: String): String =
-        "cmd locale set-app-locales $pkg --app-locales \"\""
+        "cmd locale set-app-locales ${ShellSanitizer.requirePkg(pkg)} --app-locales \"\""
 
     fun isValidTags(tags: String): Boolean {
         if (tags.isBlank() || tags.length > 64) return false

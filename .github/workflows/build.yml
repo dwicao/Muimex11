@@ -55,8 +55,9 @@ jobs:
       - name: Run unit tests
         run: ./gradlew --no-daemon --stacktrace testDebugUnitTest
 
-      - name: Android lint
-        run: ./gradlew --no-daemon --stacktrace lintDebug || true
+      - name: Android lint (tracked, non-blocking)
+        run: ./gradlew --no-daemon --stacktrace lintDebug
+        continue-on-error: true
 
       - name: Build signed release APK
         env:
@@ -65,15 +66,23 @@ jobs:
           MUIMEX_KEY_ALIAS: ${{ secrets.MUIMEX_KEY_ALIAS }}
         run: ./gradlew --no-daemon --stacktrace assembleRelease
 
-      - name: Verify APK signature
+      - name: Verify APK signature against pinned fingerprint
         run: |
           APK="app/build/outputs/apk/release/app-release.apk"
           test -s "$APK"
           APKSIGNER=$(ls "$ANDROID_HOME"/build-tools/*/apksigner 2>/dev/null | sort -V | tail -1)
-          if [ -n "$APKSIGNER" ]; then
-            "$APKSIGNER" verify --print-certs "$APK" > signing_report.txt 2>&1 || true
-            cat signing_report.txt
-          fi
+          test -n "$APKSIGNER" || { echo "::error::apksigner not found"; exit 1; }
+          "$APKSIGNER" verify --print-certs "$APK" | tee signing_report.txt
+          # The pinned release certificate (committed in this repository) must
+          # match the cert of the APK being shipped — fail the release otherwise.
+          # Update signature.txt + AppConfig.EXPECTED_SIGNATURE_SHA256 together
+          # when the signing key is intentionally rotated.
+          FP=$(grep -oE '[0-9a-f]{64}' signing_report.txt | head -1 | tr 'A-F' 'a-f')
+          EXPECTED=$(tr -d '[:space:]' < signature.txt | tr 'A-F' 'a-f')
+          echo "APK cert:  $FP"
+          echo "Pinned:    $EXPECTED"
+          test -n "$FP" || { echo "::error::Could not extract certificate fingerprint"; exit 1; }
+          test "$FP" = "$EXPECTED" || { echo "::error::Release certificate does not match the pinned fingerprint in signature.txt"; exit 1; }
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4

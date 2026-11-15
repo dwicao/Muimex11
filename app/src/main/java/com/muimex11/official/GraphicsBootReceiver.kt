@@ -40,7 +40,7 @@ class GraphicsBootReceiver : BroadcastReceiver() {
                             ready = ShizukuRunner.isReady()
                             if (ready) break
                         }
-                    } catch (_: Exception) { /* keep polling */ }
+                    } catch (e: Exception) { logQuietly("GraphicsBootReceiver", e) }
                     Thread.sleep(2_000L)
                 }
                 if (!ready) {
@@ -53,8 +53,8 @@ class GraphicsBootReceiver : BroadcastReceiver() {
                 if (setRes.ok || readBack.equals(GraphicsApi.VAL_VULKAN, ignoreCase = true)) {
                     GraphicsApi.stampRestore(prefs, GraphicsApi.VULKAN)
                 }
-            } catch (_: Exception) { /* best effort on boot */ }
-            finally { try { pending.finish() } catch (_: Exception) {} }
+            } catch (e: Exception) { logQuietly("GraphicsBootReceiver", e) }
+            finally { try { pending.finish() } catch (e: Exception) { logQuietly("GraphicsBootReceiver", e) } }
         }.apply { isDaemon = true }.start()
     }
 }

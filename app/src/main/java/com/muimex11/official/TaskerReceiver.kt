@@ -52,7 +52,7 @@ class TaskerReceiver : BroadcastReceiver() {
             } catch (_: Exception) {
                 // Automation must never crash the receiver.
             } finally {
-                try { pending.finish() } catch (_: Exception) {}
+                try { pending.finish() } catch (e: Exception) { logQuietly("TaskerReceiver", e) }
             }
         }.apply { isDaemon = true }.start()
     }

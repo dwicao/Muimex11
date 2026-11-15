@@ -86,5 +86,5 @@ private fun MainActivity.pickSettingsBackupFile() {
     }
     try {
         scriptPicker.launch(arrayOf("application/json", "*/*"))
-    } catch (_: Exception) {}
+    } catch (e: Exception) { logQuietly("SettingsBackupFeature", e) }
 }

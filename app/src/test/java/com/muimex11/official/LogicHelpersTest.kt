@@ -56,11 +56,24 @@ class UpdateParserTest {
 
     @Test
     fun trustedHostsOnly() {
-        assertTrue(UpdateParser.isSafeApkUrl("https://github.com/o/r/releases/download/v1/a.apk"))
+        assertTrue(UpdateParser.isSafeApkUrl("https://github.com/${UpdateParser.REPO}/releases/download/v1/a.apk"))
         assertTrue(UpdateParser.isSafeApkUrl("https://objects.githubusercontent.com/foo.apk"))
-        assertFalse(UpdateParser.isSafeApkUrl("http://github.com/o/r/a.apk"))
+        assertTrue(UpdateParser.isSafeApkUrl("https://release-assets.githubusercontent.com/foo.apk"))
+        assertTrue(UpdateParser.isSafeApkUrl("https://raw.githubusercontent.com/${UpdateParser.REPO}/main/version.json"))
+        assertFalse(UpdateParser.isSafeApkUrl("http://github.com/${UpdateParser.REPO}/a.apk"))
         assertFalse(UpdateParser.isSafeApkUrl("https://evil.com/a.apk"))
         assertFalse(UpdateParser.isSafeApkUrl("https://github.com.evil.com/a.apk"))
+    }
+
+    @Test
+    fun repoScopedHosts() {
+        // Other repos on github.com must be rejected — the update channel is
+        // this repository only, not the whole host.
+        assertFalse(UpdateParser.isSafeApkUrl("https://github.com/o/r/releases/download/v1/a.apk"))
+        assertFalse(UpdateParser.isSafeApkUrl("https://github.com/other/other/releases/download/v1/a.apk"))
+        assertFalse(UpdateParser.isSafeApkUrl("https://raw.githubusercontent.com/other/other/main/version.json"))
+        assertFalse(UpdateParser.isSafeApkUrl("https://raw.githubusercontent.com/${UpdateParser.REPO}/../../evil"))
+        assertTrue(UpdateParser.isSafeApkUrl("https://github.com/${UpdateParser.REPO}/releases/download/v4.32/Muimex11-4.32.apk"))
     }
 
     @Test
@@ -1127,5 +1140,47 @@ class SysTweaksMsaaTest {
     fun dualKeyVerify() {
         val v = SysTweaks.buildMsaaVerify()
         assertTrue(v.contains("enable_msaa") && v.contains("force_msaa"))
+    }
+}
+
+private fun expectIllegalArgument(block: () -> Unit) {
+    try {
+        block()
+        fail("expected IllegalArgumentException")
+    } catch (e: IllegalArgumentException) {
+        // expected
+    }
+}
+
+class BuilderSanitizerTest {
+    @Test
+    fun buildersRejectInjectionPackages() {
+        expectIllegalArgument {
+            AppOpsParser.buildSet("com.x; rm -rf /", "CAMERA", AppOpsParser.MODE_IGNORE)
+        }
+        expectIllegalArgument {
+            GameTuning.buildReset("com.x && reboot")
+        }
+        expectIllegalArgument {
+            UninstallCmd.buildUninstall(0, "com.x$(id)")
+        }
+        expectIllegalArgument {
+            StandbyBuckets.buildSet("com.x y", "rare")
+        }
+    }
+
+    @Test
+    fun listBuildersDropUnsafePackages() {
+        assertEquals("false", DozeParser.buildRemoveCmd(listOf("bad;pkg")))
+        assertTrue(DozeParser.buildRemoveCmd(listOf("com.safe.one", "bad;pkg")).contains("com.safe.one"))
+        assertFalse(DozeParser.buildRemoveCmd(listOf("com.safe.one", "bad;pkg")).contains("bad"))
+        assertEquals("false", DebloatPresets.buildDisable(listOf("bad'pkg"), 0))
+    }
+
+    @Test
+    fun buildersAcceptNormalPackages() {
+        assertTrue(AppOpsParser.buildSet("com.example.game", "CAMERA", AppOpsParser.MODE_IGNORE)
+            .startsWith("cmd appops set com.example.game"))
+        assertTrue(GameTuning.buildReset("com.example.game").endsWith("com.example.game"))
     }
 }

@@ -23,10 +23,4 @@ class SplashActivity : Activity() {
             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
     }
-
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        // leave without bouncing through MainActivity
-        finish()
-    }
 }

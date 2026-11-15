@@ -20,7 +20,7 @@ internal fun MainActivity.setupClickListeners() {
     setupBottomActionListeners(prefs)
 }
 
-private fun MainActivity.en(res: Int): String = AppTranslator.english(this, res)
+private fun MainActivity.en(res: Int): String = getString(res)
 
 private fun MainActivity.runTweakOnce(
     statusId: Int,
@@ -30,8 +30,7 @@ private fun MainActivity.runTweakOnce(
     successMessageRes: Int,
     onSuccess: () -> Unit = { fetchSystemStatuses() }
 ) {
-    // Status text may be translated; compare against its English source.
-    val status = AppTranslator.toEnglish(findViewById<TextView>(statusId).text.toString())
+    val status = findViewById<TextView>(statusId).text.toString()
     if (status.contains(doneMarker())) {
         UiToast.info(this, getString(alreadyToastRes), Toast.LENGTH_SHORT).show()
         return

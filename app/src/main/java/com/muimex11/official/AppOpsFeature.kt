@@ -38,7 +38,7 @@ private fun saveAppOpsRule(prefs: SharedPreferences, pkg: String, op: String, mo
         v.put(op, mode)
         o.put(pkg, v)
         prefs.edit().putString(Prefs.KEY_APPOPS_RULES, o.toString()).apply()
-    } catch (_: Exception) {}
+    } catch (e: Exception) { logQuietly("AppOpsFeature", e) }
 }
 
 internal fun MainActivity.showAppOpsSheet(prefs: SharedPreferences) {
@@ -193,7 +193,7 @@ private fun saveAppOpsBatchRules(prefs: SharedPreferences, pkgs: List<String>) {
             o.put(pkg, v)
         }
         prefs.edit().putString(Prefs.KEY_APPOPS_RULES, o.toString()).apply()
-    } catch (_: Exception) {}
+    } catch (e: Exception) { logQuietly("AppOpsFeature", e) }
 }
 
 private fun MainActivity.showAppOpsEditor(prefs: SharedPreferences, pkg: String, label: String) {
@@ -287,7 +287,7 @@ private fun MainActivity.resetAppOpsPkg(prefs: SharedPreferences, pkg: String, l
                 o.remove(pkg)
                 prefs.edit().putString(Prefs.KEY_APPOPS_RULES, o.toString()).apply()
             }
-        } catch (_: Exception) {}
+        } catch (e: Exception) { logQuietly("AppOpsFeature", e) }
         fetchSystemStatuses()
         showAppOpsEditor(prefs, pkg, label)
     }

@@ -214,11 +214,11 @@ class AutoClickService : Service() {
     }
 
     override fun onDestroy() {
-        try { stopForeground(STOP_FOREGROUND_REMOVE) } catch (_: Exception) {}
+        try { stopForeground(STOP_FOREGROUND_REMOVE) } catch (e: Exception) { logQuietly("AutoClickService", e) }
         stopLoop()
-        try { job.cancel() } catch (_: Exception) {}
+        try { job.cancel() } catch (e: Exception) { logQuietly("AutoClickService", e) }
         if (viewAdded) {
-            try { windowManager.removeView(root) } catch (_: Exception) {}
+            try { windowManager.removeView(root) } catch (e: Exception) { logQuietly("AutoClickService", e) }
             viewAdded = false
         }
         super.onDestroy()

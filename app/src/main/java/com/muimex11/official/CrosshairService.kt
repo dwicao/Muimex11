@@ -66,7 +66,7 @@ class CrosshairService : Service() {
     }
 
     override fun onDestroy() {
-        try { stopForeground(STOP_FOREGROUND_REMOVE) } catch (_: Exception) {}
+        try { stopForeground(STOP_FOREGROUND_REMOVE) } catch (e: Exception) { logQuietly("CrosshairService", e) }
         super.onDestroy()
         if (::crosshairView.isInitialized) {
             windowManager.removeView(crosshairView)

@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -63,20 +62,16 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    override fun getResources(): Resources = AppTranslator.wrap(super.getResources())
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        AppTranslator.init(applicationContext)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
-        AppTranslator.translateTree(findViewById(android.R.id.content))
 
         // If the previous run crashed, show the saved report now — even a
         // startup crash lands here on the next launch.
         try {
             CrashReporter.pendingReport(this)?.let { showCrashReportSheet(it) }
-        } catch (_: Exception) {}
+        } catch (e: Exception) { logQuietly("MainActivity", e) }
 
         val isNightMode = setupWindowAppearance()
         setupThemeToggle(isNightMode)
@@ -97,7 +92,6 @@ class MainActivity : AppCompatActivity() {
         setupBottomBarScrollBehavior()
         setupStatusStyling()
         refreshFreezeStatus()
-        setupLanguageIfNeeded()
         syncScreenSchedule()
 
         isGameSpaceEnabled = getSharedPreferences(Prefs.MAIN, MODE_PRIVATE)

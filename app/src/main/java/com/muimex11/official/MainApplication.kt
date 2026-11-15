@@ -1,25 +1,21 @@
 package com.muimex11.official
 
 import android.app.Application
-import android.content.Context
-import android.content.res.Resources
 import androidx.appcompat.app.AppCompatDelegate
 
 class MainApplication : Application() {
-    override fun getResources(): Resources = AppTranslator.wrap(super.getResources())
-
     override fun onCreate() {
         super.onCreate()
-        AppTranslator.init(this)
         CrashReporter.install(this)
 
-        val prefs = getSharedPreferences(Prefs.THEME, Context.MODE_PRIVATE)
-        val isDarkModeSaved = prefs.getBoolean(Prefs.KEY_DARK_MODE, false)
-
-        if (isDarkModeSaved) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        // Explicit user choice wins; otherwise follow the system setting.
+        val prefs = getSharedPreferences(Prefs.THEME, MODE_PRIVATE)
+        val nightMode = if (prefs.contains(Prefs.KEY_DARK_MODE)) {
+            if (prefs.getBoolean(Prefs.KEY_DARK_MODE, false)) AppCompatDelegate.MODE_NIGHT_YES
+            else AppCompatDelegate.MODE_NIGHT_NO
         } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
         }
+        AppCompatDelegate.setDefaultNightMode(nightMode)
     }
 }

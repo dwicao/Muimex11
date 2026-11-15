@@ -43,7 +43,7 @@ private fun MainActivity.presentGameProfiles(auto: Boolean, count: Int, apps: Li
         ) {
             try {
                 startActivity(Intent(android.provider.Settings.ACTION_USAGE_ACCESS_SETTINGS))
-            } catch (_: Exception) {}
+            } catch (e: Exception) { logQuietly("GameProfilesFeature", e) }
         })
     }
     list.addView(optionRow(
