@@ -1,8 +1,8 @@
 {
-  "versionCode": 61,
-  "versionName": "4.31",
-  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.31/Muimex11-4.31.apk",
-  "releaseNotes": "- Rebalanced card groups: removed duplicate cardSamsungBoost binding, moved Disable Dev Options + Debloat into Tools; each card appears in exactly one group (no duplicates in 'All' view).\n- Reset buttons enlarged 40dp -> 48dp tap target across all cards.\n- Status lines get contentDescription for screen readers; active-summary now shows warning count.\n- Onboarding gains a 4th step explaining view modes (list/grid/compact).\n- Empty-search state copy improved.\n- EN/PT parity clean.",
+  "versionCode": 62,
+  "versionName": "4.32",
+  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.32/Muimex11-4.32.apk",
+  "releaseNotes": "Security:\n- Self-update now verifies the downloaded APK against the pinned release\n  certificate (SHA-256, fail closed) before installing; first-party updates\n  only, Shizuku download skips the pin.\n- Expected signature is pinned at build time only \u2014 the runtime network\n  fetch of SIGNATURE_URL is gone. AppConfig URLs derive from a single\n  UpdateParser.REPO constant; github.com / raw.githubusercontent.com are\n  repo-scoped, dot-segment traversal is resolved before matching.\n- CI release pipeline now fails when the built APK's certificate does not\n  match signature.txt (previously only printed).\n- MainActivity no longer exported; predictive back enabled; shell command\n  builders route package names through ShellSanitizer.\n\nLocale:\n- Portuguese removed, Indonesian added (full EN\u2194ID parity, ~1,158 entries,\n  placeholders verified); locales_config is now en/id and wired via\n  android:localeConfig. README Indonesian section replaces PT section.\n\nHygiene:\n- Dead code removed (ML-Kit-era AppTranslator/LanguageSetup, boilerplate\n  tests, duplicate keep-rules placeholder, network-fetched signature path).\n- Overlay service coroutine scopes are shared and cancelled on destroy.\n- Previously-silent catch blocks now log via logcat (Muimex11, WARN).\n- Dark mode follows the system by default; EN/PT parity kept via tests.\n- gs_launcher_colors.xml is committed so local builds work out of the box.\n- Lint is tracked (continue-on-error) instead of || true; unit tests added\n  for the automation token, Tasker parsing and repo-scoped update URLs.",
   "mandatory": false,
-  "sha256": "449c09ca52eac51a55e0a05e570788ba3c1be934ce40d7ef7e46f120f9b489b2"
+  "sha256": "1dc0f98ac782c4a98bb76cd00c8429f7297406a2c2695ed27da0a24acabd8856"
 }
