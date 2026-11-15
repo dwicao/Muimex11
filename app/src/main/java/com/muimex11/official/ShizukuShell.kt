@@ -14,8 +14,9 @@ import kotlinx.coroutines.withContext
 import rikka.shizuku.Shizuku
 
 internal fun MainActivity.checkShizukuStatus() {
-    if (isShizukuInstalled()) {
-        if (Shizuku.pingBinder()) {
+    val binderUp = try { Shizuku.pingBinder() } catch (_: Exception) { false }
+    if (binderUp || isShizukuInstalled()) {
+        if (binderUp) {
             if (hasShizukuPermission()) {
                 updateShizukuBannerUI(true)
                 fetchSystemStatuses()
@@ -23,6 +24,7 @@ internal fun MainActivity.checkShizukuStatus() {
                 updateShizukuBannerUI(false)
             }
         } else {
+            // Manager present (possibly hidden via stealth mode) but service not running.
             updateShizukuBannerUI(false)
             UiToast.warning(this, getString(R.string.toast_shizuku_not_running_launch), Toast.LENGTH_LONG).show()
             launchShizukuApp()
@@ -50,20 +52,14 @@ internal fun MainActivity.hasShizukuPermission(): Boolean {
     }
 }
 
-internal fun MainActivity.isShizukuInstalled(): Boolean {
-    return try {
-        packageManager.getPackageInfo(AppConfig.SHIZUKU_PACKAGE, 0)
-        true
-    } catch (e: PackageManager.NameNotFoundException) {
-        false
-    }
-}
+internal fun MainActivity.isShizukuInstalled(): Boolean =
+    ShizukuMgr.installed(this) != null
 
 internal fun MainActivity.launchShizukuApp() {
     try {
         ShizukuMgr.launchIntent(this)?.let { startActivity(it); finishAffinity(); return }
     } catch (e: Exception) { logQuietly("ShizukuShell", e) }
-    val intent = packageManager.getLaunchIntentForPackage(AppConfig.SHIZUKU_PACKAGE)
+    val intent = ShizukuMgr.installed(this)?.let { pkg -> packageManager.getLaunchIntentForPackage(pkg) }
     if (intent != null) {
         startActivity(intent)
         finishAffinity()

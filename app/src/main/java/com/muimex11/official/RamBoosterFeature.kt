@@ -30,9 +30,9 @@ internal fun MainActivity.scanMemoryHogs(): List<MemApp> {
     val imePkg = Settings.Secure.getString(contentResolver, Settings.Secure.DEFAULT_INPUT_METHOD)?.substringBefore('/')
 
     val protectedPkgs = setOfNotNull(
-        packageName, AppConfig.SHIZUKU_PACKAGE, "android", "com.android.systemui",
+        packageName, "android", "com.android.systemui",
         "com.android.phone", homePkg, imePkg
-    )
+    ) + ShizukuMgr.protectedPackages(this)
 
     val line = Regex("""^\s*([\d,]+)K: (\S+)""")
     val perPackage = LinkedHashMap<String, Int>()

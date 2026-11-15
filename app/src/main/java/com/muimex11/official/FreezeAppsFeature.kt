@@ -66,7 +66,7 @@ internal fun MainActivity.refreshFreezeStatus() {
 internal fun MainActivity.freezeBlocklist(): Set<String> {
     val pm = packageManager
     val set = mutableSetOf(
-        packageName, AppConfig.SHIZUKU_PACKAGE, "android", "com.android.systemui",
+        packageName, "android", "com.android.systemui",
         "com.android.settings", "com.android.phone", "com.android.server.telecom",
         "com.android.shell", "com.android.packageinstaller", "com.google.android.packageinstaller",
         "com.android.permissioncontroller", "com.google.android.permissioncontroller",
@@ -75,6 +75,8 @@ internal fun MainActivity.freezeBlocklist(): Set<String> {
         "com.android.nfc", "com.android.emergency", "com.android.networkstack",
         "com.android.cellbroadcastreceiver", "com.android.inputmethod.latin"
     )
+    // Protect the Shizuku manager from being frozen — including stealth-mode clones.
+    set += ShizukuMgr.protectedPackages(this)
     try {
         pm.queryIntentActivities(
             Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME), PackageManager.MATCH_ALL

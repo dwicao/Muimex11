@@ -8,11 +8,17 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import rikka.shizuku.ShizukuProvider
 
 /**
- * Tolerates Shizuku-manager forks: the official manager is preferred, but a
- * compatible fork (e.g. Shevery, same client protocol) is used when the
- * official one is not installed. Pattern adapted from GAMA's ShizukuBackend.
+ * Tolerates Shizuku-manager forks and stealth-mode clones.
+ *
+ * The official manager is preferred, but a compatible fork (e.g. Shevery, same
+ * client protocol) is used when the official one is not installed. Stealth
+ * mode (thedjchi/dwicao fork) renames the manager package to a random clone,
+ * so package-name lookups fail — but the clone still declares
+ * [ShizukuProvider.PERMISSION], which is used as the discovery anchor (same
+ * approach as the fork's own compatibility snippet).
  */
 object ShizukuMgr {
     const val OFFICIAL = "moe.shizuku.privileged.api"
@@ -22,6 +28,27 @@ object ShizukuMgr {
 
     fun installed(context: Context): String? =
         KNOWN.firstOrNull { isInstalled(context, it) }
+            ?: stealthClonePackage(context)
+
+    /**
+     * Package name of the hidden Shizuku clone, discovered via the permission
+     * it declares. Works regardless of the random package name chosen at
+     * clone time; also returns the official package when not hidden.
+     */
+    fun stealthClonePackage(context: Context): String? = try {
+        context.packageManager
+            .getPermissionInfo(ShizukuProvider.PERMISSION, 0)
+            ?.packageName
+            ?.takeIf { it.isNotBlank() }
+    } catch (_: PackageManager.NameNotFoundException) {
+        null
+    } catch (_: SecurityException) {
+        null
+    }
+
+    /** All manager package names worth protecting from kill/freeze/clean. */
+    fun protectedPackages(context: Context): Set<String> =
+        KNOWN.toSet() + setOfNotNull(installed(context))
 
     fun isInstalled(context: Context, pkg: String): Boolean = try {
         context.packageManager.getPackageInfo(pkg, 0)

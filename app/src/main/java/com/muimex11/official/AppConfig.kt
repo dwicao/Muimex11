@@ -16,6 +16,4 @@ object AppConfig {
      * Pinned at build time; changed only by committing to this repository.
      */
     const val EXPECTED_SIGNATURE_SHA256 = "9f5ce76b37bf4f9427f9bbcd5ddabf5326800195a6d5175d4d723e1ddabe4df3"
-
-    const val SHIZUKU_PACKAGE = "moe.shizuku.privileged.api"
 }
