@@ -1,8 +1,8 @@
 {
-  "versionCode": 64,
-  "versionName": "4.34",
-  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.34/Muimex11-4.34.apk",
-  "releaseNotes": "Root cause of the \"tap Vulkan GPU does nothing\" reports on Samsung One UI\n(S20 included): startActivityAndCollapse(Intent) throws\nUnsupportedOperationException on API 34+ (targetSdk 34+), and the failure\nwas swallowed by a catch, so tile taps without a ready Shizuku backend\nwere absolute no-ops. Tiles now:\n\n- launch Muimex11 through startActivityAndCollapse(PendingIntent) on\n  API 34+ (Intent path kept for older), routed through unlockAndRun()\n  when the device is locked\n- toast every outcome: Private DNS on/off, Focus mode on/off,\n  \"Graphics API -> ... applies to newly launched apps\" (Vulkan tile),\n  or the copyable failure reason\n- use res.ok from the shell call instead of assuming success, and\n  tolerate updateTile() after the shade collapses mid-flight\n\nAlso audited the rest of the external entry surface (GraphicsBootReceiver,\nTaskerReceiver w/ token guard, ScreenScheduleReceiver, battery alarm FGS):\nno other API-34 crash paths or silent failures found. Bumps to 4.34 (code 64).",
+  "versionCode": 65,
+  "versionName": "4.35",
+  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.35/Muimex11-4.35.apk",
+  "releaseNotes": "Lint had been non-blocking and 166 errors had piled up. Triaged:\n\n- ShizukuRunner called Process#destroyForcibly() unconditionally; it is API\n  26+ and throws NoSuchMethodError (an Error, not an Exception) on Android\n  7.x \u2014 i.e. a crash on the shell choke point. Guarded with a destroy()\n  fallback.\n- layout_game_space_panel: android:tint -> app:tint so AppCompat actually\n  tints those two icons on older APIs.\n- QuickTiles: the pre-34 Intent overload of startActivityAndCollapse is the\n  only option there; silenced narrowly with a comment.\n- QUERY_ALL_PACKAGES documented at the declaration.\n- Stripped a stray BOM from the middle of ShellExecuteFeature.kt.\n- StringFormatMatches demoted to warning in lint.xml: %s accepts any object,\n  so the flagged calls are legal and intentional; reason recorded.\n- CI now fails on new lint errors; report still uploaded.",
   "mandatory": false,
-  "sha256": "dc11d3e5e28ff0de99c3facf6beaaa439e2f7264e6efac5d711098813fcead46"
+  "sha256": "f1f41f5d2146115ce2f37cf23ef8d95c4d593d2f8ab035b34b4d4613707834f9"
 }
