@@ -64,4 +64,6 @@ object Prefs {
     const val KEY_GRAPHICS_LAST_SWITCH = "GraphicsLastSwitch"
     const val KEY_GRAPHICS_LAST_UPTIME = "GraphicsLastUptime"
     const val KEY_GRAPHICS_LAST_BOOT = "GraphicsLastBoot"
+
+    const val KEY_LAST_DNS = "LastDns"
 }

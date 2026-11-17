@@ -114,6 +114,9 @@ class DnsTileService : MuimexTile() {
         tileScope.launch {
             val mode = ShizukuRunner.query("settings get global private_dns_mode").trim()
             val turningOff = mode == "hostname"
+            val prefs = getSharedPreferences(Prefs.MAIN, MODE_PRIVATE)
+            val saved = prefs.getString(Prefs.KEY_LAST_DNS, "one.one.one.one")?.trim().orEmpty()
+            val host = if (saved.isNotEmpty() && saved.matches(Regex("^[A-Za-z0-9][A-Za-z0-9.-]*[A-Za-z0-9]$"))) saved else "one.one.one.one"
             val res = if (turningOff) {
                 ShizukuRunner.exec(
                     "settings put global private_dns_mode default && " +
@@ -122,12 +125,16 @@ class DnsTileService : MuimexTile() {
             } else {
                 ShizukuRunner.exec(
                     "settings put global private_dns_mode hostname && " +
-                        "settings put global private_dns_specifier one.one.one.one"
+                        "settings put global private_dns_specifier $host"
                 )
             }
             withContext(Dispatchers.Main) {
                 if (res.ok) {
-                    toast(getString(if (turningOff) R.string.tile_dns_off else R.string.tile_dns_on))
+                    if (turningOff) {
+                        toast(getString(R.string.tile_dns_off))
+                    } else {
+                        toast(getString(R.string.tile_dns_on, host))
+                    }
                 } else {
                     toast(getString(R.string.tile_dns_fail), long = true)
                 }

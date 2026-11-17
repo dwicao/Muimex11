@@ -235,6 +235,12 @@
     <string name="dlg_private_dns">Private DNS</string>
     <string name="dlg_private_dns_msg">Choose a provider for ad blocking, tracker protection and lower latency.</string>
     <string name="dns_off_desc">Turn private DNS off (automatic)</string>
+    <string name="dns_custom">Custom</string>
+    <string name="dns_custom_desc">Enter your own DNS hostname</string>
+    <string name="dns_custom_title">Custom DNS</string>
+    <string name="dns_custom_msg">Enter a DNS hostname or IP address.</string>
+    <string name="dns_custom_hint">DNS hostname (e.g. dns.example.com)</string>
+    <string name="dns_custom_invalid">Invalid DNS address</string>
     <string name="msg_dns_default">DNS reset to default</string>
     <string name="hint_min_hz">Minimum (Hz)</string>
     <string name="hint_max_hz">Maximum (Hz)</string>
@@ -1024,7 +1030,7 @@
     <string name="tile_dns">Private DNS</string>
     <string name="tile_dnd">Focus Mode</string>
     <string name="tile_vulkan">Vulkan GPU</string>
-    <string name="tile_dns_on">Private DNS on (one.one.one.one)</string>
+    <string name="tile_dns_on">Private DNS on (%1$s)</string>
     <string name="tile_dns_off">Private DNS off</string>
     <string name="tile_dns_fail">Private DNS toggle failed — check Shizuku</string>
     <string name="tile_dnd_on">Focus mode on — heads-up notifications blocked</string>

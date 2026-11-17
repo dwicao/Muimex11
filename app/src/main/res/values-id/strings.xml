@@ -235,6 +235,12 @@
     <string name="dlg_private_dns">DNS Pribadi</string>
     <string name="dlg_private_dns_msg">Pilih penyedia untuk pemblokiran iklan, perlindungan tracker dan latensi lebih rendah.</string>
     <string name="dns_off_desc">Matikan DNS pribadi (otomatis)</string>
+    <string name="dns_custom">Kustom</string>
+    <string name="dns_custom_desc">Masukkan hostname DNS sendiri</string>
+    <string name="dns_custom_title">DNS Kustom</string>
+    <string name="dns_custom_msg">Masukkan hostname atau alamat IP DNS.</string>
+    <string name="dns_custom_hint">Hostname DNS (mis. dns.example.com)</string>
+    <string name="dns_custom_invalid">Alamat DNS tidak valid</string>
     <string name="msg_dns_default">DNS dikembalikan ke bawaan</string>
     <string name="hint_min_hz">Minimum (Hz)</string>
     <string name="hint_max_hz">Maksimum (Hz)</string>
@@ -1024,7 +1030,7 @@
     <string name="tile_dns">DNS Pribadi</string>
     <string name="tile_dnd">Mode Fokus</string>
     <string name="tile_vulkan">Vulkan GPU</string>
-    <string name="tile_dns_on">DNS Pribadi aktif (one.one.one.one)</string>
+    <string name="tile_dns_on">DNS Pribadi aktif (%1$s)</string>
     <string name="tile_dns_off">DNS Pribadi mati</string>
     <string name="tile_dns_fail">Gagal mengganti DNS Pribadi — periksa Shizuku</string>
     <string name="tile_dnd_on">Mode Fokus aktif — notifikasi heads-up diblokir</string>
