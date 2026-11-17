@@ -68,6 +68,13 @@ RAM booster · cache cleaner · app freezer · fstrim · fixed-performance modes
 
 This fork is 80+ commits ahead of upstream. Highlights, newest first:
 
+### Reliability & engineering (v4.35)
+- **Charge alarm actually runs in the background again** — `BatteryAlarmService` declared `foregroundServiceType="health"` while calling `startForeground(..., TYPE_SPECIAL_USE)`, and the resulting API 34+ rejection was swallowed by an empty catch. It is now a `specialUse` service like the other overlays, and a rejected foreground start is logged instead of vanishing.
+- **Tweak state is typed, not text** — "is this already applied?" was answered by substring-matching the *localized* status label (`status.contains("Recently")`), so editing copy or switching to Indonesian could change what a button does. `StatusRegistry` now holds a `StatusKind` per card, fed by real read-back, and the UI colours themselves derive from it.
+- **Status refresh forks one shell instead of thirteen** — `settings get` reads in the status, network and system sections now run as a single tagged script (`ShellBatcher` + `ShizukuRunner.runTagged`), so `sh` process creation drops from 13 to 3 per refresh. The marker parser handles noisy, multi-line and missing output, and is unit-tested.
+- **Build hygiene** — Shizuku deps moved into the version catalog, dead no-op ProGuard keeps deleted (`LogicHelpers` never existed as a class), unused Espresso/androidTest dependencies removed, dock command failures now log their exit code.
+- **Lint is tracked** — the report is uploaded and summarised on every run so findings stop being invisible.
+
 ### Quick Settings tiles fix (v4.34)
 - **Tiles actually fire on the shade now** (Samsung One UI included): without Shizuku ready — or on a locked device — a tile tap unlocks/opens Muimex11 via the Android 14+-safe `startActivityAndCollapse(PendingIntent)` API. The previous Intent-based call throws `UnsupportedOperationException` on API 34+, and the exception was swallowed, so taps did absolutely nothing.
 - **Every tile outcome gives feedback** — Private DNS on/off, Focus mode on/off, "Graphics API → … applies to newly launched apps" (or a copyable failure reason), instead of silent success/failure. Reset-all consistency, tasker `renderer` action and the boot re-apply path are covered by unit tests.

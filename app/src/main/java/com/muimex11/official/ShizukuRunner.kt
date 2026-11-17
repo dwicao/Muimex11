@@ -33,10 +33,22 @@ object ShizukuRunner {
             Shizuku.checkSelfPermission() == android.content.pm.PackageManager.PERMISSION_GRANTED
     } catch (_: Exception) { false }
 
-    /** Run several commands in one shell to halve binder round-trips. */
-    fun execBatch(cmds: List<String>, timeoutMs: Long = DEFAULT_TIMEOUT_MS): ShellResult {
-        if (cmds.isEmpty()) return ShellResult(0, "")
-        return exec(cmds.joinToString(" ; "), timeoutMs)
+    /**
+     * Runs several read-only queries in **one** shell process and returns the
+     * tagged output (`key -> text`).
+     *
+     * The old helper joined commands with `;`, so only the *last* exit code
+     * survived and a caller could not tell which command failed. Markers keep
+     * every answer addressable, and a status refresh that used to fork a
+     * process per `settings get` now forks one.
+     */
+    fun runTagged(
+        reqs: List<Pair<String, String>>,
+        timeoutMs: Long = DEFAULT_TIMEOUT_MS
+    ): Map<String, String> {
+        if (reqs.isEmpty()) return emptyMap()
+        val res = exec(ShellBatcher.build(reqs), timeoutMs)
+        return ShellBatcher.parse(res.out)
     }
 
     fun exec(cmd: String, timeoutMs: Long = DEFAULT_TIMEOUT_MS): ShellResult {

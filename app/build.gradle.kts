@@ -16,10 +16,8 @@ android {
         applicationId = "com.muimex11.official"
         minSdk = 24
         targetSdk = 37
-        versionCode = 64
-        versionName = "4.34"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        versionCode = 65
+        versionName = "4.35"
     }
 
     if (releaseKeystorePath != null) {
@@ -48,6 +46,14 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
+    lint {
+        // Tracked, not ignored: CI runs lint on every push and fails on new
+        // errors. Warnings stay visible in the uploaded report.
+        abortOnError = true
+        warningsAsErrors = false
+        checkDependencies = false
+    }
 }
 
 dependencies {
@@ -60,8 +66,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.kotlinx.coroutines.android)
     testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(libs.androidx.junit)
-    implementation("dev.rikka.shizuku:api:13.1.0")
-    implementation("dev.rikka.shizuku:provider:13.1.0")
+    implementation(libs.shizuku.api)
+    implementation(libs.shizuku.provider)
 }

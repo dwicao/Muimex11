@@ -18,3 +18,12 @@ internal fun logQuietly(where: String, e: Throwable) {
         // Logging must never throw — not even from a crash boundary.
     }
 }
+
+/** Same sink as [logQuietly] for failures that are not exceptions (bad exit codes). */
+internal fun logWarn(where: String, message: String) {
+    try {
+        Log.w("Muimex11", "$where: $message")
+    } catch (_: Throwable) {
+        // Logging must never throw.
+    }
+}

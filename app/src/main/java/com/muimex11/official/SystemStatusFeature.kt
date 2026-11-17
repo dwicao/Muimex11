@@ -11,6 +11,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 
+/** `window_animation_scale` value that the "fast animations" tweak writes. */
+internal const val ANIM_FAST_VALUE = "0.5"
+
 private class SystemStatuses(
     val fixedPerf: String,
     val thermal: String,
@@ -46,7 +49,13 @@ private class SystemStatuses(
     val radio: String,
     val shizukuRecovery: String,
     val netBlock: String,
-    val battHealth: String
+    val battHealth: String,
+    /**
+     * Cards whose read-back proved they are applied. Rendered into
+     * [StatusRegistry] so "already applied" decisions never look at the
+     * (localized, editable) status text.
+     */
+    val appliedIds: Set<Int> = emptySet()
 )
 
 internal fun MainActivity.fetchSystemStatuses() {
@@ -75,7 +84,9 @@ private data class NetStatus(
     val touch: String,
     val dns: String,
     val dnd: String,
-    val netBlock: String
+    val netBlock: String,
+    val networkApplied: Boolean = false,
+    val dndApplied: Boolean = false
 )
 
 private data class SysStatus(
@@ -83,7 +94,10 @@ private data class SysStatus(
     val blurs: String,
     val devOpts: String,
     val srec: String,
-    val battHealth: String
+    val battHealth: String,
+    val animApplied: Boolean = false,
+    val blursApplied: Boolean = false,
+    val devOptsApplied: Boolean = false
 )
 
 /**
@@ -152,15 +166,22 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
     // hung command (e.g. Shizuku dying mid-fetch) cannot stall the whole page.
     val displayJob = async {
         sectionOrNull {
-            val minRefresh = runAdbCommandWithResult("settings get system min_refresh_rate")
-            val maxRefresh = runAdbCommandWithResult("settings get system peak_refresh_rate")
+            val d = ShizukuRunner.runTagged(
+                listOf(
+                    "min_refresh" to "settings get system min_refresh_rate",
+                    "peak_refresh" to "settings get system peak_refresh_rate",
+                    "wm_size" to "wm size"
+                )
+            )
+            val minRefresh = ShellBatcher.value(d, "min_refresh")
+            val maxRefresh = ShellBatcher.value(d, "peak_refresh")
             val refreshStatus = if (minRefresh.isNotEmpty() && minRefresh != "null" && maxRefresh.isNotEmpty() && maxRefresh != "null") {
                 getString(R.string.status_value, "$minRefresh - $maxRefresh Hz")
             } else {
                 getString(R.string.status_default)
             }
 
-            val wmSize = runAdbCommandWithResult("wm size")
+            val wmSize = ShellBatcher.value(d, "wm_size")
             val resStatus = if (wmSize.contains("Override size:")) {
                 getString(R.string.status_value, wmSize.substringAfter("Override size:").trim())
             } else if (wmSize.contains("Physical size:")) {
@@ -181,12 +202,22 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
 
     val netJob = async {
         sectionOrNull {
-            val networkOpt = runAdbCommandWithResult("settings get global tether_dun_required")
-            val touchPtr = runAdbCommandWithResult("settings get system pointer_speed")
-            val touchLp = runAdbCommandWithResult("settings get secure long_press_timeout")
-            val dnsMode = runAdbCommandWithResult("settings get global private_dns_mode")
-            val dnsSpecifier = runAdbCommandWithResult("settings get global private_dns_specifier")
-            val headsUpOpt = runAdbCommandWithResult("settings get global heads_up_notifications_enabled")
+            val n = ShizukuRunner.runTagged(
+                listOf(
+                    "network" to "settings get global tether_dun_required",
+                    "pointer_speed" to "settings get system pointer_speed",
+                    "long_press" to "settings get secure long_press_timeout",
+                    "dns_mode" to "settings get global private_dns_mode",
+                    "dns_spec" to "settings get global private_dns_specifier",
+                    "heads_up" to "settings get global heads_up_notifications_enabled"
+                )
+            )
+            val networkOpt = ShellBatcher.value(n, "network")
+            val touchPtr = ShellBatcher.value(n, "pointer_speed")
+            val touchLp = ShellBatcher.value(n, "long_press")
+            val dnsMode = ShellBatcher.value(n, "dns_mode")
+            val dnsSpecifier = ShellBatcher.value(n, "dns_spec")
+            val headsUpOpt = ShellBatcher.value(n, "heads_up")
             NetStatus(
                 network = if (networkOpt == "0") getString(R.string.status_optimized) else getString(R.string.status_default),
                 touch = when (
@@ -205,16 +236,25 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
                     getString(R.string.status_default)
                 },
                 dnd = if (headsUpOpt == "0") getString(R.string.status_dnd_blocked) else getString(R.string.status_default),
-                netBlock = netBlockStatusText()
+                netBlock = netBlockStatusText(),
+                networkApplied = networkOpt == "0",
+                dndApplied = headsUpOpt == "0"
             )
         }
     }
 
     val sysJob = async {
         sectionOrNull {
-            val animScale = runAdbCommandWithResult("settings get global window_animation_scale")
-            val blursOpt = runAdbCommandWithResult("settings get global disable_window_blurs")
-            val devOpt = runAdbCommandWithResult("settings get global development_settings_enabled")
+            val sysOut = ShizukuRunner.runTagged(
+                listOf(
+                    "anim" to "settings get global window_animation_scale",
+                    "blurs" to "settings get global disable_window_blurs",
+                    "devopt" to "settings get global development_settings_enabled"
+                )
+            )
+            val animScale = ShellBatcher.value(sysOut, "anim")
+            val blursOpt = ShellBatcher.value(sysOut, "blurs")
+            val devOpt = ShellBatcher.value(sysOut, "devopt")
             SysStatus(
                 anim = when (animScale) {
                     "0.5" -> getString(R.string.status_anim_fast)
@@ -224,7 +264,10 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
                 blurs = if (blursOpt == "1") getString(R.string.status_blurs_off) else getString(R.string.status_default),
                 devOpts = if (devOpt == "1") getString(R.string.status_devopt_on) else getString(R.string.status_devopt_off),
                 srec = shizukuRecoveryStatusText(),
-                battHealth = battHealthStatusText()
+                battHealth = battHealthStatusText(),
+                animApplied = animScale == ANIM_FAST_VALUE,
+                blursApplied = blursOpt == "1",
+                devOptsApplied = devOpt == "0"
             )
         }
     }
@@ -293,46 +336,61 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
         radio = radioStatus,
         shizukuRecovery = sys.srec,
         netBlock = net.netBlock,
-        battHealth = sys.battHealth
+        battHealth = sys.battHealth,
+        appliedIds = buildSet {
+            if (net.networkApplied) add(R.id.tvStatusNetwork)
+            if (net.dndApplied) add(R.id.tvStatusDnd)
+            if (sys.animApplied) add(R.id.tvStatusAnimations)
+            if (sys.blursApplied) add(R.id.tvStatusBlurs)
+            if (sys.devOptsApplied) add(R.id.tvStatusDevOptions)
+        }
     )
 }
 
 private fun MainActivity.renderSystemStatuses(s: SystemStatuses) {
-    findViewById<TextView>(R.id.tvStatusFixedPerf).text = s.fixedPerf
-    findViewById<TextView>(R.id.tvStatusThermal).text = s.thermal
-    findViewById<TextView>(R.id.tvStatusGameMode).text = s.gameMode
-    findViewById<TextView>(R.id.tvStatusRefresh).text = s.refresh
-    findViewById<TextView>(R.id.tvStatusResolution).text = s.resolution
-    findViewById<TextView>(R.id.tvStatusNetwork).text = s.network
-    findViewById<TextView>(R.id.tvStatusTouch).text = s.touch
-    findViewById<TextView>(R.id.tvStatusDns).text = s.dns
-    findViewById<TextView>(R.id.tvStatusAnimations).text = s.animations
-    findViewById<TextView>(R.id.tvStatusBlurs).text = s.blurs
-    findViewById<TextView>(R.id.tvStatusDnd).text = s.dnd
-    findViewById<TextView>(R.id.tvStatusDevOptions).text = s.devOptions
-    findViewById<TextView>(R.id.tvStatusSysTweaks).text = s.sysTweaks
-    findViewById<TextView>(R.id.tvStatusComfort).text = s.comfort
-    findViewById<TextView>(R.id.tvStatusDx).text = s.dx
-    findViewById<TextView>(R.id.tvStatusNetRadio).text = s.netRadio
-    findViewById<TextView>(R.id.tvStatusMem).text = s.mem
-    findViewById<TextView>(R.id.tvStatusGameTuning).text = s.gameTuning
-    findViewById<TextView>(R.id.tvStatusBatterySaver).text = s.battery
-    findViewById<TextView>(R.id.tvStatusAppOps).text = s.appOps
-    findViewById<TextView>(R.id.tvStatusGameProfiles).text = s.gameProfiles
-    findViewById<TextView>(R.id.tvStatusDebloat).text = s.debloat
-    findViewById<TextView>(R.id.tvStatusAudio).text = s.audio
-    findViewById<TextView>(R.id.tvStatusSensors).text = s.sensors
-    findViewById<TextView>(R.id.tvStatusBgRestrict).text = s.bgRestrict
-    findViewById<TextView>(R.id.tvStatusBenchmark).text = s.benchmark
-    findViewById<TextView>(R.id.tvStatusGraphics).text = s.graphics
-    findViewById<TextView>(R.id.tvStatusOrientation).text = s.orientation
-    findViewById<TextView>(R.id.tvStatusApkBackup).text = s.apkBackup
-    findViewById<TextView>(R.id.tvStatusReboot).text = s.reboot
-    findViewById<TextView>(R.id.tvStatusAppLocale).text = s.appLocale
-    findViewById<TextView>(R.id.tvStatusRadio).text = s.radio
-    findViewById<TextView>(R.id.tvStatusShizukuRecovery).text = s.shizukuRecovery
-    findViewById<TextView>(R.id.tvStatusNetBlock).text = s.netBlock
-    findViewById<TextView>(R.id.tvStatusBattHealth).text = s.battHealth
+    // Registry first, text second: the status TextWatcher in MainUiSetup reads
+    // the typed state to colour the row, and the "already applied" guards in
+    // MainClickListeners read it to decide behaviour.
+    fun push(id: Int, text: String) {
+        StatusRegistry.set(id, if (id in s.appliedIds) StatusKind.APPLIED else StatusKind.READY)
+        findViewById<TextView>(id).text = text
+    }
+
+    push(R.id.tvStatusFixedPerf, s.fixedPerf)
+    push(R.id.tvStatusThermal, s.thermal)
+    push(R.id.tvStatusGameMode, s.gameMode)
+    push(R.id.tvStatusRefresh, s.refresh)
+    push(R.id.tvStatusResolution, s.resolution)
+    push(R.id.tvStatusNetwork, s.network)
+    push(R.id.tvStatusTouch, s.touch)
+    push(R.id.tvStatusDns, s.dns)
+    push(R.id.tvStatusAnimations, s.animations)
+    push(R.id.tvStatusBlurs, s.blurs)
+    push(R.id.tvStatusDnd, s.dnd)
+    push(R.id.tvStatusDevOptions, s.devOptions)
+    push(R.id.tvStatusSysTweaks, s.sysTweaks)
+    push(R.id.tvStatusComfort, s.comfort)
+    push(R.id.tvStatusDx, s.dx)
+    push(R.id.tvStatusNetRadio, s.netRadio)
+    push(R.id.tvStatusMem, s.mem)
+    push(R.id.tvStatusGameTuning, s.gameTuning)
+    push(R.id.tvStatusBatterySaver, s.battery)
+    push(R.id.tvStatusAppOps, s.appOps)
+    push(R.id.tvStatusGameProfiles, s.gameProfiles)
+    push(R.id.tvStatusDebloat, s.debloat)
+    push(R.id.tvStatusAudio, s.audio)
+    push(R.id.tvStatusSensors, s.sensors)
+    push(R.id.tvStatusBgRestrict, s.bgRestrict)
+    push(R.id.tvStatusBenchmark, s.benchmark)
+    push(R.id.tvStatusGraphics, s.graphics)
+    push(R.id.tvStatusOrientation, s.orientation)
+    push(R.id.tvStatusApkBackup, s.apkBackup)
+    push(R.id.tvStatusReboot, s.reboot)
+    push(R.id.tvStatusAppLocale, s.appLocale)
+    push(R.id.tvStatusRadio, s.radio)
+    push(R.id.tvStatusShizukuRecovery, s.shizukuRecovery)
+    push(R.id.tvStatusNetBlock, s.netBlock)
+    push(R.id.tvStatusBattHealth, s.battHealth)
 }
 
 private fun MainActivity.renderOverlayStatuses(prefs: SharedPreferences) {

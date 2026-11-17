@@ -55,9 +55,32 @@ jobs:
       - name: Run unit tests
         run: ./gradlew --no-daemon --stacktrace testDebugUnitTest
 
-      - name: Android lint (tracked, non-blocking)
+      # Lint is tracked: the report is always uploaded, and new issues are
+      # visible in every run instead of being silently swallowed. The step is
+      # non-blocking while the existing backlog is triaged (see lint-baseline).
+      - name: Android lint
+        id: lint
         run: ./gradlew --no-daemon --stacktrace lintDebug
         continue-on-error: true
+
+      - name: Upload lint report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-report
+          path: |
+            app/build/reports/lint-results-debug.html
+            app/build/reports/lint-results-debug.txt
+          if-no-files-found: ignore
+
+      - name: Summarise lint findings
+        if: always()
+        run: |
+          REPORT=app/build/reports/lint-results-debug.txt
+          if [ -f "$REPORT" ]; then
+            echo "### Android lint" >> "$GITHUB_STEP_SUMMARY"
+            tail -n 25 "$REPORT" >> "$GITHUB_STEP_SUMMARY" || true
+          fi
 
       - name: Build signed release APK
         env:
@@ -101,6 +124,13 @@ jobs:
           echo "code=$CODE" >> "$GITHUB_OUTPUT"
           echo "name=$NAME" >> "$GITHUB_OUTPUT"
           echo "App version: $NAME (code $CODE)"
+          # The tag is what makes the release; it must match the version the
+          # APK reports, otherwise version.json would advertise a build that
+          # never shipped under that number.
+          if [ "v$NAME" != "${GITHUB_REF_NAME}" ]; then
+            echo "::error::Tag ${GITHUB_REF_NAME} does not match versionName v$NAME"
+            exit 1
+          fi
 
       - name: Extract APK SHA-256 fingerprint
         if: startsWith(github.ref, 'refs/tags/v')

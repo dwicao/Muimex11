@@ -58,8 +58,11 @@ object ServiceNotif {
             } else {
                 service.startForeground(id, n)
             }
-        } catch (_: Exception) {
-            // Overlay can still work without FGS on some ROMs; don't crash.
+        } catch (e: Exception) {
+            // Overlay can still work without FGS on some ROMs; don't crash, but
+            // leave a trail: a rejected startForeground (type/permission
+            // mismatch) used to fail completely silently.
+            logQuietly("ServiceNotif", e)
         }
     }
 }

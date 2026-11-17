@@ -20,22 +20,27 @@ internal fun MainActivity.setupClickListeners() {
     setupBottomActionListeners(prefs)
 }
 
-private fun MainActivity.en(res: Int): String = getString(res)
-
+/**
+ * One-shot tweak with an "already applied" guard.
+ *
+ * The guard reads [StatusRegistry], never the localized status text: changing
+ * copy or language can no longer change what the button does.
+ */
 private fun MainActivity.runTweakOnce(
     statusId: Int,
-    doneMarker: () -> String,
     alreadyToastRes: Int,
     command: String,
     successMessageRes: Int,
     onSuccess: () -> Unit = { fetchSystemStatuses() }
 ) {
-    val status = findViewById<TextView>(statusId).text.toString()
-    if (status.contains(doneMarker())) {
+    if (StatusRegistry.isApplied(statusId)) {
         UiToast.info(this, getString(alreadyToastRes), Toast.LENGTH_SHORT).show()
         return
     }
-    runAdbCommand(command, getString(successMessageRes)) { onSuccess() }
+    runAdbCommand(command, getString(successMessageRes)) {
+        StatusRegistry.set(statusId, StatusKind.APPLIED)
+        onSuccess()
+    }
 }
 
 private fun MainActivity.bindCommandReset(buttonId: Int, command: String, messageRes: Int) {
@@ -65,7 +70,7 @@ private fun MainActivity.setupTweakCardListeners(prefs: SharedPreferences) {
 
     findViewById<CardView>(R.id.cardOptimizeSystem).setOnClickListener {
         runTweakOnce(
-            R.id.tvStatusOptimize, { en(R.string.w_recently) }, R.string.toast_already_optimized,
+            R.id.tvStatusOptimize, R.string.toast_already_optimized,
             "cmd activity kill-all", R.string.msg_sys_optimized
         ) {
             findViewById<TextView>(R.id.tvStatusOptimize).text = getString(R.string.status_recently)
@@ -74,7 +79,7 @@ private fun MainActivity.setupTweakCardListeners(prefs: SharedPreferences) {
 
     findViewById<CardView>(R.id.cardImproveNetwork).setOnClickListener {
         runTweakOnce(
-            R.id.tvStatusNetwork, { en(R.string.w_optimized) }, R.string.toast_already_optimized,
+            R.id.tvStatusNetwork, R.string.toast_already_optimized,
             "settings put global tether_dun_required 0", R.string.msg_net_optimized
         )
     }
@@ -91,7 +96,7 @@ private fun MainActivity.setupTweakCardListeners(prefs: SharedPreferences) {
 
     findViewById<CardView>(R.id.cardFastAnimations).setOnClickListener {
         runTweakOnce(
-            R.id.tvStatusAnimations, { "0.5x" }, R.string.toast_already_sped,
+            R.id.tvStatusAnimations, R.string.toast_already_sped,
             "settings put global window_animation_scale 0.5 && settings put global transition_animation_scale 0.5 && settings put global animator_duration_scale 0.5",
             R.string.msg_anim_fast
         )
@@ -99,21 +104,21 @@ private fun MainActivity.setupTweakCardListeners(prefs: SharedPreferences) {
 
     findViewById<CardView>(R.id.cardDisableBlurs).setOnClickListener {
         runTweakOnce(
-            R.id.tvStatusBlurs, { en(R.string.w_disabled) }, R.string.toast_already_disabled,
+            R.id.tvStatusBlurs, R.string.toast_already_disabled,
             "settings put global disable_window_blurs 1", R.string.msg_blurs_off
         )
     }
 
     findViewById<CardView>(R.id.cardGamingDnd).setOnClickListener {
         runTweakOnce(
-            R.id.tvStatusDnd, { en(R.string.w_blocked) }, R.string.toast_already_blocked,
+            R.id.tvStatusDnd, R.string.toast_already_blocked,
             "settings put global heads_up_notifications_enabled 0", R.string.msg_dnd_on
         )
     }
 
     findViewById<CardView>(R.id.cardDisableDevOptions).setOnClickListener {
         runTweakOnce(
-            R.id.tvStatusDevOptions, { en(R.string.w_disabled) }, R.string.toast_already_disabled,
+            R.id.tvStatusDevOptions, R.string.toast_already_disabled,
             "settings put global development_settings_enabled 0", R.string.msg_devopt_off
         )
     }
@@ -190,7 +195,7 @@ private fun MainActivity.setupTweakCardListeners(prefs: SharedPreferences) {
 private fun MainActivity.setupToolsCardListeners(prefs: SharedPreferences) {
     findViewById<CardView>(R.id.cardFstrim).setOnClickListener {
         runTweakOnce(
-            R.id.tvStatusFstrim, { en(R.string.w_recently) }, R.string.toast_storage_already,
+            R.id.tvStatusFstrim, R.string.toast_storage_already,
             "sm fstrim", R.string.msg_fstrim_done
         ) {
             findViewById<TextView>(R.id.tvStatusFstrim).text = getString(R.string.status_recently)

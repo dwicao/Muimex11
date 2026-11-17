@@ -104,11 +104,18 @@
                 android:value="overlay" />
         </service>
 
+        <!-- Charge alarm runs as specialUse like the other long-lived services:
+             the FGS type must match the type passed to startForeground(), and
+             a "health" FGS would additionally need FOREGROUND_SERVICE_HEALTH
+             (API 34+ rejects the start otherwise, silently killing the alarm). -->
         <service
             android:name=".BatteryAlarmService"
             android:enabled="true"
             android:exported="false"
-            android:foregroundServiceType="health" />
+            android:foregroundServiceType="specialUse">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="battery-alarm" />
+        </service>
 
         <service
             android:name=".DnsTileService"

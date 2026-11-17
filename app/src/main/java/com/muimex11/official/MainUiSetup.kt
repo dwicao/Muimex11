@@ -221,6 +221,13 @@ internal fun MainActivity.setupStatusStyling() {
     val amber = Color.parseColor("#E09B00")
 
     fun stateOf(id: Int, text: String): TweakState {
+        // Typed state wins: the registry is fed by a real read-back, so colour
+        // no longer depends on matching localized copy.
+        when (StatusRegistry.get(id)) {
+            StatusKind.APPLIED -> return TweakState.ACTIVE
+            StatusKind.PARTIAL -> return TweakState.WARN
+            else -> Unit
+        }
         fun en(res: Int) = getString(res)
         val t = text.removePrefix("Status:").trim()
         return when {

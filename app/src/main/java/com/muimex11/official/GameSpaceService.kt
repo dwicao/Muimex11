@@ -1154,7 +1154,18 @@ class GameSpaceService : Service() {
 
     // ---------------------------------------------------------------- shell
 
-    private fun exec(cmd: String): Boolean = ShizukuRunner.execOk(cmd)
+    private fun exec(cmd: String): Boolean {
+        val res = ShizukuRunner.exec(cmd)
+        if (!res.ok) {
+            // Dock taps could fail silently before: the tile just never turned
+            // on. Record the exit code and first line of output for bug reports.
+            logWarn(
+                "GameSpace",
+                "cmd exit=${res.code} ${cmd.take(60)} -> ${res.merged.lineSequence().firstOrNull().orEmpty().take(80)}"
+            )
+        }
+        return res.ok
+    }
 
     private fun query(cmd: String): String = ShizukuRunner.query(cmd)
 
