@@ -54,6 +54,9 @@ abstract class MuimexTile : TileService() {    protected val tileScope = Corouti
         }
     }
 
+    // The Intent overload is the only option below API 34; the PendingIntent
+    // path above is used there. Silenced narrowly instead of ignoring the check.
+    @android.annotation.SuppressLint("StartActivityAndCollapseDeprecated")
     private fun launchCollapsed(intent: Intent) {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {

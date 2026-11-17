@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/gsPanel"
     android:layout_width="258dp"
     android:layout_height="wrap_content"
@@ -43,7 +44,7 @@
             android:contentDescription="@string/cd_minimize"
             android:padding="5dp"
             android:src="@drawable/ic_minimize"
-            android:tint="#9AA3B2" />
+            app:tint="#9AA3B2" />
 
         <ImageView
             android:id="@+id/gsBtnKill"
@@ -53,7 +54,7 @@
             android:contentDescription="@string/cd_close_overlay"
             android:padding="5dp"
             android:src="@drawable/ic_close"
-            android:tint="#FF5A6E" />
+            app:tint="#FF5A6E" />
     </LinearLayout>
 
     <View

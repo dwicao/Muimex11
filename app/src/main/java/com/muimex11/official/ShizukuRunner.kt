@@ -73,7 +73,7 @@ object ShizukuRunner {
                 future.get(timeoutMs, TimeUnit.MILLISECONDS)
             } catch (e: TimeoutException) {
                 future.cancel(true)
-                try { p.destroyForcibly() } catch (_: Exception) {}
+                killQuietly(p)
                 t1.join(500); t2.join(500)
                 try { outReader.close() } catch (_: Exception) {}
                 try { errReader.close() } catch (_: Exception) {}
@@ -84,10 +84,27 @@ object ShizukuRunner {
             try { errReader.close() } catch (_: Exception) {}
             ShellResult(code, outSb.toString().trim(), errSb.toString().trim())
         } catch (e: Exception) {
-            try { proc?.destroyForcibly() } catch (_: Exception) {}
+            proc?.let { killQuietly(it) }
             ShellResult(-1, "", e.message ?: "error")
         }
         // Shared waitPool is never shut down here by design.
+    }
+
+    /**
+     * `Process.destroyForcibly()` only exists from API 26; on Android 7.x the
+     * call throws NoSuchMethodError, which is an Error and would slip through
+     * an `catch (Exception)` and kill the process. Fall back to destroy().
+     */
+    private fun killQuietly(proc: Process) {
+        try {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                proc.destroyForcibly()
+            } else {
+                proc.destroy()
+            }
+        } catch (_: Exception) {
+            // Best-effort: the caller only needs the process to stop.
+        }
     }
 
     fun query(cmd: String, timeoutMs: Long = QUERY_TIMEOUT_MS): String =

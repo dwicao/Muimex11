@@ -55,13 +55,12 @@ jobs:
       - name: Run unit tests
         run: ./gradlew --no-daemon --stacktrace testDebugUnitTest
 
-      # Lint is tracked: the report is always uploaded, and new issues are
-      # visible in every run instead of being silently swallowed. The step is
-      # non-blocking while the existing backlog is triaged (see lint-baseline).
+      # Lint gates the build: the existing backlog is fixed or demoted with a
+      # written reason in lint.xml, so a new error now fails the run instead of
+      # scrolling past. The full report is uploaded either way.
       - name: Android lint
         id: lint
         run: ./gradlew --no-daemon --stacktrace lintDebug
-        continue-on-error: true
 
       - name: Upload lint report
         if: always()

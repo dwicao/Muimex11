@@ -214,7 +214,7 @@ private fun MainActivity.readScript(uri: Uri): ScriptRead {
         if (bytes.any { it == 0.toByte() }) return ScriptRead.Binary
 
         val text = String(bytes, Charsets.UTF_8)
-            .removePrefix("﻿")
+            .removePrefix("")
             .replace("\r\n", "\n")
             .replace('\r', '\n')
         if (text.isBlank()) return ScriptRead.Empty
