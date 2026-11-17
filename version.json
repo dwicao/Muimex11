@@ -1,8 +1,8 @@
 {
-  "versionCode": 63,
-  "versionName": "4.33",
-  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.33/Muimex11-4.33.apk",
-  "releaseNotes": "Stealth mode (dwicao/thedjchi fork) renames the manager package to a\nrandom clone, so package-name lookups failed and Muimex11 reported\nShizuku as not installed. Detection now anchors on the\nmoe.shizuku.manager.permission.API_V23 permission via\ngetPermissionInfo(), which the clone still declares (same approach as\nthe fork's own compatibility snippet). Binder-first status check, and\nRAM-boost/freeze protection lists now protect the runtime-discovered\nclone package as well.",
+  "versionCode": 64,
+  "versionName": "4.34",
+  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.34/Muimex11-4.34.apk",
+  "releaseNotes": "Root cause of the \"tap Vulkan GPU does nothing\" reports on Samsung One UI\n(S20 included): startActivityAndCollapse(Intent) throws\nUnsupportedOperationException on API 34+ (targetSdk 34+), and the failure\nwas swallowed by a catch, so tile taps without a ready Shizuku backend\nwere absolute no-ops. Tiles now:\n\n- launch Muimex11 through startActivityAndCollapse(PendingIntent) on\n  API 34+ (Intent path kept for older), routed through unlockAndRun()\n  when the device is locked\n- toast every outcome: Private DNS on/off, Focus mode on/off,\n  \"Graphics API -> ... applies to newly launched apps\" (Vulkan tile),\n  or the copyable failure reason\n- use res.ok from the shell call instead of assuming success, and\n  tolerate updateTile() after the shade collapses mid-flight\n\nAlso audited the rest of the external entry surface (GraphicsBootReceiver,\nTaskerReceiver w/ token guard, ScreenScheduleReceiver, battery alarm FGS):\nno other API-34 crash paths or silent failures found. Bumps to 4.34 (code 64).",
   "mandatory": false,
-  "sha256": "6316bdd50b4c55018dc3dc1071475dfe6c01ca9ca1e94fc6edd0d97c771636e2"
+  "sha256": "dc11d3e5e28ff0de99c3facf6beaaa439e2f7264e6efac5d711098813fcead46"
 }
