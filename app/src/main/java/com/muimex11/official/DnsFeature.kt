@@ -1,5 +1,6 @@
 package com.muimex11.official
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.text.InputType
 import android.widget.LinearLayout
@@ -17,7 +18,7 @@ internal fun MainActivity.showDnsDialog() {
         Dns("AdGuard", getString(R.string.dns_blocks_ads), "dns.adguard-dns.com"),
         Dns("CleanBrowsing", getString(R.string.dns_family_safe), "family-filter-dns.cleanbrowsing.org")
     )
-    val prefs = getSharedPreferences(Prefs.MAIN, MODE_PRIVATE)
+    val prefs = getSharedPreferences(Prefs.MAIN, Context.MODE_PRIVATE)
     val current = findViewById<TextView>(R.id.tvStatusDns).text.toString()
 
     val list = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }

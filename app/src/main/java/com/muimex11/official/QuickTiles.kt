@@ -1,6 +1,7 @@
 package com.muimex11.official
 
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
@@ -114,7 +115,7 @@ class DnsTileService : MuimexTile() {
         tileScope.launch {
             val mode = ShizukuRunner.query("settings get global private_dns_mode").trim()
             val turningOff = mode == "hostname"
-            val prefs = getSharedPreferences(Prefs.MAIN, MODE_PRIVATE)
+            val prefs = getSharedPreferences(Prefs.MAIN, Context.MODE_PRIVATE)
             val saved = prefs.getString(Prefs.KEY_LAST_DNS, "one.one.one.one")?.trim().orEmpty()
             val host = if (saved.isNotEmpty() && saved.matches(Regex("^[A-Za-z0-9][A-Za-z0-9.-]*[A-Za-z0-9]$"))) saved else "one.one.one.one"
             val res = if (turningOff) {
@@ -209,7 +210,7 @@ class VulkanTileService : MuimexTile() {
         tileScope.launch {
             val cur = GraphicsApi.detectRenderer()
             val target = if (cur == GraphicsApi.VULKAN) GraphicsApi.OPENGL else GraphicsApi.VULKAN
-            val prefs = getSharedPreferences(Prefs.MAIN, MODE_PRIVATE)
+            val prefs = getSharedPreferences(Prefs.MAIN, Context.MODE_PRIVATE)
             val res = GraphicsApi.applyRenderer(target, prefs)
             withContext(Dispatchers.Main) {
                 if (res.verified) {
