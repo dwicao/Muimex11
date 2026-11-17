@@ -1,8 +1,8 @@
 {
-  "versionCode": 65,
-  "versionName": "4.35",
-  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.35/Muimex11-4.35.apk",
-  "releaseNotes": "Lint had been non-blocking and 166 errors had piled up. Triaged:\n\n- ShizukuRunner called Process#destroyForcibly() unconditionally; it is API\n  26+ and throws NoSuchMethodError (an Error, not an Exception) on Android\n  7.x \u2014 i.e. a crash on the shell choke point. Guarded with a destroy()\n  fallback.\n- layout_game_space_panel: android:tint -> app:tint so AppCompat actually\n  tints those two icons on older APIs.\n- QuickTiles: the pre-34 Intent overload of startActivityAndCollapse is the\n  only option there; silenced narrowly with a comment.\n- QUERY_ALL_PACKAGES documented at the declaration.\n- Stripped a stray BOM from the middle of ShellExecuteFeature.kt.\n- StringFormatMatches demoted to warning in lint.xml: %s accepts any object,\n  so the flagged calls are legal and intentional; reason recorded.\n- CI now fails on new lint errors; report still uploaded.",
+  "versionCode": 66,
+  "versionName": "4.36",
+  "apkUrl": "https://github.com/dwicao/Muimex11/releases/download/v4.36/Muimex11-4.36.apk",
+  "releaseNotes": "Muimex11 4.36",
   "mandatory": false,
-  "sha256": "f1f41f5d2146115ce2f37cf23ef8d95c4d593d2f8ab035b34b4d4613707834f9"
+  "sha256": "e8658738b227e993fc9631d53d54768249251c7f73cdc58214832cac2cba20f0"
 }
