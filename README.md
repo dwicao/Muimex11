@@ -68,6 +68,10 @@ RAM booster · cache cleaner · app freezer · fstrim · fixed-performance modes
 
 This fork is 80+ commits ahead of upstream. Highlights, newest first:
 
+### Quick Settings tiles fix (v4.34)
+- **Tiles actually fire on the shade now** (Samsung One UI included): without Shizuku ready — or on a locked device — a tile tap unlocks/opens Muimex11 via the Android 14+-safe `startActivityAndCollapse(PendingIntent)` API. The previous Intent-based call throws `UnsupportedOperationException` on API 34+, and the exception was swallowed, so taps did absolutely nothing.
+- **Every tile outcome gives feedback** — Private DNS on/off, Focus mode on/off, "Graphics API → … applies to newly launched apps" (or a copyable failure reason), instead of silent success/failure. Reset-all consistency, tasker `renderer` action and the boot re-apply path are covered by unit tests.
+
 ### Security & hygiene (v4.32)
 - **Self-update hardening** — APK downloads are now verified against the pinned release certificate (SHA-256) *before* installing, in addition to the existing sha256/integrity check. The expected signature is only ever read from the build-pinned constant — never fetched from the network. GitHub/raw.githubusercontent URLs are repo-scoped (only `dwicao/Muimex11` release paths are trusted). The CI release pipeline now fails instead of just printing when the built APK's certificate doesn't match `signature.txt`.
 - **Portuguese removed, Indonesian added** — the app now ships English + Indonesian (full parity, ~1,150 strings, EN↔ID placeholder-checked). `locales_config.xml` now en/id and is wired into the manifest via `android:localeConfig`.
@@ -92,7 +96,7 @@ This fork is 80+ commits ahead of upstream. Highlights, newest first:
 
 ### Automation & control
 - **Tasker / MacroDroid API (v4.18)** — token-guarded broadcast receiver (`com.muimex11.official.TASKER_RUN`): switch Vulkan/OpenGL or trigger a RAM boost from automation apps. The token lives in Shell Execute → Automation.
-- **Quick Settings tiles (v4.19)** — one-tap Private DNS, Focus-DND and Vulkan toggles.
+- **Quick Settings tiles (v4.19, fixed v4.34)** — one-tap Private DNS, Focus-DND and Vulkan toggles. v4.34 makes taps reliable on Android 14+ (PendingIntent launch path), with a toast for every outcome.
 - **Shizuku recovery helper (v4.11)** — one-tap wireless-debugging re-enable that opens whichever Shizuku manager is installed (official or forks like Shevery).
 
 ### Gaming

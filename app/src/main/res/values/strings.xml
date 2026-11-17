@@ -1024,6 +1024,14 @@
     <string name="tile_dns">Private DNS</string>
     <string name="tile_dnd">Focus Mode</string>
     <string name="tile_vulkan">Vulkan GPU</string>
+    <string name="tile_dns_on">Private DNS on (one.one.one.one)</string>
+    <string name="tile_dns_off">Private DNS off</string>
+    <string name="tile_dns_fail">Private DNS toggle failed — check Shizuku</string>
+    <string name="tile_dnd_on">Focus mode on — heads-up notifications blocked</string>
+    <string name="tile_dnd_off">Focus mode off — heads-up notifications allowed</string>
+    <string name="tile_dnd_fail">Focus mode toggle failed — check Shizuku</string>
+    <string name="tile_vulkan_applied">Graphics API → %1$s — applies to newly launched apps</string>
+    <string name="tile_open_fail">Couldn\'t open Muimex11</string>
 
     <!-- Adaptive thermal: heat response -->
     <string name="thermal_heat">Heat response: drop to 60Hz</string>

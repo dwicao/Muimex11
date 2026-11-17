@@ -1024,6 +1024,14 @@
     <string name="tile_dns">DNS Pribadi</string>
     <string name="tile_dnd">Mode Fokus</string>
     <string name="tile_vulkan">Vulkan GPU</string>
+    <string name="tile_dns_on">DNS Pribadi aktif (one.one.one.one)</string>
+    <string name="tile_dns_off">DNS Pribadi mati</string>
+    <string name="tile_dns_fail">Gagal mengganti DNS Pribadi — periksa Shizuku</string>
+    <string name="tile_dnd_on">Mode Fokus aktif — notifikasi heads-up diblokir</string>
+    <string name="tile_dnd_off">Mode Fokus mati — notifikasi heads-up diizinkan</string>
+    <string name="tile_dnd_fail">Gagal mengganti Mode Fokus — periksa Shizuku</string>
+    <string name="tile_vulkan_applied">Graphics API → %1$s — berlaku untuk aplikasi yang baru dibuka</string>
+    <string name="tile_open_fail">Tidak bisa membuka Muimex11</string>
 
     <!-- Thermal adaptif: respons panas -->
     <string name="thermal_heat">Respons panas: turun ke 60Hz</string>

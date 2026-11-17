@@ -1,6 +1,8 @@
 package com.muimex11.official
 
+import android.app.PendingIntent
 import android.content.Intent
+import android.os.Build
 import android.provider.Settings
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
@@ -24,16 +26,52 @@ abstract class MuimexTile : TileService() {    protected val tileScope = Corouti
         super.onDestroy()
     }
 
+    /**
+     * Open Muimex11 from a tile tap.
+     *
+     * Two platform traps made this a silent no-op before v4.34:
+     *  - startActivityAndCollapse(Intent) throws UnsupportedOperationException
+     *    on Android 14+ (targetSdk 34+), so the tap died inside a swallowed
+     *    catch block and nothing happened at all.
+     *  - On a locked device starting an activity directly fails, so it must
+     *    be routed through unlockAndRun().
+     */
     protected fun openApp() {
+        val intent = (packageManager.getLaunchIntentForPackage(packageName)
+            ?: Intent(Settings.ACTION_SETTINGS)).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
         try {
-            val intent = packageManager.getLaunchIntentForPackage(packageName)?.apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            } ?: Intent(Settings.ACTION_SETTINGS).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            if (isLocked) {
+                // Prompt for unlock first, then launch (collapses the shade).
+                unlockAndRun(Runnable { launchCollapsed(intent) })
+            } else {
+                launchCollapsed(intent)
             }
-            // Collapses the shade too; on a locked device the launch waits for unlock.
-            startActivityAndCollapse(intent)
-        } catch (e: Exception) { logQuietly("QuickTiles", e) }
+        } catch (e: Exception) {
+            logQuietly("QuickTiles", e)
+            toast(getString(R.string.tile_open_fail), long = true)
+        }
+    }
+
+    private fun launchCollapsed(intent: Intent) {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                val pi = PendingIntent.getActivity(
+                    this,
+                    0,
+                    intent,
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                )
+                startActivityAndCollapse(pi)
+            } else {
+                @Suppress("DEPRECATION")
+                startActivityAndCollapse(intent)
+            }
+        } catch (e: Exception) {
+            logQuietly("QuickTiles", e)
+            toast(getString(R.string.tile_open_fail), long = true)
+        }
     }
 
     protected fun toast(msg: String, long: Boolean = false) {
@@ -49,7 +87,13 @@ abstract class MuimexTile : TileService() {    protected val tileScope = Corouti
 private fun Tile.setActive(active: Boolean, label: String) {
     this.state = if (active) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
     this.label = label
-    updateTile()
+    // updateTile() is only valid while the tile is listening; the service can
+    // be unbound mid-flight (tap -> shade collapses), so never let it crash.
+    try {
+        updateTile()
+    } catch (e: Exception) {
+        logQuietly("QuickTiles", e)
+    }
 }
 
 class DnsTileService : MuimexTile() {
@@ -66,7 +110,8 @@ class DnsTileService : MuimexTile() {
         }
         tileScope.launch {
             val mode = ShizukuRunner.query("settings get global private_dns_mode").trim()
-            if (mode == "hostname") {
+            val turningOff = mode == "hostname"
+            val res = if (turningOff) {
                 ShizukuRunner.exec(
                     "settings put global private_dns_mode default && " +
                         "settings delete global private_dns_specifier"
@@ -76,6 +121,13 @@ class DnsTileService : MuimexTile() {
                     "settings put global private_dns_mode hostname && " +
                         "settings put global private_dns_specifier one.one.one.one"
                 )
+            }
+            withContext(Dispatchers.Main) {
+                if (res.ok) {
+                    toast(getString(if (turningOff) R.string.tile_dns_off else R.string.tile_dns_on))
+                } else {
+                    toast(getString(R.string.tile_dns_fail), long = true)
+                }
             }
             refresh()
         }
@@ -106,9 +158,17 @@ class DndTileService : MuimexTile() {
         }
         tileScope.launch {
             val cur = ShizukuRunner.query("settings get global heads_up_notifications_enabled").trim()
-            ShizukuRunner.exec(
-                "settings put global heads_up_notifications_enabled " + if (cur == "0") "1" else "0"
+            val blocked = cur == "0"
+            val res = ShizukuRunner.exec(
+                "settings put global heads_up_notifications_enabled " + if (blocked) "1" else "0"
             )
+            withContext(Dispatchers.Main) {
+                if (res.ok) {
+                    toast(getString(if (blocked) R.string.tile_dnd_off else R.string.tile_dnd_on))
+                } else {
+                    toast(getString(R.string.tile_dnd_fail), long = true)
+                }
+            }
             refresh()
         }
     }
@@ -142,7 +202,11 @@ class VulkanTileService : MuimexTile() {
             val prefs = getSharedPreferences(Prefs.MAIN, MODE_PRIVATE)
             val res = GraphicsApi.applyRenderer(target, prefs)
             withContext(Dispatchers.Main) {
-                if (!res.verified) toast(getString(R.string.msg_graphics_fail, res.message), long = true)
+                if (res.verified) {
+                    toast(getString(R.string.tile_vulkan_applied, target), long = true)
+                } else {
+                    toast(getString(R.string.msg_graphics_fail, res.message), long = true)
+                }
             }
             refresh()
         }
