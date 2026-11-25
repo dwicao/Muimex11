@@ -1,0 +1,80 @@
+name: Release APK (AOSP Test Key)
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "GitHub Release tag to attach the AOSP testkey APK to (e.g. v4.37)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build-testkey:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: gradle
+
+      - name: Accept Android SDK licenses
+        run: |
+          SDK_MANAGER=$(ls "$ANDROID_HOME"/cmdline-tools/*/bin/sdkmanager 2>/dev/null | sort -V | tail -1)
+          test -n "$SDK_MANAGER"
+          (set +o pipefail; yes | "$SDK_MANAGER" --licenses >/dev/null)
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build unsigned release APK
+        run: ./gradlew --no-daemon --stacktrace assembleRelease
+
+      - name: Sign release APK with AOSP test key
+        run: |
+          VERSION=$(grep -E 'versionName\s*=' app/build.gradle.kts | head -1 | sed -E 's/.*"([^"]+)".*/\1/')
+          test -n "$VERSION"
+          RAW_APK=$(ls app/build/outputs/apk/release/*.apk 2>/dev/null | head -1)
+          test -s "$RAW_APK"
+
+          curl -fsSL -o testkey.pk8 https://raw.githubusercontent.com/aosp-mirror/platform_build/master/target/product/security/testkey.pk8
+          curl -fsSL -o testkey.x509.pem https://raw.githubusercontent.com/aosp-mirror/platform_build/master/target/product/security/testkey.x509.pem
+
+          APKSIGNER=$(ls "$ANDROID_HOME"/build-tools/*/apksigner 2>/dev/null | sort -V | tail -1)
+          ZIPALIGN=$(ls "$ANDROID_HOME"/build-tools/*/zipalign 2>/dev/null | sort -V | tail -1)
+          test -x "$APKSIGNER" && test -x "$ZIPALIGN"
+
+          OUT_APK="Muimex11-${VERSION}-testkey.apk"
+          "$ZIPALIGN" -p -f 4 "$RAW_APK" aligned.apk
+          "$APKSIGNER" sign --key testkey.pk8 --cert testkey.x509.pem --out "$OUT_APK" aligned.apk
+          "$APKSIGNER" verify --print-certs "$OUT_APK" | tee testkey_verify.txt
+
+          FP=$(grep -i "certificate SHA-256 digest" testkey_verify.txt | grep -oE '[0-9a-fA-F]{64}' | head -1 | tr 'A-F' 'a-f')
+          EXPECTED_AOSP="a40da80a59d170caa950cf15c18c454d47a39b26989d8b640ecd745ba71bf5dc"
+          echo "Signed APK cert SHA-256: $FP"
+          test "$FP" = "$EXPECTED_AOSP"
+          echo "OUT_APK=$OUT_APK" >> "$GITHUB_ENV"
+
+      - name: Upload AOSP testkey APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Muimex11-testkey-APK
+          path: ${{ env.OUT_APK }}
+          retention-days: 14
+
+      - name: Upload APK to GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          if ! gh release view "$TAG" >/dev/null 2>&1; then
+            gh release create "$TAG" --title "Muimex11 ${TAG#v}" --generate-notes
+          fi
+          gh release upload "$TAG" "$OUT_APK" --clobber
