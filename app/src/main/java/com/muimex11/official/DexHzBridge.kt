@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONObject
 import rikka.shizuku.Shizuku
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.abs
@@ -116,98 +115,98 @@ object DexHzLogic {
     fun parseState(jsonStr: String?): DexHzState? {
         if (jsonStr.isNullOrBlank()) return null
         return try {
-            val j = JSONObject(jsonStr)
-            val capsObj = j.optJSONObject("caps")
+            val j = JsonParser(jsonStr).parseRoot() ?: return null
+            val capsObj = j.optObj("caps")
             val caps = capsObj?.let {
                 Caps(
-                    highRes = it.optBoolean("highRes"),
-                    monitorTiming = it.optBoolean("monitorTiming"),
-                    monitorTimingVerified = it.optBoolean("monitorTimingVerified"),
-                    phoneRates = it.optBoolean("phoneRates"),
-                    heat = it.optBoolean("heat"),
-                    codes = it.optString("codes", "none"),
-                    root = it.optBoolean("root"),
-                    monitorModes = it.optBoolean("monitorModes"),
-                    modeMethod = it.optString("modeMethod", "none"),
-                    displayConfig = it.optBoolean("displayConfig")
+                    highRes = it.optBool("highRes"),
+                    monitorTiming = it.optBool("monitorTiming"),
+                    monitorTimingVerified = it.optBool("monitorTimingVerified"),
+                    phoneRates = it.optBool("phoneRates"),
+                    heat = it.optBool("heat"),
+                    codes = it.optStr("codes", "none"),
+                    root = it.optBool("root"),
+                    monitorModes = it.optBool("monitorModes"),
+                    modeMethod = it.optStr("modeMethod", "none"),
+                    displayConfig = it.optBool("displayConfig")
                 )
             }
-            val stopsArr = j.optJSONArray("stops")
+            val stopsArr = j.optArr("stops")
             val stops = buildList {
                 if (stopsArr != null) {
-                    for (i in 0 until stopsArr.length()) {
-                        val v = stopsArr.optInt(i, -1)
+                    for (item in stopsArr) {
+                        val v = (item as? Number)?.toInt() ?: -1
                         if (v > 0) add(v)
                     }
                 }
             }
-            val monObj = j.optJSONObject("monitor")
+            val monObj = j.optObj("monitor")
             val monitor = monObj?.let { m ->
-                val choicesArr = m.optJSONArray("modeChoices")
+                val choicesArr = m.optArr("modeChoices")
                 val choices = buildList {
                     if (choicesArr != null) {
-                        for (i in 0 until choicesArr.length()) {
-                            val c = choicesArr.optJSONObject(i) ?: continue
+                        for (item in choicesArr) {
+                            val c = asStrMap(item) ?: continue
                             add(ModeChoice(c.optInt("width"), c.optInt("height"), c.optInt("hz")))
                         }
                     }
                 }
-                val sugObj = m.optJSONObject("suggest")
+                val sugObj = m.optObj("suggest")
                 val sug = sugObj?.let {
                     ModeSuggestion(
                         width = it.optInt("width"),
                         height = it.optInt("height"),
                         hz = it.optInt("hz"),
-                        label = it.optString("label"),
-                        reason = it.optString("reason")
+                        label = it.optStr("label"),
+                        reason = it.optStr("reason")
                     )
                 }
-                val lowerObj = m.optJSONObject("lowerRes")
+                val lowerObj = m.optObj("lowerRes")
                 val lowerHint = lowerObj?.let {
                     "${it.optInt("width")}×${it.optInt("height")} @ ${it.optDouble("hz").roundToInt()} Hz"
                 }
                 MonitorInfo(
                     id = m.optLong("id", -1L),
-                    name = m.optString("name", "External display"),
+                    name = m.optStr("name", "External display"),
                     width = m.optInt("width"),
                     height = m.optInt("height"),
                     linkHz = m.optDouble("linkHz", 0.0).toFloat(),
                     fastestHz = m.optDouble("fastestHz", 0.0).toFloat(),
-                    fasterListed = m.optBoolean("fasterListed"),
-                    limitedHz = if (m.has("limitedHz")) m.optDouble("limitedHz").toFloat() else null,
-                    lostHz = if (m.has("lostHz")) m.optDouble("lostHz").toFloat() else null,
-                    phonePaced = m.optBoolean("phonePaced"),
-                    modesSummary = m.optString("modes", ""),
-                    modeKey = m.optString("modeKey", ""),
-                    keptMode = if (m.has("keptMode")) m.optString("keptMode") else null,
-                    startMode = if (m.has("startMode")) m.optString("startMode") else null,
+                    fasterListed = m.optBool("fasterListed"),
+                    limitedHz = m.optNullableDouble("limitedHz")?.toFloat(),
+                    lostHz = m.optNullableDouble("lostHz")?.toFloat(),
+                    phonePaced = m.optBool("phonePaced"),
+                    modesSummary = m.optStr("modes", ""),
+                    modeKey = m.optStr("modeKey", ""),
+                    keptMode = m.optNullableStr("keptMode"),
+                    startMode = m.optNullableStr("startMode"),
                     modeChoices = choices,
                     suggest = sug,
                     lowerResHint = lowerHint
                 )
             }
-            val swObj = j.optJSONObject("modeSwitch")
+            val swObj = j.optObj("modeSwitch")
             val sw = swObj?.let {
                 ModeSwitchState(
-                    label = it.optString("label"),
-                    shortLabel = it.optString("short"),
-                    confirm = it.optBoolean("confirm"),
-                    replug = it.optBoolean("replug"),
-                    rescue = it.optBoolean("rescue"),
+                    label = it.optStr("label"),
+                    shortLabel = it.optStr("short"),
+                    confirm = it.optBool("confirm"),
+                    replug = it.optBool("replug"),
+                    rescue = it.optBool("rescue"),
                     secondsLeft = it.optInt("secondsLeft", 0)
                 )
             }
             DexHzState(
-                running = j.optBoolean("running"),
-                reconnecting = j.optBoolean("reconnecting"),
-                waiting = j.optBoolean("waiting"),
+                running = j.optBool("running"),
+                reconnecting = j.optBool("reconnecting"),
+                waiting = j.optBool("waiting"),
                 targetHz = j.optDouble("targetHz", 1000.0).toFloat(),
                 appHz = j.optDouble("appHz", 0.0).toFloat(),
-                coolingHz = if (j.has("coolingHz")) j.optDouble("coolingHz").toFloat() else null,
-                notice = if (j.has("notice")) j.optString("notice") else null,
-                rolledBack = if (j.has("rolledBack")) j.optString("rolledBack") else null,
-                modeResult = if (j.has("modeResult")) j.optString("modeResult") else null,
-                device = j.optString("device", ""),
+                coolingHz = j.optNullableDouble("coolingHz")?.toFloat(),
+                notice = j.optNullableStr("notice"),
+                rolledBack = j.optNullableStr("rolledBack"),
+                modeResult = j.optNullableStr("modeResult"),
+                device = j.optStr("device", ""),
                 uid = j.optInt("uid", -1),
                 caps = caps,
                 stops = stops,
@@ -216,6 +215,163 @@ object DexHzLogic {
             )
         } catch (_: Exception) {
             null
+        }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun asStrMap(value: Any?): Map<String, Any?>? = value as? Map<String, Any?>
+
+    private fun Map<String, Any?>.optObj(key: String): Map<String, Any?>? = asStrMap(this[key])
+
+    private fun Map<String, Any?>.optArr(key: String): List<Any?>? = this[key] as? List<Any?>
+
+    private fun Map<String, Any?>.optBool(key: String, fallback: Boolean = false): Boolean =
+        (this[key] as? Boolean) ?: fallback
+
+    private fun Map<String, Any?>.optInt(key: String, fallback: Int = 0): Int =
+        (this[key] as? Number)?.toInt() ?: fallback
+
+    private fun Map<String, Any?>.optLong(key: String, fallback: Long = -1L): Long =
+        (this[key] as? Number)?.toLong() ?: fallback
+
+    private fun Map<String, Any?>.optDouble(key: String, fallback: Double = 0.0): Double =
+        (this[key] as? Number)?.toDouble() ?: fallback
+
+    private fun Map<String, Any?>.optNullableDouble(key: String): Double? =
+        (this[key] as? Number)?.toDouble()
+
+    private fun Map<String, Any?>.optStr(key: String, fallback: String = ""): String =
+        (this[key] as? String) ?: fallback
+
+    private fun Map<String, Any?>.optNullableStr(key: String): String? =
+        this[key] as? String
+
+    /** Lightweight RFC 8259 JSON parser so unit tests run cleanly without Android's stubbed org.json. */
+    private class JsonParser(private val src: String) {
+        private var pos = 0
+
+        fun parseRoot(): Map<String, Any?>? {
+            skipWs()
+            if (pos >= src.length || src[pos] != '{') return null
+            val root = readObject()
+            skipWs()
+            return if (pos == src.length) root else null
+        }
+
+        private fun readObject(): Map<String, Any?> {
+            expect('{')
+            skipWs()
+            val map = LinkedHashMap<String, Any?>()
+            if (pos < src.length && src[pos] == '}') {
+                pos++
+                return map
+            }
+            while (true) {
+                skipWs()
+                val key = readString()
+                skipWs()
+                expect(':')
+                map[key] = readValue()
+                skipWs()
+                if (pos < src.length && src[pos] == ',') {
+                    pos++
+                    continue
+                }
+                expect('}')
+                break
+            }
+            return map
+        }
+
+        private fun readArray(): List<Any?> {
+            expect('[')
+            skipWs()
+            val list = ArrayList<Any?>()
+            if (pos < src.length && src[pos] == ']') {
+                pos++
+                return list
+            }
+            while (true) {
+                list.add(readValue())
+                skipWs()
+                if (pos < src.length && src[pos] == ',') {
+                    pos++
+                    continue
+                }
+                expect(']')
+                break
+            }
+            return list
+        }
+
+        private fun readValue(): Any? {
+            skipWs()
+            if (pos >= src.length) throw IllegalArgumentException("Unexpected end of JSON")
+            return when (src[pos]) {
+                '{' -> readObject()
+                '[' -> readArray()
+                '"' -> readString()
+                't' -> expectLiteral("true", true)
+                'f' -> expectLiteral("false", false)
+                'n' -> expectLiteral("null", null)
+                else -> readNumber()
+            }
+        }
+
+        private fun readString(): String {
+            expect('"')
+            val sb = StringBuilder()
+            while (pos < src.length) {
+                val c = src[pos++]
+                if (c == '"') return sb.toString()
+                if (c == '\\') {
+                    if (pos >= src.length) throw IllegalArgumentException("Unterminated escape")
+                    when (val esc = src[pos++]) {
+                        '"', '\\', '/' -> sb.append(esc)
+                        'b' -> sb.append('\b')
+                        'f' -> sb.append('\u000C')
+                        'n' -> sb.append('\n')
+                        'r' -> sb.append('\r')
+                        't' -> sb.append('\t')
+                        'u' -> {
+                            if (pos + 4 > src.length) throw IllegalArgumentException("Bad unicode escape")
+                            sb.append(src.substring(pos, pos + 4).toInt(16).toChar())
+                            pos += 4
+                        }
+                        else -> sb.append(esc)
+                    }
+                } else {
+                    sb.append(c)
+                }
+            }
+            throw IllegalArgumentException("Unterminated string")
+        }
+
+        private fun readNumber(): Number {
+            val start = pos
+            while (pos < src.length && src[pos] in "0123456789+-.eE") pos++
+            if (pos == start) throw IllegalArgumentException("Unexpected character at $pos")
+            val token = src.substring(start, pos)
+            return token.toLongOrNull() ?: token.toDouble()
+        }
+
+        private fun expectLiteral(literal: String, value: Any?): Any? {
+            if (!src.regionMatches(pos, literal, 0, literal.length)) {
+                throw IllegalArgumentException("Expected $literal at $pos")
+            }
+            pos += literal.length
+            return value
+        }
+
+        private fun expect(ch: Char) {
+            if (pos >= src.length || src[pos] != ch) {
+                throw IllegalArgumentException("Expected '$ch' at $pos")
+            }
+            pos++
+        }
+
+        private fun skipWs() {
+            while (pos < src.length && src[pos].isWhitespace()) pos++
         }
     }
 }
