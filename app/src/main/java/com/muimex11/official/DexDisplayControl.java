@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -445,7 +446,7 @@ final class DexDisplayControl {
             }
         }, "dexhz-exec");
         reader.start();
-        Future<Integer> waitFuture = EXEC_WAIT_POOL.submit(process::waitFor);
+        Future<Integer> waitFuture = EXEC_WAIT_POOL.submit((Callable<Integer>) process::waitFor);
         try {
             int exitCode;
             try {
