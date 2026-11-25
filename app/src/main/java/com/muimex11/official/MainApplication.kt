@@ -7,6 +7,7 @@ class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         CrashReporter.install(this)
+        MirrorDisplayManager.init(this)
 
         // Explicit user choice wins; otherwise follow the system setting.
         val prefs = getSharedPreferences(Prefs.THEME, MODE_PRIVATE)

@@ -17,7 +17,7 @@ import com.google.android.material.chip.ChipGroup
 
 /** Single source of truth for tweak card grouping (filter chips + grid mode). */
 private val performanceCardIds = listOf(R.id.cardFixedPerformance, R.id.cardOptimizeSystem, R.id.cardSamsungBoost, R.id.cardThermalThrottling, R.id.cardBatterySaver, R.id.cardMemTweaks, R.id.cardBatteryHealth, R.id.cardBgRestrict, R.id.cardFstrim, R.id.cardRamBooster, R.id.cardClearCache, R.id.cardFreezeApps)
-private val displayCardIds = listOf(R.id.cardAdjustRefreshRate, R.id.cardFastAnimations, R.id.cardDisableBlurs, R.id.cardChangeResolution, R.id.cardGraphicsApi, R.id.cardSysTweaks, R.id.cardComfortTweaks, R.id.cardDisplayExtras, R.id.cardOrientation)
+private val displayCardIds = listOf(R.id.cardAdjustRefreshRate, R.id.cardDexHz, R.id.cardMirrorDisplay, R.id.cardFastAnimations, R.id.cardDisableBlurs, R.id.cardChangeResolution, R.id.cardGraphicsApi, R.id.cardSysTweaks, R.id.cardComfortTweaks, R.id.cardDisplayExtras, R.id.cardOrientation)
 private val networkCardIds = listOf(R.id.cardImproveNetwork, R.id.cardCustomDns, R.id.cardRadioInfo, R.id.cardNetBlock, R.id.cardNetRadio)
 private val gamingCardIds = listOf(R.id.cardImproveTouch, R.id.cardGamingDnd, R.id.cardCrosshair, R.id.cardRealtimeMonitor, R.id.cardAutoClick, R.id.cardGameMode, R.id.cardGameSpace, R.id.cardFixGyro, R.id.cardGameProfiles, R.id.cardGameTuning, R.id.cardAudioLatency)
 private val toolsCardIds = listOf(R.id.cardShellExecute, R.id.cardApkInstall, R.id.cardApkBackup, R.id.cardReboot, R.id.cardShizukuRecovery, R.id.cardAppOps, R.id.cardAppLocale, R.id.cardSensorsToggle, R.id.cardBenchmark, R.id.cardDisableDevOptions, R.id.cardDebloat)
@@ -31,6 +31,8 @@ private val tweakTitles: Map<Int, Int> = mapOf(
     R.id.cardOptimizeSystem to R.string.title_optimize,
     R.id.cardSamsungBoost to R.string.title_samsung_boost,
     R.id.cardAdjustRefreshRate to R.string.title_refresh,
+    R.id.cardDexHz to R.string.title_dexhz,
+    R.id.cardMirrorDisplay to R.string.title_mirror,
     R.id.cardImproveNetwork to R.string.title_network,
     R.id.cardRadioInfo to R.string.title_radio,
     R.id.cardNetBlock to R.string.title_netblock,
@@ -214,7 +216,8 @@ internal fun MainActivity.setupStatusStyling() {
         R.id.tvStatusReboot, R.id.tvStatusAppLocale, R.id.tvStatusRadio,
         R.id.tvStatusShizukuRecovery, R.id.tvStatusNetBlock, R.id.tvStatusBattHealth,
         R.id.tvStatusSysTweaks, R.id.tvStatusComfort, R.id.tvStatusNetRadio,
-        R.id.tvStatusMem, R.id.tvStatusGameTuning, R.id.tvStatusDx
+        R.id.tvStatusMem, R.id.tvStatusGameTuning, R.id.tvStatusDx,
+        R.id.tvStatusDexHz, R.id.tvStatusMirrorDisplay
     )
     val states = HashMap<Int, TweakState>()
     val green = Color.parseColor("#2E9E5B")

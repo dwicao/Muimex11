@@ -47,6 +47,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    buildFeatures {
+        aidl = true
+    }
+
     lint {
         // Tracked, not ignored: CI runs lint on every push and fails on new
         // errors. Warnings stay visible in the uploaded report.

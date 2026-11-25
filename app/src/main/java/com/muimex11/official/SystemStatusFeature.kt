@@ -50,6 +50,8 @@ private class SystemStatuses(
     val shizukuRecovery: String,
     val netBlock: String,
     val battHealth: String,
+    val dexHz: String,
+    val mirror: String,
     /**
      * Cards whose read-back proved they are applied. Rendered into
      * [StatusRegistry] so "already applied" decisions never look at the
@@ -76,7 +78,9 @@ private data class DisplayStatus(
     val refresh: String,
     val resolution: String,
     val graphics: String,
-    val orientation: String
+    val orientation: String,
+    val mirror: String,
+    val mirrorApplied: Boolean = false
 )
 
 private data class NetStatus(
@@ -170,7 +174,8 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
                 listOf(
                     "min_refresh" to "settings get system min_refresh_rate",
                     "peak_refresh" to "settings get system peak_refresh_rate",
-                    "wm_size" to "wm size"
+                    "wm_size" to "wm size",
+                    "wm_density" to "wm density"
                 )
             )
             val minRefresh = ShellBatcher.value(d, "min_refresh")
@@ -182,6 +187,7 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
             }
 
             val wmSize = ShellBatcher.value(d, "wm_size")
+            val wmDensity = ShellBatcher.value(d, "wm_density")
             val resStatus = if (wmSize.contains("Override size:")) {
                 getString(R.string.status_value, wmSize.substringAfter("Override size:").trim())
             } else if (wmSize.contains("Physical size:")) {
@@ -190,13 +196,25 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
                 getString(R.string.status_default)
             }
 
+            val mirrorState = MirrorLogic.parseWmOutput(wmSize, wmDensity)
+            val mirrorText = mirrorStatusText(mirrorState)
+
             val liveRenderer = GraphicsApi.detectRenderer()
                 .takeIf { it == GraphicsApi.VULKAN || it == GraphicsApi.OPENGL }
             DisplayStatus(
                 refreshStatus, resStatus,
                 graphicsStatusText(prefs, liveRenderer),
-                orientationStatusText(prefs)
+                orientationStatusText(prefs),
+                mirrorText,
+                mirrorState.isOverrideApplied
             )
+        }
+    }
+
+    val dexHzJob = async {
+        sectionOrNull {
+            if (DexHzBridge.currentService() != null) DexHzBridge.refresh(this@readSystemStatuses)
+            dexHzStatusText() to isDexHzActive()
         }
     }
 
@@ -292,7 +310,8 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
         sectionOrNull { memStatusText(prefs) }
     }
 
-    val display = displayJob.await() ?: DisplayStatus(fbUnknown, fbUnknown, fbUnknown, fbUnknown)
+    val display = displayJob.await() ?: DisplayStatus(fbUnknown, fbUnknown, fbUnknown, fbUnknown, fbUnknown)
+    val dexHzPair = dexHzJob.await() ?: (fbUnknown to false)
     val net = netJob.await() ?: NetStatus(fbUnknown, fbUnknown, fbUnknown, fbUnknown, fbUnknown)
     val sys = sysJob.await() ?: SysStatus(fbUnknown, fbUnknown, fbUnknown, fbUnknown, fbUnknown)
     val tweaks = tweaksJob.await() ?: fbUnknown
@@ -337,12 +356,16 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
         shizukuRecovery = sys.srec,
         netBlock = net.netBlock,
         battHealth = sys.battHealth,
+        dexHz = dexHzPair.first,
+        mirror = display.mirror,
         appliedIds = buildSet {
             if (net.networkApplied) add(R.id.tvStatusNetwork)
             if (net.dndApplied) add(R.id.tvStatusDnd)
             if (sys.animApplied) add(R.id.tvStatusAnimations)
             if (sys.blursApplied) add(R.id.tvStatusBlurs)
             if (sys.devOptsApplied) add(R.id.tvStatusDevOptions)
+            if (display.mirrorApplied) add(R.id.tvStatusMirrorDisplay)
+            if (dexHzPair.second) add(R.id.tvStatusDexHz)
         }
     )
 }
@@ -391,6 +414,8 @@ private fun MainActivity.renderSystemStatuses(s: SystemStatuses) {
     push(R.id.tvStatusShizukuRecovery, s.shizukuRecovery)
     push(R.id.tvStatusNetBlock, s.netBlock)
     push(R.id.tvStatusBattHealth, s.battHealth)
+    push(R.id.tvStatusDexHz, s.dexHz)
+    push(R.id.tvStatusMirrorDisplay, s.mirror)
 }
 
 private fun MainActivity.renderOverlayStatuses(prefs: SharedPreferences) {

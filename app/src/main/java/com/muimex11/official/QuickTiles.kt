@@ -232,3 +232,89 @@ class VulkanTileService : MuimexTile() {
         }
     }
 }
+
+class DexHzTileService : MuimexTile() {
+    override fun onStartListening() {
+        super.onStartListening()
+        tileScope.launch { refresh() }
+    }
+
+    override fun onClick() {
+        super.onClick()
+        if (!ShizukuRunner.isReady()) {
+            openApp()
+            return
+        }
+        tileScope.launch {
+            val current = DexHzBridge.state.value ?: DexHzBridge.refresh(this@DexHzTileService)
+            val turnOn = !(current?.running ?: false)
+            val msg = DexHzBridge.withService(this@DexHzTileService) { svc ->
+                if (turnOn) DexHzBridge.startWithSavedPrefs(this@DexHzTileService, svc)
+                else DexHzBridge.stopAndForget(this@DexHzTileService, svc)
+            }
+            withContext(Dispatchers.Main) {
+                if (!msg.isNullOrBlank()) toast(msg)
+                else toast(getString(R.string.tile_dexhz_fail), long = true)
+            }
+            refresh()
+        }
+    }
+
+    private suspend fun refresh() {
+        val t = qsTile ?: return
+        val ready = ShizukuRunner.isReady()
+        val st = if (ready) DexHzBridge.state.value ?: DexHzBridge.refresh(this) else null
+        val active = ready && (st?.running ?: false)
+        val label = if (active && (st?.appHz ?: 0f) > 0f) {
+            getString(R.string.tile_dexhz_rate, kotlin.math.round(st!!.appHz).toInt())
+        } else {
+            getString(R.string.tile_dexhz)
+        }
+        withContext(Dispatchers.Main) {
+            t.setActive(active, label)
+        }
+    }
+}
+
+class MirrorTileService : MuimexTile() {
+    override fun onStartListening() {
+        super.onStartListening()
+        tileScope.launch { refresh() }
+    }
+
+    override fun onClick() {
+        super.onClick()
+        if (!ShizukuRunner.isReady()) {
+            openApp()
+            return
+        }
+        tileScope.launch {
+            val state = MirrorDisplayManager.refreshStateSync(this@MirrorTileService)
+            if (state.isOverrideApplied) {
+                val ok = ShizukuRunner.execOk(MirrorLogic.buildResetCmd())
+                MirrorDisplayManager.refreshStateSync(this@MirrorTileService)
+                withContext(Dispatchers.Main) {
+                    toast(getString(if (ok) R.string.mirror_restored_toast else R.string.tile_mirror_fail), long = !ok)
+                }
+            } else {
+                val dpi = MirrorDisplayManager.getPreferredDpi(this@MirrorTileService)
+                val ok = ShizukuRunner.execOk(MirrorLogic.buildApplyCmd(1080, 1920, dpi))
+                MirrorDisplayManager.refreshStateSync(this@MirrorTileService)
+                withContext(Dispatchers.Main) {
+                    toast(getString(if (ok) R.string.mirror_applied_port else R.string.tile_mirror_fail), long = !ok)
+                }
+            }
+            refresh()
+        }
+    }
+
+    private suspend fun refresh() {
+        val t = qsTile ?: return
+        val ready = ShizukuRunner.isReady()
+        val st = if (ready) MirrorDisplayManager.refreshStateSync(this) else null
+        val active = ready && (st?.isOverrideApplied ?: false)
+        withContext(Dispatchers.Main) {
+            t.setActive(active, getString(R.string.tile_mirror))
+        }
+    }
+}

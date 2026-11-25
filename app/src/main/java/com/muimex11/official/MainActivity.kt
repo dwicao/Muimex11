@@ -84,6 +84,7 @@ class MainActivity : AppCompatActivity() {
 
         Shizuku.addRequestPermissionResultListener(permissionListener)
         checkShizukuStatus()
+        DexHzBridge.restoreIfWanted(this)
         setupClickListeners()
         setupFilterChips()
         setupViewToggle()

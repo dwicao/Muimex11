@@ -66,4 +66,13 @@ object Prefs {
     const val KEY_GRAPHICS_LAST_BOOT = "GraphicsLastBoot"
 
     const val KEY_LAST_DNS = "LastDns"
+
+    const val KEY_DEXHZ_WANT_ON = "DexHzWantOn"
+    const val KEY_DEXHZ_TARGET = "DexHzTarget"
+    const val KEY_DEXHZ_RECONNECT = "DexHzReconnect"
+    const val KEY_DEXHZ_COOLDOWN = "DexHzCoolDown"
+    const val KEY_DEXHZ_RESTORE = "DexHzRestore"
+
+    const val KEY_MIRROR_DPI = "MirrorDpi"
+    const val KEY_MIRROR_AUTO_RESTORE = "MirrorAutoRestore"
 }

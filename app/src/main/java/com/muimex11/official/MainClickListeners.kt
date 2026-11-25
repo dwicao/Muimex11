@@ -127,6 +127,12 @@ private fun MainActivity.setupTweakCardListeners(prefs: SharedPreferences) {
 
     findViewById<CardView>(R.id.cardAdjustRefreshRate).setOnClickListener { showRefreshRateDialog() }
 
+    findViewById<CardView>(R.id.cardDexHz).setOnClickListener { showDexHzSheet() }
+    findViewById<android.view.View>(R.id.btnResetDexHz).setOnClickListener { resetDexHz() }
+
+    findViewById<CardView>(R.id.cardMirrorDisplay).setOnClickListener { showMirrorDisplaySheet() }
+    findViewById<android.view.View>(R.id.btnResetMirrorDisplay).setOnClickListener { resetMirrorDisplay() }
+
     findViewById<CardView>(R.id.cardGraphicsApi).setOnClickListener { showGraphicsApiSheet(prefs) }
 
     findViewById<CardView>(R.id.cardSysTweaks).setOnClickListener { showSysTweaksSheet() }
@@ -488,6 +494,8 @@ internal fun MainActivity.resetAllFunctions(prefs: android.content.SharedPrefere
             clearSensorsPrefs(prefs)
             clearBgRestrictPrefs(prefs)
             resetNetBlock()
+            MirrorDisplayManager.dismissNotification(this@resetAllFunctions)
+            if (isDexHzActive()) resetDexHz()
 
 
             if (isMonitorEnabled) {
