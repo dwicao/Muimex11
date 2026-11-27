@@ -24,6 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -319,7 +320,7 @@ class ConnectionKeeperService : Service() {
             logs = logRing.toList()
         )
 
-        while (coroutineContext.isActive && isRunning) {
+        while (currentCoroutineContext().isActive && isRunning) {
             syncWakeLock(prefs.getBoolean(Prefs.KEY_KEEPER_WAKELOCK, true))
             val preset = ConnectionKeeperLogic.IntervalPreset.entries.firstOrNull {
                 it.name == prefs.getString(Prefs.KEY_KEEPER_PRESET, null)
