@@ -77,4 +77,11 @@ object Prefs {
 
     const val KEY_MIRROR_DPI = "MirrorDpi"
     const val KEY_MIRROR_AUTO_RESTORE = "MirrorAutoRestore"
+
+    const val KEY_INPUT_PEAK_HZ = "InputPeakTouchHz"
+    const val KEY_NETPING_LAST = "NetPingLast"
+    const val KEY_ART_COMPILED_PKGS = "ArtCompiledPkgs"
+    const val KEY_WAKELOCK_RESTRICTED = "WakelockRestricted"
+    const val KEY_PRIVACY_RULES = "PrivacyAuditRules"
+    const val KEY_PERF_SESSIONS = "PerfProfilerSessions"
 }

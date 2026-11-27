@@ -217,6 +217,13 @@ private fun MainActivity.setupToolsCardListeners(prefs: SharedPreferences) {
     findViewById<CardView>(R.id.cardChangeResolution).setOnClickListener { showResolutionModeDialog() }
     findViewById<CardView>(R.id.cardCustomDns).setOnClickListener { showDnsDialog() }
     findViewById<CardView>(R.id.cardDnsBenchmark).setOnClickListener { showDnsBenchmarkSheet() }
+    findViewById<CardView>(R.id.cardNetPing).setOnClickListener { showNetPingSheet() }
+    findViewById<CardView>(R.id.cardInputTester).setOnClickListener { showInputTesterSheet() }
+    findViewById<CardView>(R.id.cardPerfProfiler).setOnClickListener { showPerfProfilerSheet(prefs) }
+    findViewById<CardView>(R.id.cardArtCompiler).setOnClickListener { showArtCompilerSheet(prefs) }
+    findViewById<CardView>(R.id.cardDexDesktop).setOnClickListener { showDexDesktopSheet() }
+    findViewById<CardView>(R.id.cardWakelock).setOnClickListener { showWakelockInspectorSheet(prefs) }
+    findViewById<CardView>(R.id.cardPrivacyAudit).setOnClickListener { showPrivacyAuditSheet(prefs) }
     findViewById<CardView>(R.id.cardCrosshair).setOnClickListener { showCrosshairConfigDialog() }
     findViewById<CardView>(R.id.cardRealtimeMonitor).setOnClickListener { toggleRealtimeMonitor() }
     findViewById<CardView>(R.id.cardAutoClick).setOnClickListener { showAutoClickDialog() }
@@ -310,6 +317,27 @@ private fun MainActivity.setupToolsCardListeners(prefs: SharedPreferences) {
     }
     findViewById<android.view.View>(R.id.btnResetDnsBenchmark).setOnClickListener {
         resetDnsBenchmark(prefs)
+    }
+    findViewById<android.view.View>(R.id.btnResetInputTester).setOnClickListener {
+        resetInputTester(prefs)
+    }
+    findViewById<android.view.View>(R.id.btnResetNetPing).setOnClickListener {
+        resetNetPing(prefs)
+    }
+    findViewById<android.view.View>(R.id.btnResetArtCompiler).setOnClickListener {
+        resetArtCompiler(prefs)
+    }
+    findViewById<android.view.View>(R.id.btnResetWakelock).setOnClickListener {
+        resetWakelockInspector(prefs)
+    }
+    findViewById<android.view.View>(R.id.btnResetDexDesktop).setOnClickListener {
+        resetDexDesktop()
+    }
+    findViewById<android.view.View>(R.id.btnResetPrivacyAudit).setOnClickListener {
+        resetPrivacyAudit(prefs)
+    }
+    findViewById<android.view.View>(R.id.btnResetPerfProfiler).setOnClickListener {
+        resetPerfProfiler(prefs)
     }
 }
 
@@ -474,6 +502,7 @@ internal fun MainActivity.resetAllFunctions(prefs: android.content.SharedPrefere
             ${ComfortTweaks.buildReset()}
             ${NetRadio.buildReset()}
             ${DisplayExtras.buildReset()}
+            ${DexDesktopLogic.buildResetCommand()}
         """.trimIndent().replace("\n", " && ").replace("&&  &&", "&&")
 
         runAdbCommand(resetCmd, getString(R.string.msg_all_reset)) {

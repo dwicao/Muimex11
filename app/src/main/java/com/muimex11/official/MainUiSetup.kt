@@ -16,11 +16,11 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 
 /** Single source of truth for tweak card grouping (filter chips + grid mode). */
-private val performanceCardIds = listOf(R.id.cardFixedPerformance, R.id.cardOptimizeSystem, R.id.cardSamsungBoost, R.id.cardThermalThrottling, R.id.cardBatterySaver, R.id.cardMemTweaks, R.id.cardBatteryHealth, R.id.cardBgRestrict, R.id.cardFstrim, R.id.cardRamBooster, R.id.cardClearCache, R.id.cardFreezeApps)
-private val displayCardIds = listOf(R.id.cardAdjustRefreshRate, R.id.cardDexHz, R.id.cardMirrorDisplay, R.id.cardFastAnimations, R.id.cardDisableBlurs, R.id.cardChangeResolution, R.id.cardGraphicsApi, R.id.cardSysTweaks, R.id.cardComfortTweaks, R.id.cardDisplayExtras, R.id.cardOrientation)
-private val networkCardIds = listOf(R.id.cardImproveNetwork, R.id.cardCustomDns, R.id.cardDnsBenchmark, R.id.cardRadioInfo, R.id.cardNetBlock, R.id.cardNetRadio)
-private val gamingCardIds = listOf(R.id.cardImproveTouch, R.id.cardGamingDnd, R.id.cardCrosshair, R.id.cardRealtimeMonitor, R.id.cardAutoClick, R.id.cardGameMode, R.id.cardGameSpace, R.id.cardFixGyro, R.id.cardGameProfiles, R.id.cardGameTuning, R.id.cardAudioLatency)
-private val toolsCardIds = listOf(R.id.cardShellExecute, R.id.cardApkInstall, R.id.cardApkBackup, R.id.cardReboot, R.id.cardShizukuRecovery, R.id.cardAppOps, R.id.cardAppLocale, R.id.cardSensorsToggle, R.id.cardBenchmark, R.id.cardDisableDevOptions, R.id.cardDebloat)
+private val performanceCardIds = listOf(R.id.cardFixedPerformance, R.id.cardOptimizeSystem, R.id.cardArtCompiler, R.id.cardSamsungBoost, R.id.cardThermalThrottling, R.id.cardBatterySaver, R.id.cardMemTweaks, R.id.cardBatteryHealth, R.id.cardBgRestrict, R.id.cardFstrim, R.id.cardRamBooster, R.id.cardClearCache, R.id.cardFreezeApps)
+private val displayCardIds = listOf(R.id.cardAdjustRefreshRate, R.id.cardDexHz, R.id.cardMirrorDisplay, R.id.cardDexDesktop, R.id.cardFastAnimations, R.id.cardDisableBlurs, R.id.cardChangeResolution, R.id.cardGraphicsApi, R.id.cardSysTweaks, R.id.cardComfortTweaks, R.id.cardDisplayExtras, R.id.cardOrientation)
+private val networkCardIds = listOf(R.id.cardImproveNetwork, R.id.cardCustomDns, R.id.cardDnsBenchmark, R.id.cardNetPing, R.id.cardRadioInfo, R.id.cardNetBlock, R.id.cardNetRadio)
+private val gamingCardIds = listOf(R.id.cardImproveTouch, R.id.cardGamingDnd, R.id.cardCrosshair, R.id.cardRealtimeMonitor, R.id.cardAutoClick, R.id.cardGameMode, R.id.cardGameSpace, R.id.cardFixGyro, R.id.cardGameProfiles, R.id.cardGameTuning, R.id.cardAudioLatency, R.id.cardInputTester, R.id.cardPerfProfiler)
+private val toolsCardIds = listOf(R.id.cardShellExecute, R.id.cardApkInstall, R.id.cardApkBackup, R.id.cardReboot, R.id.cardShizukuRecovery, R.id.cardWakelock, R.id.cardPrivacyAudit, R.id.cardAppOps, R.id.cardAppLocale, R.id.cardSensorsToggle, R.id.cardBenchmark, R.id.cardDisableDevOptions, R.id.cardDebloat)
 
 internal fun tweakCardIds(): List<Int> =
     performanceCardIds + displayCardIds + networkCardIds + gamingCardIds + toolsCardIds
@@ -77,7 +77,14 @@ private val tweakTitles: Map<Int, Int> = mapOf(
     R.id.cardBenchmark to R.string.title_bench,
     R.id.cardShellExecute to R.string.title_shell,
     R.id.cardReboot to R.string.title_reboot,
-    R.id.cardShizukuRecovery to R.string.title_srec
+    R.id.cardShizukuRecovery to R.string.title_srec,
+    R.id.cardInputTester to R.string.title_input_tester,
+    R.id.cardNetPing to R.string.title_net_ping,
+    R.id.cardArtCompiler to R.string.title_art_compiler,
+    R.id.cardWakelock to R.string.title_wakelock,
+    R.id.cardDexDesktop to R.string.title_dex_desktop,
+    R.id.cardPrivacyAudit to R.string.title_privacy_audit,
+    R.id.cardPerfProfiler to R.string.title_perf_profiler
 )
 
 internal fun MainActivity.cardTitle(id: Int): String? {
@@ -218,7 +225,10 @@ internal fun MainActivity.setupStatusStyling() {
         R.id.tvStatusShizukuRecovery, R.id.tvStatusNetBlock, R.id.tvStatusBattHealth,
         R.id.tvStatusSysTweaks, R.id.tvStatusComfort, R.id.tvStatusNetRadio,
         R.id.tvStatusMem, R.id.tvStatusGameTuning, R.id.tvStatusDx,
-        R.id.tvStatusDexHz, R.id.tvStatusMirrorDisplay
+        R.id.tvStatusDexHz, R.id.tvStatusMirrorDisplay,
+        R.id.tvStatusInputTester, R.id.tvStatusNetPing, R.id.tvStatusArtCompiler,
+        R.id.tvStatusWakelock, R.id.tvStatusDexDesktop, R.id.tvStatusPrivacyAudit,
+        R.id.tvStatusPerfProfiler
     )
     val states = HashMap<Int, TweakState>()
     val green = Color.parseColor("#2E9E5B")

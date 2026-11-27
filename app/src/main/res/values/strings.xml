@@ -1421,4 +1421,156 @@
     <string name="dnsbench_retest_one">Test This Resolver Now</string>
     <string name="dnsbench_testing_single">Measuring latency…</string>
     <string name="dnsbench_apply_dot">Set as Private DNS</string>
+
+    <string name="btn_clear">Clear</string>
+
+    <!-- Touch Hz & Gamepad/Mouse Tester -->
+    <string name="title_input_tester">Touch Hz &amp; Input Tester</string>
+    <string name="desc_input_tester">Measure live touch sampling rate (Hz), peak digitizer Hz, multi-touch, mouse polling rate, and gamepad sticks/buttons.</string>
+    <string name="input_sheet_msg">Swipe inside the test pad to measure real touch sampling rate (Hz), or move a mouse / gamepad connected over USB or Bluetooth.</string>
+    <string name="input_waiting_touch">Touch or swipe inside the pad below to start measuring Hz</string>
+    <string name="input_live_stats_fmt">Live: %1$d Hz · Avg: %2$d Hz · Peak: %3$d Hz · Pointers: %4$d · Mouse: %5$s</string>
+    <string name="input_mouse_hz_fmt">%1$d Hz</string>
+    <string name="input_status_peak">Peak: %1$d Hz</string>
+    <string name="input_reset_done">Input peak Hz cleared</string>
+    <string name="input_no_ext_device">No external mouse or gamepad detected</string>
+    <string name="input_ext_devices_fmt">Connected devices:\n%1$s</string>
+    <string name="input_gamepad_idle">Gamepad axes &amp; buttons will appear here when moved or pressed.</string>
+    <string name="input_gamepad_live_fmt">L(%1$.2f, %2$.2f | mag %3$.2f) · R(%4$.2f, %5$.2f) · L2 %6$.2f R2 %7$.2f · Btn: %8$s</string>
+    <string name="input_btn_refresh_devs">Refresh Devices</string>
+    <string name="input_canvas_prompt">Touch &amp; swipe here to measure Hz</string>
+
+    <!-- Game Ping, Jitter & Network Analyzer -->
+    <string name="title_net_ping">Game Ping &amp; Network Analyzer</string>
+    <string name="desc_net_ping">Measure live TCP ping, jitter, and packet loss across global gaming hubs or any custom host, plus Wi-Fi band and signal telemetry.</string>
+    <string name="netping_sheet_msg">Runs multi-probe latency and jitter tests against global regional edges or a custom host[:port].</string>
+    <string name="netping_custom_hint">Optional host[:port] (e.g. 1.1.1.1:443)</string>
+    <string name="netping_invalid_host">Invalid host or port (1–65535)</string>
+    <string name="netping_no_network">No active network detected</string>
+    <string name="netping_link_fmt">Active link: %1$s · Down %2$d Mbps · Up %3$d Mbps</string>
+    <string name="netping_idle">Ready to test %1$d regional hubs — tap Run Ping Test</string>
+    <string name="netping_btn_run">Run Ping Test</string>
+    <string name="netping_progress">Testing %1$d / %2$d regions…</string>
+    <string name="netping_progress_best">Testing %1$d / %2$d · Best: %3$s (%4$d ms · jitter %5$d ms)</string>
+    <string name="netping_row_fmt">Avg %1$d ms · Jitter %2$d ms · Min %3$d / Max %4$d · Loss %5$d%%</string>
+    <string name="netping_status_best">Best: %1$s (%2$d ms)</string>
+    <string name="netping_reset_done">Network ping history cleared</string>
+
+    <!-- Per-App ART / Dex2Oat Compiler -->
+    <string name="title_art_compiler">App ART / Dex2Oat Compiler</string>
+    <string name="desc_art_compiler">Pre-compile games and apps with ART speed or speed-profile mode via Shizuku to reduce shader/JIT micro-stutter.</string>
+    <string name="art_sheet_msg">Choose system background optimization or pick an app to force AOT compilation.</string>
+    <string name="art_bg_dexopt">Run System bg-dexopt-job</string>
+    <string name="art_bg_dexopt_desc">Trigger Android background ART compilation sweep</string>
+    <string name="art_bg_dexopt_done">Background dexopt completed</string>
+    <string name="art_tag_compiled">Compiled</string>
+    <string name="art_prof_speed">Full AOT (speed)</string>
+    <string name="art_prof_speed_desc">Compile all bytecode natively — best for games &amp; smoothness</string>
+    <string name="art_prof_profile">Guided AOT (speed-profile)</string>
+    <string name="art_prof_profile_desc">Balanced native compilation using runtime profiles</string>
+    <string name="art_prof_everything">Maximum (everything)</string>
+    <string name="art_prof_everything_desc">Compile every method aggressively (uses more storage)</string>
+    <string name="art_prof_verify">Lightweight (verify)</string>
+    <string name="art_prof_verify_desc">Minimal verification only to reclaim storage</string>
+    <string name="art_prof_reset">Reset Compilation</string>
+    <string name="art_prof_reset_desc">Restore package to default ART state</string>
+    <string name="art_running_fmt">Compiling with %1$s…</string>
+    <string name="art_done_fmt">%1$s compiled (%2$s)</string>
+    <string name="art_fail">ART compilation failed</string>
+    <string name="art_status_fmt">Compiled: %1$d apps</string>
+    <string name="art_reset_done">ART compilation overrides reset</string>
+
+    <!-- Battery Drain & Wakelock Inspector -->
+    <string name="title_wakelock">Battery Drain &amp; Wakelock Inspector</string>
+    <string name="desc_wakelock">Inspect active partial wakelocks, frequent alarm wakeups, and App Standby Buckets, then restrict background drainers.</string>
+    <string name="wake_sheet_msg">Apps ranked by active wake locks and alarm wakeups. Tap an app to change its standby bucket.</string>
+    <string name="wake_scanning">Reading power wakelocks, alarms &amp; standby buckets…</string>
+    <string name="wake_none_found">No third-party wakelock or wakeup offenders found right now.</string>
+    <string name="wake_found_summary">Found %1$d apps holding wakelocks or alarm wakeups</string>
+    <string name="wake_row_fmt">Locks: %1$d · Alarm wakeups: %2$d · Bucket: %3$s</string>
+    <string name="wake_set_restricted">Set Bucket: Restricted</string>
+    <string name="wake_set_restricted_desc">Strictest background CPU, network &amp; job limit</string>
+    <string name="wake_set_rare">Set Bucket: Rare</string>
+    <string name="wake_set_rare_desc">Heavily defers background alarms &amp; jobs</string>
+    <string name="wake_set_working">Restore Bucket: Working Set</string>
+    <string name="wake_set_working_desc">Normal periodic background activity</string>
+    <string name="wake_force_stop">Force Stop Package</string>
+    <string name="wake_force_stop_desc">Stop active wakelocks immediately via am force-stop</string>
+    <string name="wake_force_stopped">Force stopped %1$s</string>
+    <string name="wake_bucket_set">Standby bucket updated: %1$s</string>
+    <string name="wake_status_fmt">Restricted: %1$d apps</string>
+    <string name="wake_reset_done">Restricted standby buckets restored</string>
+
+    <!-- DeX & Desktop Environment Tweaks -->
+    <string name="title_dex_desktop">DeX &amp; Desktop Tweaks</string>
+    <string name="desc_dex_desktop">Configure external desktop mode, freeform windows, desktop font scale, mouse pointer speed, and keep-awake while docked.</string>
+    <string name="dexdesk_sheet_msg">Customize desktop windowing, mouse cursor responsiveness, and external monitor ergonomics.</string>
+    <string name="dexdesk_reading">Reading desktop &amp; DeX settings…</string>
+    <string name="dexdesk_preset_prod">Apply One-Tap DeX Productivity Preset</string>
+    <string name="dexdesk_preset_prod_desc">Enables Desktop Mode, Freeform, Resizable apps, Stay Awake, 0.90x font &amp; +3 mouse speed</string>
+    <string name="dexdesk_preset_applied">DeX productivity preset applied</string>
+    <string name="dexdesk_force_desktop">Force Desktop Mode on External Display</string>
+    <string name="dexdesk_force_desktop_desc">Enables desktop shell layout on secondary monitors</string>
+    <string name="dexdesk_freeform">Freeform Window Support</string>
+    <string name="dexdesk_freeform_desc">Allow floating resizable windows on standard Android</string>
+    <string name="dexdesk_resizable">Force All Activities Resizable</string>
+    <string name="dexdesk_resizable_desc">Override apps that block split-screen or DeX resize</string>
+    <string name="dexdesk_nonres_mw">Non-Resizable Multi-Window</string>
+    <string name="dexdesk_nonres_mw_desc">Force multi-window compatibility for legacy apps</string>
+    <string name="dexdesk_stay_on">Stay Awake While Plugged In</string>
+    <string name="dexdesk_stay_on_desc">Prevent sleep when docked to USB-C/HDMI monitor</string>
+    <string name="dexdesk_toggled_fmt">%1$s updated</string>
+    <string name="dexdesk_font_title">Desktop Font Scale</string>
+    <string name="dexdesk_font_desc">Current scale: %1$sx (0.85–0.90x gives sharper monitor density)</string>
+    <string name="dexdesk_font_applied">Font scale set to %1$sx</string>
+    <string name="dexdesk_ptr_title">Mouse / Trackpad Pointer Speed</string>
+    <string name="dexdesk_ptr_desc">Current speed: %1$s (-7 slowest to +7 fastest)</string>
+    <string name="dexdesk_ptr_applied">Pointer speed set to %1$s</string>
+    <string name="dexdesk_btn_reset">Reset Desktop</string>
+    <string name="dexdesk_status_fmt">%1$d applied</string>
+    <string name="dexdesk_reset_done">Desktop &amp; DeX tweaks reset</string>
+
+    <!-- Privacy & Clipboard Cleaner -->
+    <string name="title_privacy_audit">Privacy &amp; Clipboard Audit</string>
+    <string name="desc_privacy_audit">Scan apps allowed to read clipboard, background location, camera, mic, or overlay, revoke via AppOps, and wipe clipboard.</string>
+    <string name="privacy_sheet_msg">Audit sensitive permissions by risk category or wipe the system clipboard right away.</string>
+    <string name="privacy_clear_clip">Clear System Clipboard Now</string>
+    <string name="privacy_clear_clip_desc">Immediately clears copied passwords, links, or text</string>
+    <string name="privacy_clip_cleared">Clipboard cleared</string>
+    <string name="privacy_op_clipboard">Clipboard Readers (READ_CLIPBOARD)</string>
+    <string name="privacy_op_clipboard_desc">Apps allowed to silently read copied clipboard data</string>
+    <string name="privacy_op_location">Fine Location (ACCESS_FINE_LOCATION)</string>
+    <string name="privacy_op_location_desc">Apps allowed to access precise GPS location</string>
+    <string name="privacy_op_camera">Camera Access (CAMERA)</string>
+    <string name="privacy_op_camera_desc">User apps currently allowed camera access</string>
+    <string name="privacy_op_mic">Microphone Access (RECORD_AUDIO)</string>
+    <string name="privacy_op_mic_desc">User apps currently allowed audio recording</string>
+    <string name="privacy_op_overlay">Display Over Apps (SYSTEM_ALERT_WINDOW)</string>
+    <string name="privacy_op_overlay_desc">Apps allowed to draw floating overlays</string>
+    <string name="privacy_op_bg">Unrestricted Background (RUN_ANY_IN_BACKGROUND)</string>
+    <string name="privacy_op_bg_desc">Apps permitted to run unrestricted in background</string>
+    <string name="privacy_scanning">Scanning AppOps permissions…</string>
+    <string name="privacy_found_msg">Found %1$d user apps currently allowed for this permission</string>
+    <string name="privacy_none_found">No user apps are holding allow access for this op.</string>
+    <string name="privacy_revoked_fmt">Revoked %2$s for %1$s</string>
+    <string name="privacy_revoke_all">Revoke All Listed</string>
+    <string name="privacy_bulk_revoked">Revoked permission for %1$d apps</string>
+    <string name="privacy_status_fmt">Hardened: %1$d rules</string>
+    <string name="privacy_reset_done">Privacy AppOps overrides restored to default</string>
+
+    <!-- Session Frame-Time & Thermal Profiler -->
+    <string name="title_perf_profiler">Session Frame-Time &amp; Thermal Profiler</string>
+    <string name="desc_perf_profiler">Record timed 15–60s gaming sessions tracking Avg FPS, Jank %, P99 frame time, battery °C delta, and average peak CPU MHz.</string>
+    <string name="profiler_sheet_msg">Pick a game or app to capture real-time frame times, thermal rise, and CPU frequency over a timed session.</string>
+    <string name="profiler_last_fmt">%1$s · Last: %2$d FPS · Jank %3$.1f%% · P99 %4$d ms</string>
+    <string name="profiler_prev_card">Previous run: %1$d FPS · Jank %2$.1f%% · P99 %3$d ms · Temp %4$.1f→%5$.1f °C</string>
+    <string name="profiler_pick_dur">Choose capture window for %1$s</string>
+    <string name="profiler_dur_sec">%1$d seconds</string>
+    <string name="profiler_dur_desc">Play normally during capture for accurate FPS &amp; thermal metrics</string>
+    <string name="profiler_launching">Launching app &amp; capturing baseline…</string>
+    <string name="profiler_sampling_fmt">Profiling… %1$d / %2$d s</string>
+    <string name="profiler_result_body">Avg FPS: %1$d · Jank: %2$.1f%%\nP99 frame time: %3$d ms · Avg big CPU: %4$d MHz\nBattery temp: %5$.1f → %6$.1f °C (%7$+.1f °C)</string>
+    <string name="profiler_delta_body">vs previous run: %1$s FPS · %2$s%% jank</string>
+    <string name="profiler_status_fmt">%1$s · %2$d FPS (%3$.1f%% jank)</string>
+    <string name="profiler_reset_done">Session profiler history cleared</string>
 </resources>

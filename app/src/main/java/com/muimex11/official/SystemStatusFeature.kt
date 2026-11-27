@@ -53,6 +53,13 @@ private class SystemStatuses(
     val battHealth: String,
     val dexHz: String,
     val mirror: String,
+    val inputTester: String,
+    val netPing: String,
+    val artCompiler: String,
+    val wakelock: String,
+    val dexDesktop: String,
+    val privacyAudit: String,
+    val perfProfiler: String,
     /**
      * Cards whose read-back proved they are applied. Rendered into
      * [StatusRegistry] so "already applied" decisions never look at the
@@ -161,6 +168,12 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
 
     val apkBackupStatus = apkBackupStatusText()
     val dnsBenchStatus = dnsBenchmarkStatusText(prefs)
+    val inputTesterStatus = inputTesterStatusText(prefs)
+    val netPingStatus = netPingStatusText(prefs)
+    val artCompilerStatus = artCompilerStatusText(prefs)
+    val wakelockStatus = wakelockStatusText(prefs)
+    val privacyAuditStatus = privacyAuditStatusText(prefs)
+    val perfProfilerStatus = perfProfilerStatusText(prefs)
     val rebootStatus = getString(R.string.status_ready)
     val appLocaleStatus = getString(R.string.status_ready)
     val radioStatus = getString(R.string.status_ready)
@@ -218,6 +231,10 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
             if (DexHzBridge.currentService() != null) DexHzBridge.refresh(this@readSystemStatuses)
             dexHzStatusText() to isDexHzActive()
         }
+    }
+
+    val dexDesktopJob = async {
+        sectionOrNull { dexDesktopStatusPair() }
     }
 
     val netJob = async {
@@ -314,6 +331,7 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
 
     val display = displayJob.await() ?: DisplayStatus(fbUnknown, fbUnknown, fbUnknown, fbUnknown, fbUnknown)
     val dexHzPair = dexHzJob.await() ?: (fbUnknown to false)
+    val dexDesktopPair = dexDesktopJob.await() ?: (fbUnknown to false)
     val net = netJob.await() ?: NetStatus(fbUnknown, fbUnknown, fbUnknown, fbUnknown, fbUnknown)
     val sys = sysJob.await() ?: SysStatus(fbUnknown, fbUnknown, fbUnknown, fbUnknown, fbUnknown)
     val tweaks = tweaksJob.await() ?: fbUnknown
@@ -361,6 +379,13 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
         battHealth = sys.battHealth,
         dexHz = dexHzPair.first,
         mirror = display.mirror,
+        inputTester = inputTesterStatus,
+        netPing = netPingStatus,
+        artCompiler = artCompilerStatus,
+        wakelock = wakelockStatus,
+        dexDesktop = dexDesktopPair.first,
+        privacyAudit = privacyAuditStatus,
+        perfProfiler = perfProfilerStatus,
         appliedIds = buildSet {
             if (net.networkApplied) add(R.id.tvStatusNetwork)
             if (net.dndApplied) add(R.id.tvStatusDnd)
@@ -369,6 +394,7 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
             if (sys.devOptsApplied) add(R.id.tvStatusDevOptions)
             if (display.mirrorApplied) add(R.id.tvStatusMirrorDisplay)
             if (dexHzPair.second) add(R.id.tvStatusDexHz)
+            if (dexDesktopPair.second) add(R.id.tvStatusDexDesktop)
         }
     )
 }
@@ -420,6 +446,13 @@ private fun MainActivity.renderSystemStatuses(s: SystemStatuses) {
     push(R.id.tvStatusBattHealth, s.battHealth)
     push(R.id.tvStatusDexHz, s.dexHz)
     push(R.id.tvStatusMirrorDisplay, s.mirror)
+    push(R.id.tvStatusInputTester, s.inputTester)
+    push(R.id.tvStatusNetPing, s.netPing)
+    push(R.id.tvStatusArtCompiler, s.artCompiler)
+    push(R.id.tvStatusWakelock, s.wakelock)
+    push(R.id.tvStatusDexDesktop, s.dexDesktop)
+    push(R.id.tvStatusPrivacyAudit, s.privacyAudit)
+    push(R.id.tvStatusPerfProfiler, s.perfProfiler)
 }
 
 private fun MainActivity.renderOverlayStatuses(prefs: SharedPreferences) {

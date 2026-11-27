@@ -1421,4 +1421,156 @@
     <string name="dnsbench_retest_one">Uji Resolver Ini Sekarang</string>
     <string name="dnsbench_testing_single">Mengukur latensi…</string>
     <string name="dnsbench_apply_dot">Jadikan Private DNS</string>
+
+    <string name="btn_clear">Bersihkan</string>
+
+    <!-- Penguji Touch Hz & Input -->
+    <string name="title_input_tester">Penguji Touch Hz &amp; Input</string>
+    <string name="desc_input_tester">Ukur sampling rate sentuhan layar (Hz) real-time, Hz puncak, multi-sentuh, polling rate mouse, dan tombol/stik gamepad.</string>
+    <string name="input_sheet_msg">Usap di dalam area uji untuk mengukur sampling rate sentuh (Hz), atau gerakkan mouse / gamepad USB/Bluetooth yang terhubung.</string>
+    <string name="input_waiting_touch">Sentuh atau usap di dalam kotak di bawah untuk mulai mengukur Hz</string>
+    <string name="input_live_stats_fmt">Live: %1$d Hz · Rata-rata: %2$d Hz · Puncak: %3$d Hz · Titik: %4$d · Mouse: %5$s</string>
+    <string name="input_mouse_hz_fmt">%1$d Hz</string>
+    <string name="input_status_peak">Puncak: %1$d Hz</string>
+    <string name="input_reset_done">Rekor Hz input dihapus</string>
+    <string name="input_no_ext_device">Tidak ada mouse atau gamepad eksternal terdeteksi</string>
+    <string name="input_ext_devices_fmt">Perangkat terhubung:\n%1$s</string>
+    <string name="input_gamepad_idle">Sumbu &amp; tombol gamepad akan tampil di sini saat digerakkan atau ditekan.</string>
+    <string name="input_gamepad_live_fmt">L(%1$.2f, %2$.2f | mag %3$.2f) · R(%4$.2f, %5$.2f) · L2 %6$.2f R2 %7$.2f · Tbl: %8$s</string>
+    <string name="input_btn_refresh_devs">Segarkan Perangkat</string>
+    <string name="input_canvas_prompt">Sentuh &amp; usap di sini untuk ukur Hz</string>
+
+    <!-- Penguji Ping Game, Jitter & Jaringan -->
+    <string name="title_net_ping">Penguji Ping Game &amp; Jaringan</string>
+    <string name="desc_net_ping">Ukur ping TCP, jitter, dan packet loss ke server region game global atau host kustom, serta info band &amp; sinyal Wi-Fi.</string>
+    <string name="netping_sheet_msg">Mengukur latensi dan jitter multi-sampel ke edge regional global atau host[:port] kustom.</string>
+    <string name="netping_custom_hint">Host[:port] opsional (mis. 1.1.1.1:443)</string>
+    <string name="netping_invalid_host">Host atau port tidak valid (1–65535)</string>
+    <string name="netping_no_network">Tidak ada jaringan aktif terdeteksi</string>
+    <string name="netping_link_fmt">Koneksi aktif: %1$s · Unduh %2$d Mbps · Unggah %3$d Mbps</string>
+    <string name="netping_idle">Siap menguji %1$d region — ketuk Mulai Uji Ping</string>
+    <string name="netping_btn_run">Mulai Uji Ping</string>
+    <string name="netping_progress">Menguji %1$d / %2$d region…</string>
+    <string name="netping_progress_best">Menguji %1$d / %2$d · Terbaik: %3$s (%4$d ms · jitter %5$d ms)</string>
+    <string name="netping_row_fmt">Rata %1$d ms · Jitter %2$d ms · Min %3$d / Maks %4$d · Loss %5$d%%</string>
+    <string name="netping_status_best">Terbaik: %1$s (%2$d ms)</string>
+    <string name="netping_reset_done">Riwayat ping jaringan dihapus</string>
+
+    <!-- Kompilator ART / Dex2Oat Per-Aplikasi -->
+    <string name="title_art_compiler">Kompilator ART / Dex2Oat Aplikasi</string>
+    <string name="desc_art_compiler">Kompilasi game dan aplikasi dengan profil speed atau speed-profile via Shizuku untuk mengurangi stutter JIT/shader.</string>
+    <string name="art_sheet_msg">Jalankan optimasi latar belakang sistem atau pilih aplikasi untuk kompilasi AOT langsung.</string>
+    <string name="art_bg_dexopt">Jalankan Sistem bg-dexopt-job</string>
+    <string name="art_bg_dexopt_desc">Memicu sapuan kompilasi ART latar belakang Android</string>
+    <string name="art_bg_dexopt_done">Background dexopt selesai</string>
+    <string name="art_tag_compiled">Terkompilasi</string>
+    <string name="art_prof_speed">AOT Penuh (speed)</string>
+    <string name="art_prof_speed_desc">Kompilasi seluruh bytecode ke kode native — optimal untuk game</string>
+    <string name="art_prof_profile">AOT Terpandu (speed-profile)</string>
+    <string name="art_prof_profile_desc">Kompilasi seimbang berdasarkan profil pemakaian</string>
+    <string name="art_prof_everything">Maksimal (everything)</string>
+    <string name="art_prof_everything_desc">Kompilasi agresif semua metode (memakan ruang lebih)</string>
+    <string name="art_prof_verify">Ringan (verify)</string>
+    <string name="art_prof_verify_desc">Hanya verifikasi minimal untuk hemat penyimpanan</string>
+    <string name="art_prof_reset">Reset Kompilasi</string>
+    <string name="art_prof_reset_desc">Kembalikan paket ke status ART bawaan</string>
+    <string name="art_running_fmt">Mengompilasi dengan %1$s…</string>
+    <string name="art_done_fmt">%1$s selesai dikompilasi (%2$s)</string>
+    <string name="art_fail">Kompilasi ART gagal</string>
+    <string name="art_status_fmt">Dikompilasi: %1$d app</string>
+    <string name="art_reset_done">Override kompilasi ART direset</string>
+
+    <!-- Inspektor Wakelock & Penguras Baterai -->
+    <string name="title_wakelock">Inspektor Wakelock &amp; Boros Baterai</string>
+    <string name="desc_wakelock">Periksa partial wakelock aktif, frekuensi alarm wakeup, dan Standby Bucket, lalu batasi aplikasi penguras baterai.</string>
+    <string name="wake_sheet_msg">Aplikasi diurutkan berdasarkan wakelock aktif dan alarm wakeup. Ketuk aplikasi untuk mengubah standby bucket-nya.</string>
+    <string name="wake_scanning">Membaca wakelock daya, alarm &amp; standby bucket…</string>
+    <string name="wake_none_found">Tidak ditemukan aplikasi pihak ketiga pemegang wakelock saat ini.</string>
+    <string name="wake_found_summary">Ditemukan %1$d aplikasi dengan wakelock atau wakeup alarm</string>
+    <string name="wake_row_fmt">Locks: %1$d · Wakeup alarm: %2$d · Bucket: %3$s</string>
+    <string name="wake_set_restricted">Atur Bucket: Restricted</string>
+    <string name="wake_set_restricted_desc">Pembatasan paling ketat untuk CPU, jaringan &amp; job latar belakang</string>
+    <string name="wake_set_rare">Atur Bucket: Rare</string>
+    <string name="wake_set_rare_desc">Menunda alarm &amp; tugas latar belakang secara signifikan</string>
+    <string name="wake_set_working">Pulihkan Bucket: Working Set</string>
+    <string name="wake_set_working_desc">Aktivitas latar belakang berkala normal</string>
+    <string name="wake_force_stop">Paksa Berhenti Paket</string>
+    <string name="wake_force_stop_desc">Hentikan wakelock aktif seketika dengan am force-stop</string>
+    <string name="wake_force_stopped">Menghentikan paksa %1$s</string>
+    <string name="wake_bucket_set">Standby bucket diperbarui: %1$s</string>
+    <string name="wake_status_fmt">Dibatasi: %1$d app</string>
+    <string name="wake_reset_done">Standby bucket yang dibatasi dipulihkan</string>
+
+    <!-- Tweak Lingkungan DeX & Desktop -->
+    <string name="title_dex_desktop">Tweak DeX &amp; Lingkungan Desktop</string>
+    <string name="desc_dex_desktop">Atur mode desktop eksternal, jendela freeform, skala font desktop, kecepatan kursor mouse, dan tetap menyala saat terpasang.</string>
+    <string name="dexdesk_sheet_msg">Sesuaikan mode jendela desktop, responsivitas mouse, dan kenyamanan monitor eksternal.</string>
+    <string name="dexdesk_reading">Membaca pengaturan DeX &amp; desktop…</string>
+    <string name="dexdesk_preset_prod">Terapkan Preset Produktivitas DeX</string>
+    <string name="dexdesk_preset_prod_desc">Aktifkan Mode Desktop, Freeform, Resizable, Stay Awake, font 0.90x &amp; kecepatan mouse +3</string>
+    <string name="dexdesk_preset_applied">Preset produktivitas DeX diterapkan</string>
+    <string name="dexdesk_force_desktop">Paksa Mode Desktop di Layar Eksternal</string>
+    <string name="dexdesk_force_desktop_desc">Mengaktifkan tampilan desktop di monitor eksternal</string>
+    <string name="dexdesk_freeform">Dukungan Jendela Freeform</string>
+    <string name="dexdesk_freeform_desc">Izinkan jendela mengambang yang bisa diubah ukurannya</string>
+    <string name="dexdesk_resizable">Paksa Semua Aktivitas Bisa Diubah Ukuran</string>
+    <string name="dexdesk_resizable_desc">Izinkan split-screen atau ubah ukuran DeX di semua app</string>
+    <string name="dexdesk_nonres_mw">Multi-Jendela Non-Resizable</string>
+    <string name="dexdesk_nonres_mw_desc">Paksa dukungan multi-jendela untuk aplikasi lama</string>
+    <string name="dexdesk_stay_on">Tetap Menyala Saat Tercolok</string>
+    <string name="dexdesk_stay_on_desc">Cegah layar tidur saat terhubung ke monitor USB-C/HDMI</string>
+    <string name="dexdesk_toggled_fmt">%1$s diperbarui</string>
+    <string name="dexdesk_font_title">Skala Font Desktop</string>
+    <string name="dexdesk_font_desc">Skala saat ini: %1$sx (0.85–0.90x membuat teks monitor lebih ringkas)</string>
+    <string name="dexdesk_font_applied">Skala font disetel ke %1$sx</string>
+    <string name="dexdesk_ptr_title">Kecepatan Kursor Mouse / Trackpad</string>
+    <string name="dexdesk_ptr_desc">Kecepatan saat ini: %1$s (-7 terlambat hingga +7 tercepat)</string>
+    <string name="dexdesk_ptr_applied">Kecepatan kursor disetel ke %1$s</string>
+    <string name="dexdesk_btn_reset">Reset Desktop</string>
+    <string name="dexdesk_status_fmt">%1$d diterapkan</string>
+    <string name="dexdesk_reset_done">Tweak DeX &amp; desktop direset</string>
+
+    <!-- Audit Privasi & Pembersih Clipboard -->
+    <string name="title_privacy_audit">Audit Privasi &amp; Clipboard</string>
+    <string name="desc_privacy_audit">Pindai app yang diizinkan membaca clipboard, lokasi presisi, kamera, mikrofon, atau overlay, cabut via AppOps, dan bersihkan clipboard.</string>
+    <string name="privacy_sheet_msg">Audit izin sensitif berdasarkan kategori risiko atau hapus riwayat clipboard seketika.</string>
+    <string name="privacy_clear_clip">Bersihkan Clipboard Sistem Sekarang</string>
+    <string name="privacy_clear_clip_desc">Langsung hapus kata sandi, tautan, atau teks yang disalin</string>
+    <string name="privacy_clip_cleared">Clipboard dibersihkan</string>
+    <string name="privacy_op_clipboard">Pembaca Clipboard (READ_CLIPBOARD)</string>
+    <string name="privacy_op_clipboard_desc">Aplikasi yang diizinkan membaca isi clipboard secara diam-diam</string>
+    <string name="privacy_op_location">Lokasi Presisi (ACCESS_FINE_LOCATION)</string>
+    <string name="privacy_op_location_desc">Aplikasi dengan izin lokasi GPS presisi</string>
+    <string name="privacy_op_camera">Akses Kamera (CAMERA)</string>
+    <string name="privacy_op_camera_desc">Aplikasi pengguna yang diizinkan mengakses kamera</string>
+    <string name="privacy_op_mic">Akses Mikrofon (RECORD_AUDIO)</string>
+    <string name="privacy_op_mic_desc">Aplikasi pengguna yang diizinkan merekam audio</string>
+    <string name="privacy_op_overlay">Tampil di Atas App (SYSTEM_ALERT_WINDOW)</string>
+    <string name="privacy_op_overlay_desc">Aplikasi yang boleh menggambar overlay mengambang</string>
+    <string name="privacy_op_bg">Latar Belakang Bebas (RUN_ANY_IN_BACKGROUND)</string>
+    <string name="privacy_op_bg_desc">Aplikasi yang bebas berjalan di latar belakang</string>
+    <string name="privacy_scanning">Memindai izin AppOps…</string>
+    <string name="privacy_found_msg">Ditemukan %1$d aplikasi pengguna dengan status izin aktif</string>
+    <string name="privacy_none_found">Tidak ada aplikasi pengguna yang memegang akses aktif untuk izin ini.</string>
+    <string name="privacy_revoked_fmt">Izin %2$s dicabut untuk %1$s</string>
+    <string name="privacy_revoke_all">Cabut Semua Terdaftar</string>
+    <string name="privacy_bulk_revoked">Izin dicabut untuk %1$d aplikasi</string>
+    <string name="privacy_status_fmt">Diperketat: %1$d aturan</string>
+    <string name="privacy_reset_done">Override AppOps privasi dikembalikan ke bawaan</string>
+
+    <!-- Profiler Sesi Frame-Time & Termal -->
+    <string name="title_perf_profiler">Profiler Sesi Frame-Time &amp; Termal</string>
+    <string name="desc_perf_profiler">Rekam sesi game 15–60 detik untuk memantau Rata-rata FPS, Jank %, P99 frame time, kenaikan suhu °C, dan clock CPU puncak.</string>
+    <string name="profiler_sheet_msg">Pilih game atau aplikasi untuk merekam frame time, kenaikan suhu, dan frekuensi CPU selama sesi.</string>
+    <string name="profiler_last_fmt">%1$s · Terakhir: %2$d FPS · Jank %3$.1f%% · P99 %4$d ms</string>
+    <string name="profiler_prev_card">Sesi sebelumnya: %1$d FPS · Jank %2$.1f%% · P99 %3$d ms · Suhu %4$.1f→%5$.1f °C</string>
+    <string name="profiler_pick_dur">Pilih durasi perekaman untuk %1$s</string>
+    <string name="profiler_dur_sec">%1$d detik</string>
+    <string name="profiler_dur_desc">Mainkan seperti biasa selama perekaman agar metrik FPS &amp; termal akurat</string>
+    <string name="profiler_launching">Membuka aplikasi &amp; mengambil baseline…</string>
+    <string name="profiler_sampling_fmt">Merekam… %1$d / %2$d dtk</string>
+    <string name="profiler_result_body">Rata-rata FPS: %1$d · Jank: %2$.1f%%\nP99 frame time: %3$d ms · Rata CPU besar: %4$d MHz\nSuhu baterai: %5$.1f → %6$.1f °C (%7$+.1f °C)</string>
+    <string name="profiler_delta_body">dibanding sesi sebelumnya: %1$s FPS · %2$s%% jank</string>
+    <string name="profiler_status_fmt">%1$s · %2$d FPS (%3$.1f%% jank)</string>
+    <string name="profiler_reset_done">Riwayat profiler sesi dihapus</string>
 </resources>
