@@ -92,7 +92,7 @@ internal fun MainActivity.showInputTesterSheet() {
     body.addView(controllerStatusView)
 
     fun refreshConnectedDevices() {
-        val list = InputDevice.getDeviceIds().mapNotNull { id ->
+        val list = InputDevice.getDeviceIds().toList().mapNotNull { id ->
             val dev = InputDevice.getDevice(id) ?: return@mapNotNull null
             val src = dev.sources
             val isExt = (src and InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD ||

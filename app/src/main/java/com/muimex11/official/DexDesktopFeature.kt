@@ -42,8 +42,8 @@ object DexDesktopLogic {
         }
     }
 
-    fun parseState(rawTagged: String): DesktopState {
-        fun v(tag: String) = ShellBatcher.value(rawTagged, tag).trim()
+    fun parseState(values: Map<String, String>): DesktopState {
+        fun v(tag: String) = ShellBatcher.value(values, tag).trim()
         val font = v("font_scale").let { if (it.isEmpty() || it == "null") "1.0" else it }
         val ptr = v("ptr_speed").let { if (it.isEmpty() || it == "null") "0" else it }
         val stayRaw = v("stay_on").toIntOrNull() ?: 0

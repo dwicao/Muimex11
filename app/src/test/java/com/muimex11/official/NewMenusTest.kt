@@ -83,32 +83,24 @@ class NewMenusTest {
 
     @Test
     fun dexDesktopLogicParsesAndCountsAppliedSettings() {
-        val tagged = ShellBatcher.run { "" }
-        assertNotNull(tagged)
         val raw = """
-            __M_START_force_desktop
+            @@muimex:force_desktop@@
             1
-            __M_END_force_desktop
-            __M_START_freeform
+            @@muimex:freeform@@
             1
-            __M_END_freeform
-            __M_START_resizable
+            @@muimex:resizable@@
             0
-            __M_END_resizable
-            __M_START_non_res_mw
+            @@muimex:non_res_mw@@
             1
-            __M_END_non_res_mw
-            __M_START_stay_on
+            @@muimex:stay_on@@
             7
-            __M_END_stay_on
-            __M_START_font_scale
+            @@muimex:font_scale@@
             0.85
-            __M_END_font_scale
-            __M_START_ptr_speed
+            @@muimex:ptr_speed@@
             3
-            __M_END_ptr_speed
+            @@muimex:__end__@@
         """.trimIndent()
-        val state = DexDesktopLogic.parseState(raw)
+        val state = DexDesktopLogic.parseState(ShellBatcher.parse(raw))
         assertTrue(state.forceDesktop)
         assertTrue(state.freeform)
         assertFalse(state.forceResizable)
