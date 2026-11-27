@@ -23,6 +23,7 @@ private class SystemStatuses(
     val network: String,
     val touch: String,
     val dns: String,
+    val dnsBenchmark: String,
     val animations: String,
     val blurs: String,
     val dnd: String,
@@ -159,6 +160,7 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
     )
 
     val apkBackupStatus = apkBackupStatusText()
+    val dnsBenchStatus = dnsBenchmarkStatusText(prefs)
     val rebootStatus = getString(R.string.status_ready)
     val appLocaleStatus = getString(R.string.status_ready)
     val radioStatus = getString(R.string.status_ready)
@@ -329,6 +331,7 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
         network = net.network,
         touch = net.touch,
         dns = net.dns,
+        dnsBenchmark = dnsBenchStatus,
         animations = sys.anim,
         blurs = sys.blurs,
         dnd = net.dnd,
@@ -387,6 +390,7 @@ private fun MainActivity.renderSystemStatuses(s: SystemStatuses) {
     push(R.id.tvStatusNetwork, s.network)
     push(R.id.tvStatusTouch, s.touch)
     push(R.id.tvStatusDns, s.dns)
+    push(R.id.tvStatusDnsBenchmark, s.dnsBenchmark)
     push(R.id.tvStatusAnimations, s.animations)
     push(R.id.tvStatusBlurs, s.blurs)
     push(R.id.tvStatusDnd, s.dnd)

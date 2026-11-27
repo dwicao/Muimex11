@@ -66,6 +66,8 @@ object Prefs {
     const val KEY_GRAPHICS_LAST_BOOT = "GraphicsLastBoot"
 
     const val KEY_LAST_DNS = "LastDns"
+    const val KEY_DNS_BENCH_RESULTS = "DnsBenchResults"
+    const val KEY_DNS_BENCH_PROTO = "DnsBenchProto"
 
     const val KEY_DEXHZ_WANT_ON = "DexHzWantOn"
     const val KEY_DEXHZ_TARGET = "DexHzTarget"

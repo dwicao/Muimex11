@@ -1378,4 +1378,47 @@
     <string name="mirror_notif_body">Saat ini: %1$d×%2$d (%3$d DPI)</string>
     <string name="tile_mirror">Mirror 16:9</string>
     <string name="tile_mirror_fail">Gagal mengganti Mirror — periksa Shizuku</string>
+
+    <!-- Uji Benchmark DNS -->
+    <string name="title_dns_bench">Uji Benchmark DNS</string>
+    <string name="desc_dns_bench">Ukur latensi nyata pada 50+ resolver DNS populer maupun tidak populer (UDP :53 &amp; DoT :853), urutkan tercepat, dan terapkan sekali ketuk.</string>
+    <string name="dnsbench_shortcut_desc">Uji latensi DNS populer &amp; tidak populer</string>
+    <string name="dnsbench_sheet_msg">Mengukur latensi respons DNS nyata via UDP :53 atau Private DNS (DoT :853) untuk DNS global populer maupun independen/regional.</string>
+    <string name="dnsbench_catalog_summary">%1$d resolver tersedia: %2$d Populer · %3$d Tidak Populer / Niche</string>
+    <string name="dnsbench_proto_label">Mode Protokol</string>
+    <string name="dnsbench_proto_udp">UDP :53 (Semua DNS)</string>
+    <string name="dnsbench_proto_dot">DoT :853 (Private DNS)</string>
+    <string name="dnsbench_filter_label">Direktori DNS</string>
+    <string name="dnsbench_filter_all">Semua (%1$d)</string>
+    <string name="dnsbench_filter_popular">Populer (%1$d)</string>
+    <string name="dnsbench_filter_unpopular">Tidak Populer (%1$d)</string>
+    <string name="dnsbench_search_hint">Cari nama, IP, negara, atau catatan…</string>
+    <string name="dnsbench_tag_popular">Populer</string>
+    <string name="dnsbench_tag_unpopular">Tidak Populer</string>
+    <string name="dnsbench_udp_only_short">Khusus UDP</string>
+    <string name="dnsbench_btn_run">Mulai Benchmark</string>
+    <string name="dnsbench_btn_stop">Hentikan Uji</string>
+    <string name="dnsbench_running_init">Memulai benchmark DNS…</string>
+    <string name="dnsbench_idle_list">Menampilkan %1$d resolver — ketuk Mulai Benchmark atau pilih DNS untuk detail</string>
+    <string name="dnsbench_no_match">Tidak ada penyedia DNS yang cocok dengan filter.</string>
+    <string name="dnsbench_progress">Menguji %1$d / %2$d resolver…</string>
+    <string name="dnsbench_progress_fastest">Menguji %1$d / %2$d · Tercepat: %3$s (%4$d ms)</string>
+    <string name="dnsbench_summary_done">Selesai: %1$d / %2$d merespons · Tercepat: %3$s (%4$d ms)</string>
+    <string name="dnsbench_none_reachable">Tidak ada resolver yang merespons pada mode terpilih.</string>
+    <string name="dnsbench_timeout">Waktu habis / tidak terjangkau</string>
+    <string name="dnsbench_fail_short">Gagal</string>
+    <string name="dnsbench_apply_fastest">Pakai Tercepat: %1$s (%2$d ms)</string>
+    <string name="dnsbench_status_fastest">Tercepat: %1$s (%2$d ms)</string>
+    <string name="dnsbench_reset_done">Riwayat benchmark DNS dihapus</string>
+    <string name="dnsbench_copied">Disalin: %1$s</string>
+    <string name="dnsbench_detail_tier">Kategori: %1$s · Wilayah: %2$s</string>
+    <string name="dnsbench_detail_primary">IP Utama: %1$s</string>
+    <string name="dnsbench_detail_secondary">IP Cadangan: %1$s</string>
+    <string name="dnsbench_detail_dot">Private DNS (DoT): %1$s</string>
+    <string name="dnsbench_detail_latency">Rata-rata: %1$d ms · Min: %2$d ms · Maks: %3$d ms (%4$d/%5$d sukses)</string>
+    <string name="dnsbench_copy_primary">Salin IP Utama</string>
+    <string name="dnsbench_copy_secondary">Salin IP Cadangan</string>
+    <string name="dnsbench_retest_one">Uji Resolver Ini Sekarang</string>
+    <string name="dnsbench_testing_single">Mengukur latensi…</string>
+    <string name="dnsbench_apply_dot">Jadikan Private DNS</string>
 </resources>

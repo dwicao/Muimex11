@@ -18,7 +18,7 @@ import com.google.android.material.chip.ChipGroup
 /** Single source of truth for tweak card grouping (filter chips + grid mode). */
 private val performanceCardIds = listOf(R.id.cardFixedPerformance, R.id.cardOptimizeSystem, R.id.cardSamsungBoost, R.id.cardThermalThrottling, R.id.cardBatterySaver, R.id.cardMemTweaks, R.id.cardBatteryHealth, R.id.cardBgRestrict, R.id.cardFstrim, R.id.cardRamBooster, R.id.cardClearCache, R.id.cardFreezeApps)
 private val displayCardIds = listOf(R.id.cardAdjustRefreshRate, R.id.cardDexHz, R.id.cardMirrorDisplay, R.id.cardFastAnimations, R.id.cardDisableBlurs, R.id.cardChangeResolution, R.id.cardGraphicsApi, R.id.cardSysTweaks, R.id.cardComfortTweaks, R.id.cardDisplayExtras, R.id.cardOrientation)
-private val networkCardIds = listOf(R.id.cardImproveNetwork, R.id.cardCustomDns, R.id.cardRadioInfo, R.id.cardNetBlock, R.id.cardNetRadio)
+private val networkCardIds = listOf(R.id.cardImproveNetwork, R.id.cardCustomDns, R.id.cardDnsBenchmark, R.id.cardRadioInfo, R.id.cardNetBlock, R.id.cardNetRadio)
 private val gamingCardIds = listOf(R.id.cardImproveTouch, R.id.cardGamingDnd, R.id.cardCrosshair, R.id.cardRealtimeMonitor, R.id.cardAutoClick, R.id.cardGameMode, R.id.cardGameSpace, R.id.cardFixGyro, R.id.cardGameProfiles, R.id.cardGameTuning, R.id.cardAudioLatency)
 private val toolsCardIds = listOf(R.id.cardShellExecute, R.id.cardApkInstall, R.id.cardApkBackup, R.id.cardReboot, R.id.cardShizukuRecovery, R.id.cardAppOps, R.id.cardAppLocale, R.id.cardSensorsToggle, R.id.cardBenchmark, R.id.cardDisableDevOptions, R.id.cardDebloat)
 
@@ -54,6 +54,7 @@ private val tweakTitles: Map<Int, Int> = mapOf(
     R.id.cardGameTuning to R.string.title_gametuning,
     R.id.cardOrientation to R.string.title_orientation,
     R.id.cardCustomDns to R.string.title_dns,
+    R.id.cardDnsBenchmark to R.string.title_dns_bench,
     R.id.cardCrosshair to R.string.title_crosshair,
     R.id.cardRealtimeMonitor to R.string.title_monitor,
     R.id.cardAutoClick to R.string.title_autoclick,
@@ -206,7 +207,7 @@ internal fun MainActivity.setupStatusStyling() {
     val statusIds = listOf(
         R.id.tvStatusFixedPerf, R.id.tvStatusOptimize, R.id.tvStatusRefresh, R.id.tvStatusNetwork,
         R.id.tvStatusTouch, R.id.tvStatusAnimations, R.id.tvStatusBlurs, R.id.tvStatusDnd,
-        R.id.tvStatusDevOptions, R.id.tvStatusResolution, R.id.tvStatusDns, R.id.tvStatusCrosshair,
+        R.id.tvStatusDevOptions, R.id.tvStatusResolution, R.id.tvStatusDns, R.id.tvStatusDnsBenchmark, R.id.tvStatusCrosshair,
         R.id.tvStatusMonitor, R.id.tvStatusGameMode, R.id.tvStatusThermal, R.id.tvStatusFstrim,
         R.id.tvStatusRamBooster, R.id.tvStatusCache, R.id.tvStatusFreeze, R.id.tvStatusAutoClick,
         R.id.tvStatusGameSpace, R.id.tvStatusSamsungBoost, R.id.tvStatusGyro, R.id.tvStatusBatterySaver,

@@ -1378,4 +1378,47 @@
     <string name="mirror_notif_body">Current: %1$d×%2$d (%3$d DPI)</string>
     <string name="tile_mirror">Mirror 16:9</string>
     <string name="tile_mirror_fail">Mirror toggle failed — check Shizuku</string>
+
+    <!-- DNS Benchmark Test -->
+    <string name="title_dns_bench">DNS Benchmark Test</string>
+    <string name="desc_dns_bench">Measure real latency across 50+ popular and niche/unpopular DNS resolvers (UDP :53 &amp; DoT :853), rank the fastest, and apply in one tap.</string>
+    <string name="dnsbench_shortcut_desc">Benchmark popular &amp; unpopular DNS latency</string>
+    <string name="dnsbench_sheet_msg">Measures real DNS response latency over UDP :53 or Private DNS (DoT :853) across mainstream global and lesser-known independent resolvers.</string>
+    <string name="dnsbench_catalog_summary">%1$d resolvers loaded: %2$d Popular · %3$d Unpopular / Niche</string>
+    <string name="dnsbench_proto_label">Protocol Mode</string>
+    <string name="dnsbench_proto_udp">UDP :53 (All DNS)</string>
+    <string name="dnsbench_proto_dot">DoT :853 (Private DNS)</string>
+    <string name="dnsbench_filter_label">DNS Directory</string>
+    <string name="dnsbench_filter_all">All (%1$d)</string>
+    <string name="dnsbench_filter_popular">Popular (%1$d)</string>
+    <string name="dnsbench_filter_unpopular">Unpopular (%1$d)</string>
+    <string name="dnsbench_search_hint">Search name, IP, country, or note…</string>
+    <string name="dnsbench_tag_popular">Popular</string>
+    <string name="dnsbench_tag_unpopular">Unpopular</string>
+    <string name="dnsbench_udp_only_short">UDP only</string>
+    <string name="dnsbench_btn_run">Run Benchmark</string>
+    <string name="dnsbench_btn_stop">Stop Test</string>
+    <string name="dnsbench_running_init">Starting DNS benchmark…</string>
+    <string name="dnsbench_idle_list">Showing %1$d resolvers — tap Run Benchmark or tap any provider for details</string>
+    <string name="dnsbench_no_match">No DNS providers match your current filter.</string>
+    <string name="dnsbench_progress">Testing %1$d / %2$d resolvers…</string>
+    <string name="dnsbench_progress_fastest">Testing %1$d / %2$d · Fastest: %3$s (%4$d ms)</string>
+    <string name="dnsbench_summary_done">Done: %1$d / %2$d reachable · Fastest: %3$s (%4$d ms)</string>
+    <string name="dnsbench_none_reachable">No resolvers responded in the selected mode.</string>
+    <string name="dnsbench_timeout">Timed out / unreachable</string>
+    <string name="dnsbench_fail_short">Fail</string>
+    <string name="dnsbench_apply_fastest">Apply Fastest: %1$s (%2$d ms)</string>
+    <string name="dnsbench_status_fastest">Fastest: %1$s (%2$d ms)</string>
+    <string name="dnsbench_reset_done">DNS benchmark history cleared</string>
+    <string name="dnsbench_copied">Copied %1$s</string>
+    <string name="dnsbench_detail_tier">Tier: %1$s · Region: %2$s</string>
+    <string name="dnsbench_detail_primary">Primary IP: %1$s</string>
+    <string name="dnsbench_detail_secondary">Secondary IP: %1$s</string>
+    <string name="dnsbench_detail_dot">Private DNS (DoT): %1$s</string>
+    <string name="dnsbench_detail_latency">Avg: %1$d ms · Min: %2$d ms · Max: %3$d ms (%4$d/%5$d ok)</string>
+    <string name="dnsbench_copy_primary">Copy Primary IP</string>
+    <string name="dnsbench_copy_secondary">Copy Secondary IP</string>
+    <string name="dnsbench_retest_one">Test This Resolver Now</string>
+    <string name="dnsbench_testing_single">Measuring latency…</string>
+    <string name="dnsbench_apply_dot">Set as Private DNS</string>
 </resources>

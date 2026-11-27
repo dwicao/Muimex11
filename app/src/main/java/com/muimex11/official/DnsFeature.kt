@@ -27,6 +27,11 @@ internal fun MainActivity.showDnsDialog() {
         .title(getString(R.string.dlg_private_dns))
         .message(getString(R.string.dlg_private_dns_msg))
 
+    list.addView(optionRow(this, getString(R.string.title_dns_bench), getString(R.string.dnsbench_shortcut_desc), selected = false) {
+        sheet.dismiss()
+        showDnsBenchmarkSheet()
+    })
+
     providers.forEach { p ->
         list.addView(optionRow(this, p.name, "${p.desc}  ·  ${p.host}", selected = current.contains(p.host)) {
             sheet.dismiss()

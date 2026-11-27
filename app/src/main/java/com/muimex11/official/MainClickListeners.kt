@@ -216,6 +216,7 @@ private fun MainActivity.setupToolsCardListeners(prefs: SharedPreferences) {
     findViewById<CardView>(R.id.cardClearCache).setOnClickListener { confirmClearCaches() }
     findViewById<CardView>(R.id.cardChangeResolution).setOnClickListener { showResolutionModeDialog() }
     findViewById<CardView>(R.id.cardCustomDns).setOnClickListener { showDnsDialog() }
+    findViewById<CardView>(R.id.cardDnsBenchmark).setOnClickListener { showDnsBenchmarkSheet() }
     findViewById<CardView>(R.id.cardCrosshair).setOnClickListener { showCrosshairConfigDialog() }
     findViewById<CardView>(R.id.cardRealtimeMonitor).setOnClickListener { toggleRealtimeMonitor() }
     findViewById<CardView>(R.id.cardAutoClick).setOnClickListener { showAutoClickDialog() }
@@ -306,6 +307,9 @@ private fun MainActivity.setupToolsCardListeners(prefs: SharedPreferences) {
     }
     findViewById<android.view.View>(R.id.btnResetBenchmark).setOnClickListener {
         UiToast.info(this, getString(R.string.toast_bench_kept), Toast.LENGTH_SHORT).show()
+    }
+    findViewById<android.view.View>(R.id.btnResetDnsBenchmark).setOnClickListener {
+        resetDnsBenchmark(prefs)
     }
 }
 
