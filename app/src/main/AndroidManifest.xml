@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <!-- Required: every picker (freeze, AppOps, per-game profiles, backup)
@@ -122,6 +123,15 @@
         </service>
 
         <service
+            android:name=".ConnectionKeeperService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="specialUse">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="connection-keeper" />
+        </service>
+
+        <service
             android:name=".DnsTileService"
             android:enabled="true"
             android:exported="true"
@@ -175,6 +185,18 @@
             android:exported="true"
             android:icon="@drawable/ic_resolution"
             android:label="@string/tile_mirror"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".ConnectionKeeperTileService"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@drawable/ic_dns"
+            android:label="@string/tile_keeper"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />

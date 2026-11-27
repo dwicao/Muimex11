@@ -18,7 +18,7 @@ import com.google.android.material.chip.ChipGroup
 /** Single source of truth for tweak card grouping (filter chips + grid mode). */
 private val performanceCardIds = listOf(R.id.cardFixedPerformance, R.id.cardOptimizeSystem, R.id.cardArtCompiler, R.id.cardSamsungBoost, R.id.cardThermalThrottling, R.id.cardBatterySaver, R.id.cardMemTweaks, R.id.cardBatteryHealth, R.id.cardBgRestrict, R.id.cardFstrim, R.id.cardRamBooster, R.id.cardClearCache, R.id.cardFreezeApps)
 private val displayCardIds = listOf(R.id.cardAdjustRefreshRate, R.id.cardDexHz, R.id.cardMirrorDisplay, R.id.cardDexDesktop, R.id.cardFastAnimations, R.id.cardDisableBlurs, R.id.cardChangeResolution, R.id.cardGraphicsApi, R.id.cardSysTweaks, R.id.cardComfortTweaks, R.id.cardDisplayExtras, R.id.cardOrientation)
-private val networkCardIds = listOf(R.id.cardImproveNetwork, R.id.cardCustomDns, R.id.cardDnsBenchmark, R.id.cardNetPing, R.id.cardRadioInfo, R.id.cardNetBlock, R.id.cardNetRadio)
+private val networkCardIds = listOf(R.id.cardImproveNetwork, R.id.cardCustomDns, R.id.cardDnsBenchmark, R.id.cardNetPing, R.id.cardConnKeeper, R.id.cardRadioInfo, R.id.cardNetBlock, R.id.cardNetRadio)
 private val gamingCardIds = listOf(R.id.cardImproveTouch, R.id.cardGamingDnd, R.id.cardCrosshair, R.id.cardRealtimeMonitor, R.id.cardAutoClick, R.id.cardGameMode, R.id.cardGameSpace, R.id.cardFixGyro, R.id.cardGameProfiles, R.id.cardGameTuning, R.id.cardAudioLatency, R.id.cardInputTester, R.id.cardPerfProfiler)
 private val toolsCardIds = listOf(R.id.cardShellExecute, R.id.cardApkInstall, R.id.cardApkBackup, R.id.cardReboot, R.id.cardShizukuRecovery, R.id.cardWakelock, R.id.cardPrivacyAudit, R.id.cardAppOps, R.id.cardAppLocale, R.id.cardSensorsToggle, R.id.cardBenchmark, R.id.cardDisableDevOptions, R.id.cardDebloat)
 
@@ -84,7 +84,8 @@ private val tweakTitles: Map<Int, Int> = mapOf(
     R.id.cardWakelock to R.string.title_wakelock,
     R.id.cardDexDesktop to R.string.title_dex_desktop,
     R.id.cardPrivacyAudit to R.string.title_privacy_audit,
-    R.id.cardPerfProfiler to R.string.title_perf_profiler
+    R.id.cardPerfProfiler to R.string.title_perf_profiler,
+    R.id.cardConnKeeper to R.string.title_conn_keeper
 )
 
 internal fun MainActivity.cardTitle(id: Int): String? {
@@ -228,7 +229,7 @@ internal fun MainActivity.setupStatusStyling() {
         R.id.tvStatusDexHz, R.id.tvStatusMirrorDisplay,
         R.id.tvStatusInputTester, R.id.tvStatusNetPing, R.id.tvStatusArtCompiler,
         R.id.tvStatusWakelock, R.id.tvStatusDexDesktop, R.id.tvStatusPrivacyAudit,
-        R.id.tvStatusPerfProfiler
+        R.id.tvStatusPerfProfiler, R.id.tvStatusConnKeeper
     )
     val states = HashMap<Int, TweakState>()
     val green = Color.parseColor("#2E9E5B")

@@ -218,6 +218,7 @@ private fun MainActivity.setupToolsCardListeners(prefs: SharedPreferences) {
     findViewById<CardView>(R.id.cardCustomDns).setOnClickListener { showDnsDialog() }
     findViewById<CardView>(R.id.cardDnsBenchmark).setOnClickListener { showDnsBenchmarkSheet() }
     findViewById<CardView>(R.id.cardNetPing).setOnClickListener { showNetPingSheet() }
+    findViewById<CardView>(R.id.cardConnKeeper).setOnClickListener { showConnectionKeeperSheet() }
     findViewById<CardView>(R.id.cardInputTester).setOnClickListener { showInputTesterSheet() }
     findViewById<CardView>(R.id.cardPerfProfiler).setOnClickListener { showPerfProfilerSheet(prefs) }
     findViewById<CardView>(R.id.cardArtCompiler).setOnClickListener { showArtCompilerSheet(prefs) }
@@ -323,6 +324,9 @@ private fun MainActivity.setupToolsCardListeners(prefs: SharedPreferences) {
     }
     findViewById<android.view.View>(R.id.btnResetNetPing).setOnClickListener {
         resetNetPing(prefs)
+    }
+    findViewById<android.view.View>(R.id.btnResetConnKeeper).setOnClickListener {
+        resetConnectionKeeper()
     }
     findViewById<android.view.View>(R.id.btnResetArtCompiler).setOnClickListener {
         resetArtCompiler(prefs)
@@ -528,6 +532,10 @@ internal fun MainActivity.resetAllFunctions(prefs: android.content.SharedPrefere
             clearBgRestrictPrefs(prefs)
             resetNetBlock()
             MirrorDisplayManager.dismissNotification(this@resetAllFunctions)
+            if (ConnectionKeeperService.isRunning) {
+                ConnectionKeeperService.stop(this@resetAllFunctions)
+                findViewById<TextView>(R.id.tvStatusConnKeeper)?.text = getString(R.string.status_default)
+            }
             if (isDexHzActive()) resetDexHz()
 
 

@@ -318,3 +318,28 @@ class MirrorTileService : MuimexTile() {
         }
     }
 }
+
+class ConnectionKeeperTileService : MuimexTile() {
+    override fun onStartListening() {
+        super.onStartListening()
+        refresh()
+    }
+
+    override fun onClick() {
+        super.onClick()
+        if (ConnectionKeeperService.isRunning) {
+            ConnectionKeeperService.stop(this)
+            toast(getString(R.string.keeper_stopped_toast))
+        } else {
+            ConnectionKeeperService.start(this)
+            toast(getString(R.string.keeper_started_toast))
+        }
+        refresh()
+    }
+
+    private fun refresh() {
+        val t = qsTile ?: return
+        val active = ConnectionKeeperService.isRunning
+        t.setActive(active, getString(R.string.tile_keeper))
+    }
+}

@@ -1573,4 +1573,30 @@
     <string name="profiler_delta_body">vs previous run: %1$s FPS · %2$s%% jank</string>
     <string name="profiler_status_fmt">%1$s · %2$d FPS (%3$.1f%% jank)</string>
     <string name="profiler_reset_done">Session profiler history cleared</string>
+
+    <!-- Connection Keeper (Penjaga Koneksi / pancing.sh) -->
+    <string name="title_conn_keeper">Connection Keeper (Penjaga Koneksi)</string>
+    <string name="desc_conn_keeper">Keeps mobile &amp; Wi-Fi data paths responsive with lightweight 1-byte Range 0-0 HTTPS probes, adaptive interval, and auto failover.</string>
+    <string name="keeper_sheet_msg">Native Speedtest.net 1-byte Range keep-alive service (adapted from pancing.sh) with adaptive delay, fallback endpoint, and exponential backoff.</string>
+    <string name="keeper_preset_label">Interval Profile</string>
+    <string name="keeper_preset_default">Adaptive 25–30s (Default)</string>
+    <string name="keeper_preset_fast">Fast Gaming 10–15s</string>
+    <string name="keeper_preset_saver">Battery Saver 45–60s</string>
+    <string name="keeper_wakelock_title">Keep CPU WakeLock While Running</string>
+    <string name="keeper_wakelock_desc">Holds partial wake lock so screen-off connections stay warm</string>
+    <string name="keeper_logs_title">Live Probe Log</string>
+    <string name="keeper_logs_empty">No probes recorded yet — tap Start Keeper or Test 1 Ping</string>
+    <string name="keeper_log_started">=== Connection Keeper started ===</string>
+    <string name="keeper_notif_starting">Starting Connection Keeper…</string>
+    <string name="keeper_btn_start">Start Keeper</string>
+    <string name="keeper_btn_stop">Stop Keeper</string>
+    <string name="keeper_btn_test_one">Test 1 Ping</string>
+    <string name="keeper_testing_one">Running 1-byte probe…</string>
+    <string name="keeper_started_toast">Connection Keeper started in background</string>
+    <string name="keeper_stopped_toast">Connection Keeper stopped</string>
+    <string name="keeper_status_active">Active · %1$d pings</string>
+    <string name="keeper_status_active_ms">Active · %1$d pings (%2$d ms TTFB)</string>
+    <string name="keeper_last_ok_fmt">%1$s · TTFB %2$d ms · conn %3$d ms · HTTP %4$d</string>
+    <string name="keeper_stats_card_fmt">State: %1$s · Uptime: %2$s\nPings: %3$d · Fails: %4$d · Data: %5$s\nEndpoint: %6$s\nLast: %7$s</string>
+    <string name="tile_keeper">Conn Keeper</string>
 </resources>

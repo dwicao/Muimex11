@@ -60,6 +60,7 @@ private class SystemStatuses(
     val dexDesktop: String,
     val privacyAudit: String,
     val perfProfiler: String,
+    val connKeeper: String,
     /**
      * Cards whose read-back proved they are applied. Rendered into
      * [StatusRegistry] so "already applied" decisions never look at the
@@ -174,6 +175,7 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
     val wakelockStatus = wakelockStatusText(prefs)
     val privacyAuditStatus = privacyAuditStatusText(prefs)
     val perfProfilerStatus = perfProfilerStatusText(prefs)
+    val connKeeperPair = connectionKeeperStatusPair()
     val rebootStatus = getString(R.string.status_ready)
     val appLocaleStatus = getString(R.string.status_ready)
     val radioStatus = getString(R.string.status_ready)
@@ -386,6 +388,7 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
         dexDesktop = dexDesktopPair.first,
         privacyAudit = privacyAuditStatus,
         perfProfiler = perfProfilerStatus,
+        connKeeper = connKeeperPair.first,
         appliedIds = buildSet {
             if (net.networkApplied) add(R.id.tvStatusNetwork)
             if (net.dndApplied) add(R.id.tvStatusDnd)
@@ -395,6 +398,7 @@ private suspend fun MainActivity.readSystemStatuses(prefs: SharedPreferences): S
             if (display.mirrorApplied) add(R.id.tvStatusMirrorDisplay)
             if (dexHzPair.second) add(R.id.tvStatusDexHz)
             if (dexDesktopPair.second) add(R.id.tvStatusDexDesktop)
+            if (connKeeperPair.second) add(R.id.tvStatusConnKeeper)
         }
     )
 }
@@ -453,6 +457,7 @@ private fun MainActivity.renderSystemStatuses(s: SystemStatuses) {
     push(R.id.tvStatusDexDesktop, s.dexDesktop)
     push(R.id.tvStatusPrivacyAudit, s.privacyAudit)
     push(R.id.tvStatusPerfProfiler, s.perfProfiler)
+    push(R.id.tvStatusConnKeeper, s.connKeeper)
 }
 
 private fun MainActivity.renderOverlayStatuses(prefs: SharedPreferences) {

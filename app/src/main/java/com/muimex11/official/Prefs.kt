@@ -84,4 +84,8 @@ object Prefs {
     const val KEY_WAKELOCK_RESTRICTED = "WakelockRestricted"
     const val KEY_PRIVACY_RULES = "PrivacyAuditRules"
     const val KEY_PERF_SESSIONS = "PerfProfilerSessions"
+
+    const val KEY_KEEPER_RUNNING = "KeeperRunning"
+    const val KEY_KEEPER_PRESET = "KeeperPreset"
+    const val KEY_KEEPER_WAKELOCK = "KeeperWakeLock"
 }
