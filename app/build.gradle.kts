@@ -16,8 +16,8 @@ android {
         applicationId = "com.muimex11.official"
         minSdk = 24
         targetSdk = 37
-        versionCode = 69
-        versionName = "4.39"
+        versionCode = 70
+        versionName = "4.40"
     }
 
     if (releaseKeystorePath != null) {
